@@ -1,0 +1,243 @@
+.helpModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.helpModalBackdrop.visible {
+  opacity: 1;
+}
+
+.helpModalBox {
+  width: min(92%, 640px);
+  max-width: 640px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  box-shadow: var(--surface-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.98);
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.helpModalBox.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.helpModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.helpHeaderTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.helpModalTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.helpModalSubtitle {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.helpCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
+  margin-top: -0.2rem;
+}
+
+.helpCloseBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+}
+
+.helpModalBody {
+  padding: 1.25rem 1.5rem 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.faqSectionTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.faqItem {
+  background-color: var(--input-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.faqItem:hover {
+  border-color: var(--badge-border);
+}
+
+.faqItem.expanded {
+  border-color: var(--accent-color);
+}
+
+.faqQuestionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.faqQuestionHeader:focus-visible {
+  background-color: var(--badge-bg);
+}
+
+.faqQuestionText {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.faqChevronIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.faqItem.expanded .faqChevronIcon {
+  color: var(--accent-color);
+}
+
+.faqChevronIcon.rotated {
+  transform: rotate(180deg);
+}
+
+.faqAnswerWrapper {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+}
+
+.faqAnswerWrapper.open {
+  max-height: 300px;
+  opacity: 1;
+}
+
+.faqAnswerContent {
+  padding: 0 1rem 0.9rem;
+  border-top: 1px solid var(--surface-border);
+  margin-top: 0.1rem;
+}
+
+.faqAnswerContent p {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Bottom Informational Footer Card */
+.helpFooterCard {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background-color: var(--badge-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+}
+
+.helpFooterInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.helpFooterIcon {
+  color: var(--accent-color);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.helpFooterTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.15rem 0;
+}
+
+.helpFooterSub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.35;
+}
+
+@media (max-width: 639px) {
+  .helpModalHeader {
+    padding: 1rem 1.25rem;
+  }
+  .helpModalBody {
+    padding: 1rem 1.25rem;
+  }
+  .faqQuestionHeader {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.85rem;
+  }
+}

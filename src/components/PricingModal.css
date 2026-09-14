@@ -1,0 +1,287 @@
+.pricingModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pricingModalBackdrop.visible {
+  opacity: 1;
+}
+
+.pricingModalBox {
+  width: min(92%, 720px);
+  max-width: 720px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  box-shadow: var(--surface-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.98);
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pricingModalBox.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pricingModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.pricingHeaderTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pricingModalTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.pricingModalSubtitle {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pricingCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
+  margin-top: -0.2rem;
+}
+
+.pricingCloseBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+}
+
+.pricingModalBody {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.pricingGrid {
+  display: flex;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.planCard {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--input-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.planCard.proCard {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.15);
+}
+
+.planCardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.planTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.planName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.recommendedBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  background-color: var(--badge-bg);
+  border: 1px solid var(--accent-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.planDesc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0 0 0.4rem 0;
+  line-height: 1.4;
+  min-height: 2.5em;
+}
+
+.planPriceRow {
+  display: flex;
+  align-items: baseline;
+}
+
+.priceAmount {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.pricePeriod {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.planDivider {
+  height: 1px;
+  background-color: var(--surface-border);
+  margin: 1rem 0;
+}
+
+.planFeatures {
+  list-style: none;
+  margin: 0 0 1.25rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.planFeatures li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.checkIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.checkIcon.proCheck {
+  color: var(--accent-color);
+}
+
+.planActionArea {
+  margin-top: auto;
+}
+
+.planBtn {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.planBtn.current {
+  background-color: var(--surface-border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.planBtn.upgrade {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--badge-border);
+  cursor: pointer;
+}
+
+.planBtn.upgrade.primary {
+  background-color: var(--accent-color);
+  color: #080a11;
+  font-weight: 700;
+  border: none;
+}
+
+.planBtn.upgrade.primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 639px) {
+  .pricingModalBox {
+    width: 95%;
+  }
+  .pricingModalHeader {
+    padding: 1rem;
+  }
+  .pricingModalBody {
+    padding: 1rem;
+  }
+  .pricingGrid {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .planCard {
+    padding: 1rem;
+  }
+  .planDesc {
+    min-height: auto;
+  }
+  .priceAmount {
+    font-size: 1.6rem;
+  }
+}

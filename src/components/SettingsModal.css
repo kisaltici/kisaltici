@@ -1,0 +1,1180 @@
+.settingsModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settingsModalBackdrop.visible {
+  opacity: 1;
+}
+
+.settingsModalBox {
+  width: min(92%, 740px);
+  max-width: 740px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  box-shadow: var(--surface-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.98);
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settingsModalBox.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.settingsModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.settingsModalTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.settingsCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.settingsCloseBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+}
+
+/* Modal Layout (Sidebar + Right Content Pane) */
+.settingsModalLayout {
+  display: flex;
+  min-height: 420px;
+}
+
+.settingsNav {
+  width: 210px;
+  padding: 0.85rem 0.5rem;
+  border-right: 1px solid var(--surface-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+/* Nav Search Bar */
+.settingsNavSearch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.settingsSearchIcon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.settingsSearchInput {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.6rem 0.45rem 2.1rem;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.settingsSearchInput:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--badge-bg);
+}
+
+.settingsNavEmpty {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+}
+
+.settingsNavItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.settingsNavItem svg {
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.settingsNavItem:hover {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+}
+
+.settingsNavItem:hover svg {
+  color: var(--text-primary);
+}
+
+.settingsNavItem.active {
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+  font-weight: 600;
+}
+
+.settingsNavItem.active svg {
+  color: var(--accent-color);
+}
+
+.settingsContent {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 520px;
+}
+
+.settingsTabPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.settingsPaneHeader {
+  margin-bottom: 1.25rem;
+}
+
+.settingsPaneTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.35rem 0;
+}
+
+.settingsPaneDesc {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.settingsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settingsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.settingsRow:last-child {
+  border-bottom: none;
+}
+
+.settingsLabelGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.settingsLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settingsSubtext {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.settingsSelectWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.settingsSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.45rem 2.25rem 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.settingsSelect:hover {
+  border-color: var(--accent-color);
+}
+
+.settingsSelect:focus-visible {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--badge-bg);
+}
+
+.selectChevron {
+  position: absolute;
+  right: 0.75rem;
+  pointer-events: none;
+  color: var(--text-muted);
+}
+
+/* Subtle ChatGPT-style Upgrade Promotion Row in Genel */
+.settingsPromoCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  margin-top: 1.25rem;
+}
+
+.settingsPromoDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.settingsPromoTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settingsPromoDesc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.settingsPromoBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.settingsPromoBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Account Details Card in Account Section */
+.settingsAccountCard {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.settingsAccountAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settingsAccountAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settingsAccountAvatarFallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  color: var(--action-btn-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settingsAccountDetails {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.settingsAccountName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settingsAccountEmail {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settingsAccountBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--badge-text);
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.settingsPlanValueWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.settingsPlanValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.settingsPlanValue.free {
+  color: var(--text-muted);
+}
+
+.settingsPlanValue.paid {
+  color: var(--accent-color);
+}
+
+/* Color Themes Section in Kişiselleştirme */
+.settingsThemeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settingsThemeSectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.themeGroupSubhead {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.themeGroupSubhead.pro {
+  margin-top: 1.25rem;
+}
+
+.proSubtextHint {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.colorThemeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.65rem;
+}
+
+.themeSwatchCard {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: all 0.15s ease;
+  position: relative;
+  user-select: none;
+}
+
+.themeSwatchCard:hover {
+  border-color: var(--accent-color);
+  background-color: var(--badge-bg);
+}
+
+.themeSwatchCard.selected {
+  border-color: var(--accent-color);
+  background-color: var(--badge-bg);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+.themeSwatchCard.locked {
+  opacity: 0.85;
+}
+
+/* Miniature SaaS UI Preview Mockup in Theme Swatch */
+.themeMiniMockup {
+  width: 100%;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--input-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.themeSwatchCard:hover .themeMiniMockup {
+  transform: translateY(-1px);
+}
+
+.themeMiniHeader {
+  height: 14px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid;
+  flex-shrink: 0;
+}
+
+.themeMiniDotRow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.themeMiniDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.themeMiniHeaderPill {
+  width: 16px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.themeMiniBody {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.themeMiniSidebar {
+  width: 26px;
+  padding: 4px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-right: 1px solid;
+  flex-shrink: 0;
+}
+
+.themeMiniSideLine {
+  height: 3px;
+  border-radius: 1.5px;
+  width: 100%;
+}
+
+.themeMiniSideLine.muted {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.themeMiniMain {
+  flex: 1;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.themeMiniCard {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  border: 1px solid;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.themeMiniLine {
+  height: 3px;
+  border-radius: 1.5px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.themeMiniLine.long {
+  width: 80%;
+}
+
+.themeMiniLine.short {
+  width: 50%;
+}
+
+.themeMiniBtn {
+  height: 6px;
+  width: 40%;
+  border-radius: 2px;
+  align-self: flex-end;
+}
+
+.themeSwatchPreview {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.themeColorDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.themeSwatchTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.themeSwatchName {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.themeLockIcon {
+  color: var(--text-muted);
+}
+
+.themeActiveCheck {
+  color: var(--accent-color);
+}
+
+/* Inline Prompt for Locked Pro Theme Click */
+.lockedThemeNoticeCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--accent-color);
+  border-radius: 10px;
+  animation: fadeIn 0.2s ease;
+}
+
+.lockedThemeNoticeTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.lockedThemeTitle {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+.lockedThemeSub {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.lockedThemeUpgradeBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Informational Card for Link History */
+.settingsInfoBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--input-bg);
+  border: 1px dashed var(--input-border);
+  border-radius: 12px;
+  margin-top: 0.5rem;
+}
+
+.settingsInfoIcon {
+  color: var(--accent-color);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.settingsInfoTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.settingsInfoTitle {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settingsInfoSubtext {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Storage Component */
+.storageCard {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.storageCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.storageCardTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+}
+
+.storageCardTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.storagePlanBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background-color: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--accent-color);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.storageBarOuter {
+  width: 100%;
+  height: 8px;
+  background-color: var(--badge-bg);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.storageBarInner {
+  height: 100%;
+  background-color: var(--accent-color);
+  border-radius: 9999px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.storageTextRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+}
+
+.storageAmountText {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.storagePercentageText {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Modern Toggle Switch */
+.settingsToggleSwitch {
+  width: 44px;
+  height: 24px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  padding: 2px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.settingsToggleSwitch:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+.settingsToggleSwitch.active {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.toggleSwitchHandle {
+  width: 18px;
+  height: 18px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: block;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.settingsToggleSwitch.active .toggleSwitchHandle {
+  transform: translateX(20px);
+  background-color: #080a11;
+}
+
+/* Shortcut Settings UI in SettingsModal.css */
+.shortcutToggleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.shortcutToggleStatusLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.shortcutListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.85rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  transition: border-color 0.15s ease;
+}
+
+.shortcutRow:hover {
+  border-color: var(--surface-border);
+}
+
+.shortcutDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.shortcutTitle {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.shortcutSubtext {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.shortcutKeycapGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.shortcutKeycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 0.45rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  user-select: none;
+}
+
+.shortcutPlus {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.shortcutRow.editing {
+  border-color: var(--accent-color);
+  background-color: var(--badge-bg);
+}
+
+.shortcutControlGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.shortcutViewBox {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.shortcutEditBtn {
+  background-color: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.shortcutEditBtn:hover {
+  border-color: var(--accent-color);
+  background-color: var(--input-bg);
+}
+
+.shortcutEditingBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.shortcutRecordingStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.recordingDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  animation: pulseDot 1.2s infinite alternate;
+}
+
+@keyframes pulseDot {
+  0% { opacity: 0.3; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1.1); }
+}
+
+.shortcutKeycapWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.shortcutKeycap.empty {
+  color: var(--text-muted);
+}
+
+.shortcutWarningText {
+  font-size: 0.75rem;
+  color: var(--error-text);
+  text-align: right;
+  max-width: 280px;
+  line-height: 1.3;
+}
+
+.shortcutEditingBtns {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.shortcutSaveBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.shortcutSaveBtn.replace {
+  background-color: #f59e0b;
+  color: #000000;
+}
+
+.shortcutSaveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shortcutCancelBtn {
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.shortcutResetRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--surface-border);
+}
+
+.shortcutResetBtn {
+  background-color: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s ease;
+}
+
+.shortcutResetBtn:hover {
+  color: var(--text-primary);
+}
+
+/* Responsive Layout for Mobile (< 640px) */
+@media (max-width: 639px) {
+  .settingsModalBox {
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .settingsModalLayout {
+    flex-direction: column;
+    min-height: auto;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .settingsNav {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--surface-border);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0.5rem 0.65rem;
+    gap: 0.35rem;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+    background-color: var(--surface-bg);
+  }
+
+  .settingsNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .settingsNavSearch {
+    display: none;
+  }
+
+  .settingsNavText {
+    display: none;
+  }
+
+  .settingsNavItem {
+    flex: 1;
+    min-width: 40px;
+    height: 42px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background-color: transparent;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .settingsNavItem svg {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+
+  .settingsNavItem:hover {
+    background-color: var(--badge-bg);
+  }
+
+  .settingsNavItem:hover svg {
+    color: var(--text-primary);
+    transform: scale(1.1);
+  }
+
+  .settingsNavItem.active {
+    background-color: var(--badge-bg);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(222, 255, 54, 0.15);
+  }
+
+  .settingsNavItem.active svg {
+    color: var(--accent-color);
+  }
+
+  .settingsContent {
+    padding: 1rem;
+    flex: 1;
+    max-height: calc(100dvh - 140px);
+  }
+
+  .settingsRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.85rem 0;
+  }
+
+  .settingsSelectWrapper,
+  .settingsSelect {
+    width: 100%;
+  }
+
+  .colorThemeGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+  }
+}

@@ -1,0 +1,179 @@
+:root,
+[data-theme='dark'] {
+  --header-height: 58px;
+  --bg-color: #000000;
+  --header-bg: #090909;
+  --header-border: #1f1f1f;
+  --sidebar-bg: #0b0b0b;
+  --sidebar-border: #1f1f1f;
+  --surface-bg: #161616;
+  --surface-border: #242424;
+  --surface-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.75), 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+  --input-bg: #181818;
+  --input-border: #282828;
+  --input-focus: #DEFF36;
+  --input-focus-ring: rgba(222, 255, 54, 0.15);
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --accent-color: #DEFF36;
+  --accent-hover: #cbe82e;
+  --action-btn-bg: #DEFF36;
+  --action-btn-text: #080a11;
+  --badge-bg: #1e1e1e;
+  --badge-border: #2a2a2a;
+  --badge-text: #d1d5db;
+  --success-bg: rgba(222, 255, 54, 0.08);
+  --success-border: rgba(222, 255, 54, 0.22);
+  --success-text: #DEFF36;
+  --error-text: #f87171;
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.25);
+  --toggle-bg: #1e1e1e;
+  --toggle-border: #2a2a2a;
+  --toggle-text: #f3f4f6;
+
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --header-height: 58px;
+  --bg-color: #f8fafc;
+  --header-bg: #ffffff;
+  --header-border: #e2e8f0;
+  --sidebar-bg: #f8fafc;
+  --sidebar-border: #e2e8f0;
+  --surface-bg: #ffffff;
+  --surface-border: #e2e8f0;
+  --surface-shadow: 0 12px 32px -6px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02);
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-focus: #657800;
+  --input-focus-ring: rgba(101, 120, 0, 0.15);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent-color: #657800;
+  --accent-hover: #546400;
+  --action-btn-bg: #657800;
+  --action-btn-text: #ffffff;
+  --badge-bg: #f1f5f9;
+  --badge-border: #e2e8f0;
+  --badge-text: #475569;
+  --success-bg: rgba(101, 120, 0, 0.08);
+  --success-border: rgba(101, 120, 0, 0.25);
+  --success-text: #657800;
+  --error-text: #dc2626;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --toggle-bg: #f1f5f9;
+  --toggle-border: #cbd5e1;
+  --toggle-text: #0f172a;
+
+  color-scheme: light;
+}
+
+html {
+  box-sizing: border-box;
+  overflow-x: clip;
+  width: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Interface Density System (Rahat, Standart, Sıkı) */
+:root,
+[data-density='standard'] {
+  --density-sidebar-item-padding: 0.55rem 0.65rem;
+  --density-history-row-padding: 0.625rem 0.75rem;
+  --density-btn-padding: 0.45rem 0.85rem;
+  --density-input-padding: 0.45rem 0.85rem;
+  --density-card-padding: 1.1rem;
+}
+
+[data-density='comfortable'] {
+  --density-sidebar-item-padding: 0.75rem 0.85rem;
+  --density-history-row-padding: 0.75rem 0.85rem;
+  --density-btn-padding: 0.55rem 0.95rem;
+  --density-input-padding: 0.55rem 0.95rem;
+  --density-card-padding: 1.35rem;
+}
+
+[data-density='compact'] {
+  --density-sidebar-item-padding: 0.38rem 0.5rem;
+  --density-history-row-padding: 0.45rem 0.6rem;
+  --density-btn-padding: 0.35rem 0.65rem;
+  --density-input-padding: 0.35rem 0.65rem;
+  --density-card-padding: 0.85rem;
+}
+
+/* Subtle Pro Theme Animations */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme-effect='shimmer'] {
+    animation: themeShimmerPulse 8s ease-in-out infinite alternate;
+  }
+  [data-theme-effect='pulse'] {
+    animation: themeGlowPulse 6s ease-in-out infinite alternate;
+  }
+  [data-theme-effect='warmth'] {
+    animation: themeWarmthPulse 10s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes themeShimmerPulse {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(8deg);
+  }
+}
+
+@keyframes themeGlowPulse {
+  0% {
+    box-shadow: none;
+  }
+  100% {
+    box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.03);
+  }
+}
+
+@keyframes themeWarmthPulse {
+  0% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.03);
+  }
+}
+

@@ -1,0 +1,381 @@
+.profileModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profileModalBackdrop.visible {
+  opacity: 1;
+}
+
+.profileModalBox {
+  width: min(92%, 480px);
+  max-width: 480px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  box-shadow: var(--surface-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.98);
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profileModalBox.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.profileModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.35rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.profileModalTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.profileCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.profileCloseBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+}
+
+.profileModalBody {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@media (max-width: 639px) {
+  .profileModalBox {
+    width: 95%;
+  }
+  .profileModalBody {
+    padding: 1rem;
+    gap: 0.95rem;
+  }
+  .profileModalFooter {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .profileCancelBtn,
+  .profileSaveBtn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+.profileErrorCard {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.9rem;
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.profileErrorCard svg {
+  flex-shrink: 0;
+}
+
+/* Avatar Section */
+.profileAvatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.profileAvatarWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--surface-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--badge-bg);
+}
+
+.profileAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileAvatarFallback {
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent-color);
+  color: var(--action-btn-text);
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.changePhotoBtn {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.changePhotoBtn:hover {
+  border-color: var(--accent-color);
+  background-color: var(--badge-bg);
+}
+
+.avatarPickerBox {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+  animation: fadeIn 0.15s ease;
+}
+
+.avatarPickerTitle {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.presetAvatarRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  overflow-x: auto;
+}
+
+.presetAvatarThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  background-color: var(--badge-bg);
+}
+
+.presetAvatarThumb:hover {
+  transform: scale(1.08);
+}
+
+.presetAvatarThumb.selected {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+.uploadAvatarBtn {
+  width: 100%;
+  background-color: var(--badge-bg);
+  border: 1px dashed var(--input-border);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.45rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.uploadAvatarBtn:hover {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+/* Fields */
+.profileFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.profileFieldLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profileInput {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profileInput:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--badge-bg);
+}
+
+.usernameInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.usernamePrefix {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.profileInput.username {
+  padding-left: 2rem;
+}
+
+.usernameHint {
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.usernameHint.valid {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.usernameHint.invalid {
+  color: var(--error-text);
+}
+
+.profileStaticValue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.profileBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--badge-text);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Footer Actions */
+.profileModalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.profileCancelBtn {
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.profileCancelBtn:hover {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+}
+
+.profileSaveBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 0.5rem 1.15rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.profileSaveBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.profileSaveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,426 @@
+.analyticsPage {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.analyticsTopNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backNavBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+}
+
+.backNavBtn:hover {
+  color: var(--accent-color);
+}
+
+.primaryActionBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryActionBtn:hover {
+  background-color: var(--accent-hover);
+}
+
+.linkHeaderCard {
+  width: 100%;
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--surface-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.linkHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.shortUrlGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.analyticsBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.mainShortLink {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.mainShortLink:hover {
+  text-decoration: underline;
+}
+
+.linkHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actionBtn {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--badge-border);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover,
+.actionBtn.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--input-bg);
+}
+
+.copyBtn.copied {
+  background-color: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.originalUrlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--surface-border);
+  padding-top: 0.875rem;
+}
+
+.rowLabel {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.rowValue {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.qrDrawerAnalytics {
+  margin-top: 0.5rem;
+  padding: 1.25rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.qrDrawerAnalytics.open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.qrDrawerAnalytics.closing {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qrDrawerAnalytics,
+  .qrDrawerAnalytics.open,
+  .qrDrawerAnalytics.closing {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.qrCanvasBox {
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.downloadQrBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.statsCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.statCard {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: var(--surface-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.statCardLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.statCardValue {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.statCardValue.highlight {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--accent-color);
+}
+
+.chartSection {
+  width: 100%;
+}
+
+.activitySection {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--surface-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activityTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.emptyActivityMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 2.25rem 1rem;
+  text-align: center;
+}
+
+.emptyActivityTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.emptyActivitySub {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  max-width: 440px;
+  line-height: 1.45;
+}
+
+.activityTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.activityTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.activityTable th {
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.activityTable td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--surface-border);
+  color: var(--text-primary);
+}
+
+.redirectTag {
+  font-size: 0.75rem;
+  background-color: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--accent-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.activeStatusTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.statusDotLive {
+  font-size: 0.55rem;
+  color: var(--success-text);
+}
+
+/* Skeleton Loading styles */
+.analyticsSkeleton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.skeletonNav,
+.skeletonHeader,
+.skeletonCard,
+.skeletonChart {
+  background-color: var(--surface-bg);
+  border-radius: 16px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonNav { height: 40px; width: 180px; }
+.skeletonHeader { height: 120px; width: 100%; }
+.skeletonCards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.skeletonCard { height: 90px; }
+.skeletonChart { height: 260px; width: 100%; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.2; }
+}
+
+.notFoundContainer {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notFoundIcon { font-size: 2.5rem; }
+.notFoundTitle { font-size: 1.5rem; color: var(--text-primary); }
+.notFoundSub { font-size: 0.95rem; color: var(--text-muted); max-width: 420px; }
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .statsCardsGrid,
+  .skeletonCards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 639px) {
+  .statsCardsGrid,
+  .skeletonCards {
+    grid-template-columns: 1fr;
+  }
+
+  .linkHeaderCard {
+    padding: 1.1rem;
+  }
+
+  .linkHeaderTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .mainShortLink {
+    font-size: 1.15rem;
+  }
+
+  .linkHeaderActions {
+    width: 100%;
+  }
+
+  .actionBtn {
+    flex: 1;
+  }
+
+  .originalUrlRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .activitySection {
+    padding: 1.1rem;
+  }
+}

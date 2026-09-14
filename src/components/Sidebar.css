@@ -1,0 +1,639 @@
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg, var(--surface-bg));
+  border-right: 1px solid var(--sidebar-border, var(--surface-border));
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--header-height, 58px));
+  height: calc(100dvh - var(--header-height, 58px));
+  position: sticky;
+  top: var(--header-height, 58px);
+  flex-shrink: 0;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  z-index: 40;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+}
+
+.sidebar.collapsed {
+  width: 64px;
+}
+
+.sidebarHeader {
+  padding: 1rem 0.75rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.newLinkBtn {
+  width: 100%;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px dashed var(--input-border);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar.collapsed .newLinkBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.newLinkBtn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--badge-bg);
+}
+
+.plusSvg {
+  flex-shrink: 0;
+}
+
+.sidebarContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 0.5rem 1.25rem;
+}
+
+.historySectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.5rem;
+}
+
+.historyTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.historyCount {
+  font-size: 0.75rem;
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.emptyHistoryMessage {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: 1rem 0.5rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.guestHistoryNoticeCard {
+  margin: 0.5rem 0.25rem;
+  padding: 0.85rem 0.75rem;
+  background-color: var(--input-bg);
+  border: 1px dashed var(--input-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.guestHistoryNoticeCard:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--badge-bg);
+}
+
+.guestHistoryNoticeCard svg {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.guestHistoryNoticeCard:hover svg {
+  color: var(--accent-color);
+}
+
+.guestHistoryNoticeCard span {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.sidebarHistoryLoading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.sidebarHistorySpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--surface-border);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: sidebarSpin 0.75s linear infinite;
+}
+
+@keyframes sidebarSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.historyItemRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: var(--density-history-row-padding, 0.625rem 0.75rem);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+  position: relative;
+  user-select: none;
+}
+
+.historyItemRow:hover {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+}
+
+.historyItemRow.active {
+  background-color: var(--badge-bg);
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.historyItemTitle {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.84rem;
+}
+
+.historyItemMenuWrapper {
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.historyItemRow:hover .historyItemMenuWrapper,
+.historyItemRow.active .historyItemMenuWrapper {
+  opacity: 1;
+}
+
+.menuToggleBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.menuToggleBtn:hover {
+  color: var(--text-primary);
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  box-shadow: var(--surface-shadow);
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  z-index: 50;
+  min-width: 155px;
+  white-space: nowrap;
+}
+
+.menuOption {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.menuOption span {
+  white-space: nowrap;
+}
+
+.menuOption:hover {
+  background-color: var(--badge-bg);
+}
+
+.menuOption.delete:hover {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+}
+
+.inlineEditWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.inlineEditInput {
+  flex: 1;
+  background-color: var(--input-bg);
+  border: 1px solid var(--accent-color);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  outline: none;
+}
+
+.saveRenameBtn {
+  background-color: var(--accent-color);
+  color: #080a11;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Sidebar Bottom ChatGPT-style Profile Area */
+.sidebarFooter {
+  padding: 0.75rem 0.5rem;
+  border-top: 1px solid var(--surface-border);
+  background-color: var(--sidebar-bg, var(--surface-bg));
+  margin-top: auto;
+  box-sizing: border-box;
+}
+
+.sidebar.collapsed .sidebarFooter {
+  padding: 0.75rem 0.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebarGuestNavList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+}
+
+.sidebarNavItem {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+  padding: var(--density-sidebar-item-padding, 0.55rem 0.65rem);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  transition: all 0.15s ease;
+  text-align: left;
+  outline: none;
+}
+
+.sidebar.collapsed .sidebarNavItem {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  justify-content: center;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.sidebarNavItem:hover {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+}
+
+.sidebarNavItem:hover svg {
+  color: var(--accent-color);
+}
+
+.sidebarNavItem:focus-visible {
+  outline: 2px solid var(--accent-color);
+}
+
+.sidebarSignInBtn {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.sidebarSignInBtn:hover {
+  color: var(--accent-color);
+}
+
+.sidebarProfileWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.sidebarProfileCard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 10px;
+  cursor: pointer;
+  background: transparent;
+  transition: background-color 0.15s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.sidebar.collapsed .sidebarProfileCard {
+  padding: 0;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.sidebarProfileCard:hover {
+  background-color: var(--badge-bg);
+}
+
+.sidebarProfileAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.sidebarProfileAvatar.paidAvatar {
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 0 8px rgba(222, 255, 54, 0.25);
+}
+
+.sidebarAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.sidebarAvatarFallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  color: var(--action-btn-text);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.sidebarProfileDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sidebarProfileName {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebarProfilePlan {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebarProfilePlan.paid {
+  color: var(--accent-color);
+}
+
+.sidebarFooterSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0.5rem;
+  min-height: 44px;
+}
+
+.sidebarFooterSpinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--surface-border);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: sidebarSpin 0.75s linear infinite;
+}
+
+.sidebarUpgradeBtn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.sidebarUpgradeBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Sidebar Profile Dropdown Menu (6 Items) */
+.sidebarProfileDropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  box-shadow: var(--surface-shadow);
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  z-index: 60;
+  animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar.collapsed .sidebarProfileDropdown {
+  left: calc(100% + 8px);
+  bottom: 0;
+}
+
+.sidebarDropdownItem {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.5rem 0.65rem;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-align: left;
+}
+
+.sidebarDropdownItem:hover {
+  background-color: var(--badge-bg);
+}
+
+.sidebarDropdownItem.logout:hover {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+}
+
+.sidebarDropdownDivider {
+  height: 1px;
+  background-color: var(--surface-border);
+  margin: 0.25rem 0;
+}
+
+/* Sidebar Guest Sign In Button */
+.sidebarGuestSignInBtn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--badge-border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  transition: all 0.15s ease;
+}
+
+.sidebar.collapsed .sidebarGuestSignInBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0 auto;
+}
+
+.sidebarGuestSignInBtn:hover {
+  background-color: var(--badge-bg);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.sidebarBackdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebarBackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(2px);
+    z-index: 55;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--header-height, 58px);
+    height: calc(100vh - var(--header-height, 58px));
+    height: calc(100dvh - var(--header-height, 58px));
+    width: min(280px, 85vw);
+    max-width: 85vw;
+    box-shadow: var(--surface-shadow);
+    transform: translateX(-100%);
+    z-index: 60;
+  }
+
+  .sidebar.mobileOpen {
+    transform: translateX(0);
+  }
+
+  .sidebarProfileDropdown {
+    width: calc(100% - 1rem);
+    max-width: 240px;
+    left: 0.5rem;
+    bottom: calc(100% + 6px);
+  }
+}
