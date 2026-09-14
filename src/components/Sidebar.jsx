@@ -611,7 +611,7 @@ function Sidebar({
                 type="button"
                 className="sidebarNavItem sidebarSignInBtn"
                 onClick={() => onOpenAuthModal && onOpenAuthModal('login')}
-                disabled={loading}
+                disabled={authLoading}
                 title={t('signIn')}
               >
                 <svg

@@ -94,7 +94,7 @@ function Header({
   }, []);
 
   const handleGoogleAuth = async () => {
-    if (isSigningIn || loading) return;
+    if (isSigningIn || authLoading) return;
     setIsSigningIn(true);
     try {
       await signInWithGoogle();
@@ -408,7 +408,7 @@ function Header({
                       type="button"
                       className="authGuestBtn signInBtn"
                       onClick={() => onOpenAuthModal && onOpenAuthModal('login')}
-                      disabled={loading}
+                      disabled={authLoading}
                     >
                       {t('signIn')}
                     </button>
@@ -416,7 +416,7 @@ function Header({
                       type="button"
                       className="authGuestBtn signUpBtn"
                       onClick={() => onOpenAuthModal && onOpenAuthModal('register')}
-                      disabled={loading}
+                      disabled={authLoading}
                     >
                       {t('signUpFree')}
                     </button>

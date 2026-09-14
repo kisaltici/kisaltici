@@ -39,6 +39,11 @@ const isOriginAllowed = (origin) => {
   // Allow production domain
   if (origin === PRODUCTION_ORIGIN) return true;
 
+  // Allow HTTPS Vercel deployment/preview origins
+  if (origin.startsWith('https://') && origin.endsWith('.vercel.app')) {
+    return true;
+  }
+
   // Allow local development origins (localhost, 127.0.0.1 on any port)
   if (
     origin.startsWith('http://localhost:') ||
