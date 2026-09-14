@@ -16,7 +16,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
 
 // 1. Security HTTP Headers (Helmet)
 app.use(
@@ -25,21 +25,40 @@ app.use(
   })
 );
 
-// 2. Configure CORS for allowed origin
+// 2. Configure CORS for allowed origins
+const configuredOrigins = FRONTEND_URL.split(',').map((url) => url.trim().replace(/\/+$/, ''));
+const PRODUCTION_ORIGIN = 'https://kisaltici.com';
+
+const isOriginAllowed = (origin) => {
+  // Allow requests with no origin (like mobile apps, curl, postman)
+  if (!origin) return true;
+
+  // Allow configured FRONTEND_URL(s)
+  if (configuredOrigins.includes(origin)) return true;
+
+  // Allow production domain
+  if (origin === PRODUCTION_ORIGIN) return true;
+
+  // Allow local development origins (localhost, 127.0.0.1 on any port)
+  if (
+    origin.startsWith('http://localhost:') ||
+    origin === 'http://localhost' ||
+    origin.startsWith('http://127.0.0.1:') ||
+    origin === 'http://127.0.0.1'
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
-      if (!origin) return callback(null, true);
-      // Allow FRONTEND_URL, localhost, 127.0.0.1
-      if (
-        origin === FRONTEND_URL ||
-        origin.startsWith('http://localhost') ||
-        origin.startsWith('http://127.0.0.1')
-      ) {
+      if (isOriginAllowed(origin)) {
         return callback(null, true);
       }
-      return callback(null, true);
+      return callback(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

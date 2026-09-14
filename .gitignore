@@ -18,10 +18,10 @@ scratch/
 # Environment variables
 .env
 .env.*
-!.env.example
-!server/.env.example
 server/.env
 server/.env.*
+!.env.example
+!server/.env.example
 
 # Firebase & service account credentials
 *serviceAccount*.json

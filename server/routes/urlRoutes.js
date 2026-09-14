@@ -62,6 +62,19 @@ const validateBackendUrl = (urlToTest) => {
 };
 
 /**
+ * Resolves the base URL for short link generation.
+ * Uses BASE_URL environment variable if provided, or falls back to the incoming request host.
+ * Trailing slashes are stripped to avoid malformed links (e.g. https://lnk1.tr/aB3xYz).
+ *
+ * @param {import('express').Request} req
+ * @returns {string} Clean base URL without trailing slash
+ */
+const getBaseUrl = (req) => {
+  const url = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+  return url.replace(/\/+$/, '');
+};
+
+/**
  * POST /api/shorten
  * Rate-limited endpoint for shortening URLs.
  * Supports optional authentication (attaches userId if Bearer token is valid).
@@ -113,7 +126,7 @@ router.post('/shorten', shortenLimiter, optionalAuth, async (req, res, next) => 
       userId: authenticatedUserId,
     });
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const shortUrl = `${baseUrl}/${newUrlRecord.shortCode}`;
 
     return res.status(201).json({
@@ -141,7 +154,7 @@ router.get('/urls/mine', requireAuth, async (req, res, next) => {
 
     const userUrls = await Url.find({ userId }).sort({ createdAt: -1 }).select('-__v');
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
 
     const formattedList = userUrls.map((item) => {
       const clicks = item.clicks || [];
@@ -192,7 +205,7 @@ router.get('/urls/:shortCode', async (req, res, next) => {
       });
     }
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const shortUrl = `${baseUrl}/${urlRecord.shortCode}`;
 
     const clicks = urlRecord.clicks || [];
