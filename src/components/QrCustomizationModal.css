@@ -1,0 +1,960 @@
+/* QR Customization Modal - Modern SaaS Aesthetic */
+
+.qrModalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 16px;
+  animation: qrModalFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qrModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.qrModalContainer {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-shadow);
+  width: 100%;
+  max-width: 980px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  animation: qrModalSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qrModalSlideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal Header */
+.qrModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface-bg);
+}
+
+.qrModalTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qrModalIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--accent-color);
+}
+
+.qrModalTitle {
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.qrSaveStatusTag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.qrSaveStatusTag.saved {
+  color: var(--success-text);
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.qrModalCloseBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.qrModalCloseBtn:hover {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+}
+
+/* Modal Body Layout: Desktop 2-Columns */
+.qrModalBody {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 360px);
+  overflow-y: auto;
+  max-height: calc(90vh - 68px);
+}
+
+/* Left Column: Organized Customization Controls */
+.qrControlsPane {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0; /* prevent grid cell blowout */
+  /* overflow-y handled by parent qrModalBody – no nested scroll */
+}
+
+.qrControlSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qrControlHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qrControlTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qrSectionNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--accent-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.qrFieldSubLabel {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.qrHelpHintText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin: 2px 0 0 0;
+  line-height: 1.4;
+}
+
+/* Complexity Grid (4 Options) */
+.qrComplexityGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.qrOptionCard {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.16s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qrOptionCard:hover {
+  border-color: var(--text-secondary);
+  transform: translateY(-1px);
+}
+
+.qrOptionCard.selected {
+  border-color: var(--accent-color);
+  background: var(--badge-bg);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+.qrOptionCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.qrOptionCardName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.qrOptionCardTag {
+  font-size: 0.7rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.qrOptionCardDesc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.34;
+}
+
+/* Module Shapes (5 Items) */
+.qrShapesRow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.qrShapeCard {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  padding: 10px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.16s ease;
+}
+
+.qrShapeCard:hover {
+  border-color: var(--text-secondary);
+}
+
+.qrShapeCard.selected {
+  border-color: var(--accent-color);
+  background: var(--badge-bg);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+.qrShapeIconBox {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+
+.qrShapeTitle {
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Sub-styles: Finder Styles & Quiet Zone */
+.qrSubStyleRow {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.qrFinderPillsSelector,
+.qrPillsSelector {
+  display: flex;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.qrPillBtn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 6px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.qrPillBtn:hover {
+  color: var(--text-primary);
+}
+
+.qrPillBtn.selected {
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  font-weight: 600;
+}
+
+/* Redesigned Color Controls */
+.qrColorsContainer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.qrColorPickerCard {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0; /* prevent grid track blowout */
+}
+
+.qrColorPickerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qrColorPickerLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.qrColorValueTag {
+  font-size: 0.74rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.qrColorInteractiveRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0; /* constrain row to card's padding box */
+}
+
+.qrColorPreviewThumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.qrColorPreviewThumb:hover {
+  transform: scale(1.04);
+}
+
+.qrColorPipetteIcon {
+  color: rgba(255, 255, 255, 0.75);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.qrColorPreviewThumb.transparentThumb {
+  background-image: linear-gradient(45deg, #4b5563 25%, transparent 25%),
+    linear-gradient(-45deg, #4b5563 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #4b5563 75%),
+    linear-gradient(-45deg, transparent 75%, #4b5563 75%);
+  background-size: 10px 10px;
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+  background-color: #374151;
+}
+
+.qrNativeColorInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.qrHexInputWrapper {
+  flex: 1;
+  min-width: 0; /* allow wrapper to shrink past intrinsic input width */
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 0 12px;
+  transition: border-color 0.15s ease;
+}
+
+.qrHexInputWrapper:focus-within {
+  border-color: var(--accent-color);
+}
+
+.qrHexHash {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.qrHexTextInput {
+  flex: 1;
+  min-width: 0; /* monospace inputs have browser intrinsic min-width; override it */
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  padding: 10px 6px;
+  font-size: 0.86rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.qrHexTextInput:focus {
+  outline: none;
+}
+
+.qrHexTextInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Swatches List */
+.qrSwatchesList {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.qrSwatchItem {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.14s ease, border-color 0.14s ease;
+}
+
+.qrSwatchItem:hover {
+  transform: scale(1.16);
+}
+
+.qrSwatchItem.active {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+.qrSwatchItem.transparentItem {
+  background-image: linear-gradient(45deg, #4b5563 25%, transparent 25%),
+    linear-gradient(-45deg, #4b5563 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #4b5563 75%),
+    linear-gradient(-45deg, transparent 75%, #4b5563 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+  background-color: #374151;
+}
+
+/* Low Contrast Alert */
+.qrContrastAlert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.09);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 10px;
+  padding: 10px 14px;
+  line-height: 1.35;
+}
+
+/* Center Image / Logo Controls */
+.qrCenterImageCard {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qrUploadDropZone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1.5px dashed var(--surface-border);
+  border-radius: 12px;
+  background: var(--badge-bg);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.qrUploadDropZone:hover,
+.qrUploadDropZone.dragActive {
+  border-color: var(--accent-color);
+  background: rgba(222, 255, 54, 0.04);
+}
+
+.qrUploadIconCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.qrUploadDropText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qrUploadPrimaryLabel {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.qrUploadSecondaryLabel {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* Active Image Preview & Controls */
+.qrActiveImageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qrActiveImageRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.qrLogoPreviewThumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--surface-border);
+  object-fit: cover;
+  background: var(--badge-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.qrActiveImageActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qrImageActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qrImageActionBtn:hover {
+  background: var(--surface-border);
+}
+
+.qrImageActionBtn.remove {
+  color: var(--error-text);
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.qrImageActionBtn.remove:hover {
+  background: rgba(239, 68, 68, 0.14);
+}
+
+.qrSliderGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.qrSliderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.78rem;
+}
+
+.qrSliderRow label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.qrSliderRow span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text-primary);
+  min-width: 38px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.qrRangeInput {
+  flex: 1;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.qrImageNote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* Right Column: Live Preview & Features */
+.qrPreviewPane {
+  padding: 24px;
+  border-left: 1px solid var(--surface-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  min-width: 0; /* prevent grid cell blowout */
+}
+
+[data-theme='dark'] .qrPreviewPane {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.qrPreviewHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qrPreviewLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.qrPreviewCardWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qrPreviewFrame {
+  width: 250px;
+  height: 250px;
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--surface-border);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Checkered background effect for transparent QR previews */
+.qrPreviewFrame.transparentBg {
+  background-image: linear-gradient(45deg, #1f2937 25%, transparent 25%),
+    linear-gradient(-45deg, #1f2937 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1f2937 75%),
+    linear-gradient(-45deg, transparent 75%, #1f2937 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  background-color: #111827;
+}
+
+[data-theme='light'] .qrPreviewFrame.transparentBg {
+  background-image: linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+    linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+    linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  background-color: #f1f5f9;
+}
+
+.qrSvgContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qrSvgContainer svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.qrPreviewUrlText {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: center;
+  word-break: break-all;
+  max-width: 260px;
+}
+
+/* User-Friendly "QR'ın özellikleri" Card */
+.qrFeaturesCard {
+  width: 100%;
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qrFeaturesCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.qrFeaturesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.qrFeatureItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qrFeatureItemLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.qrFeatureItemVal {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.qrFeatureItemVal.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qrFeaturesSubtleFooter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--surface-border);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+/* Export Section (Dışa aktar) */
+.qrExportSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qrExportSectionLabel {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.qrExportButtonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.qrExportBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  border: none;
+  width: 100%;
+}
+
+.qrExportBtn.primary {
+  background: var(--action-btn-bg);
+  color: var(--action-btn-text);
+}
+
+.qrExportBtn.primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.qrExportBtn.secondary {
+  background: var(--badge-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--badge-border);
+}
+
+.qrExportBtn.secondary:hover {
+  background: var(--surface-border);
+  color: var(--text-primary);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 880px) {
+  .qrModalBody {
+    grid-template-columns: 1fr;
+    max-height: calc(88vh - 64px);
+  }
+
+  .qrPreviewPane {
+    border-left: none;
+    border-bottom: 1px solid var(--surface-border);
+    padding: 16px;
+    gap: 14px;
+    order: -1;
+  }
+
+  .qrPreviewFrame {
+    width: 210px;
+    height: 210px;
+    padding: 10px;
+  }
+
+  .qrControlsPane {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .qrColorsContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .qrComplexityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .qrShapesRow {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .qrSubStyleRow {
+    grid-template-columns: 1fr;
+  }
+}

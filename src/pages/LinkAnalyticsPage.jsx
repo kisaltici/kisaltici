@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { QRCodeCanvas } from 'qrcode.react';
 import AnalyticsChart from '../components/AnalyticsChart';
+import QrCustomizationModal from '../components/QrCustomizationModal';
 import { useTranslation } from '../i18n/LanguageContext';
 import { API_BASE_URL } from '../config/api';
 import './LinkAnalyticsPage.css';
@@ -15,17 +15,13 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorStatus, setErrorStatus] = useState(null);
   const [isCopied, setIsCopied] = useState(false);
-  const [showQr, setShowQr] = useState(false);
-  const [isQrOpening, setIsQrOpening] = useState(false);
-  const [isQrClosing, setIsQrClosing] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
     setErrorStatus(null);
-    setShowQr(false);
-    setIsQrOpening(false);
-    setIsQrClosing(false);
+    setIsQrModalOpen(false);
 
     const fetchLinkStats = async () => {
       try {
@@ -67,26 +63,23 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
     };
   }, [shortCode]);
 
-  const handleToggleQr = () => {
-    if (showQr) {
-      if (isQrClosing) return;
-      setIsQrClosing(true);
-      setTimeout(() => {
-        setShowQr(false);
-        setIsQrClosing(false);
-        setIsQrOpening(false);
-      }, 200);
-    } else {
-      setIsQrClosing(false);
-      setShowQr(true);
-      setIsQrOpening(true);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsQrOpening(false);
-        });
-      });
-    }
+  const handleOpenQrModal = () => {
+    setIsQrModalOpen(true);
   };
+
+  const handleCloseQrModal = () => {
+    setIsQrModalOpen(false);
+  };
+
+  const handleQrSettingsSaved = useCallback((code, savedSettings) => {
+    setLinkData((prev) => {
+      if (!prev || prev.shortCode !== code) return prev;
+      return {
+        ...prev,
+        qrSettings: savedSettings,
+      };
+    });
+  }, []);
 
   const handleCopy = async () => {
     if (!linkData?.shortUrl) return;
@@ -96,23 +89,6 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
       setTimeout(() => setIsCopied(false), 2000);
     } catch (e) {
       console.error('Copy error:', e);
-    }
-  };
-
-  const handleDownloadQr = () => {
-    try {
-      const canvas = document.getElementById('qrCodeCanvasAnalytics');
-      if (!canvas) return;
-
-      const imageUri = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = imageUri;
-      link.download = `qr-${shortCode}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (e) {
-      console.error('QR download error:', e);
     }
   };
 
@@ -203,13 +179,13 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
           </div>
 
           <div className="linkHeaderActions">
-            {/* QR Code Icon-Only Button */}
+            {/* QR Code Icon-Only Button - Opens Modern QR Customization Modal */}
             <button
               type="button"
-              className={`actionBtn ${showQr && !isQrClosing ? 'active' : ''}`}
-              onClick={handleToggleQr}
-              aria-label={t('showQrCode')}
-              title={t('showQrCode')}
+              className={`actionBtn ${isQrModalOpen ? 'active' : ''}`}
+              onClick={handleOpenQrModal}
+              aria-label={t('customizeQrCode')}
+              title={t('customizeQrCode')}
             >
               <svg
                 width="18"
@@ -272,34 +248,17 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
           <span className="rowLabel">{t('originalUrl')}</span>
           <span className="rowValue">{linkData.originalUrl}</span>
         </div>
-
-        {(showQr || isQrClosing) && (
-          <div
-            className={`qrDrawerAnalytics ${
-              isQrClosing ? 'closing' : !isQrOpening ? 'open' : ''
-            }`}
-          >
-            <div className="qrCanvasBox">
-              <QRCodeCanvas
-                id="qrCodeCanvasAnalytics"
-                value={linkData.shortUrl}
-                size={160}
-                bgColor="#ffffff"
-                fgColor="#080a11"
-                level="H"
-                marginSize={1}
-              />
-            </div>
-            <button
-              type="button"
-              className="downloadQrBtn"
-              onClick={handleDownloadQr}
-            >
-              {t('downloadQr')}
-            </button>
-          </div>
-        )}
       </section>
+
+      {/* Modern QR Customization Modal */}
+      <QrCustomizationModal
+        isOpen={isQrModalOpen}
+        onClose={handleCloseQrModal}
+        shortCode={linkData.shortCode}
+        shortUrl={linkData.shortUrl}
+        initialSettings={linkData.qrSettings}
+        onSettingsSaved={handleQrSettingsSaved}
+      />
 
       {/* Overview Statistics Cards */}
       <section className="statsCardsGrid">

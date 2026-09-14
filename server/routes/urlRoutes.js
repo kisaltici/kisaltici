@@ -166,6 +166,7 @@ router.get('/urls/mine', requireAuth, async (req, res, next) => {
         clickCount: item.clickCount,
         createdAt: item.createdAt,
         lastClick: lastClick,
+        qrSettings: item.qrSettings || null,
       };
     });
 
@@ -221,7 +222,111 @@ router.get('/urls/:shortCode', async (req, res, next) => {
         createdAt: urlRecord.createdAt,
         lastClick: lastClick,
         clicks: clicks,
+        qrSettings: urlRecord.qrSettings || null,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PATCH /api/urls/:shortCode/qr
+ * Persists customized QR code settings for a specific shortened link.
+ * Allows link owner or guest link without owner to persist settings cleanly.
+ */
+router.patch('/urls/:shortCode/qr', optionalAuth, async (req, res, next) => {
+  try {
+    const { shortCode } = req.params;
+
+    if (!shortCode || typeof shortCode !== 'string' || !shortCode.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide a valid short code.',
+      });
+    }
+
+    const trimmedCode = shortCode.trim();
+    const urlRecord = await Url.findOne({ shortCode: trimmedCode });
+
+    if (!urlRecord) {
+      return res.status(404).json({
+        success: false,
+        error: 'Short URL not found.',
+      });
+    }
+
+    // If link has an authenticated owner, verify requester is the owner
+    if (urlRecord.userId) {
+      if (!req.user || req.user.uid !== urlRecord.userId) {
+        return res.status(403).json({
+          success: false,
+          error: 'You do not have permission to modify QR settings for this link.',
+        });
+      }
+    }
+
+    const {
+      complexity,
+      preset,
+      level,
+      fgColor,
+      bgColor,
+      moduleShape,
+      finderStyle,
+      quietZone,
+      centerImage,
+    } = req.body || {};
+
+    const validComplexities = ['ultra-minimal', 'minimal', 'balanced', 'high'];
+    const validLevels = ['L', 'M', 'Q', 'H'];
+    const validShapes = ['square', 'rounded', 'extra-rounded', 'dots', 'diamond'];
+    const validFinderStyles = ['classic', 'square', 'rounded', 'soft', 'compact', 'dot', 'circle'];
+    const validQuietZones = ['compact', 'standard', 'generous'];
+
+    const newQrSettings = urlRecord.qrSettings ? urlRecord.qrSettings.toObject() : {};
+
+    if (complexity && validComplexities.includes(complexity)) {
+      newQrSettings.complexity = complexity;
+    }
+    if (preset && typeof preset === 'string') {
+      newQrSettings.preset = preset.trim();
+    }
+    if (level && validLevels.includes(level)) {
+      newQrSettings.level = level;
+    }
+    if (typeof fgColor === 'string' && fgColor.trim()) {
+      newQrSettings.fgColor = fgColor.trim();
+    }
+    if (typeof bgColor === 'string' && bgColor.trim()) {
+      newQrSettings.bgColor = bgColor.trim();
+    }
+    if (moduleShape && validShapes.includes(moduleShape)) {
+      newQrSettings.moduleShape = moduleShape;
+    }
+    if (finderStyle && validFinderStyles.includes(finderStyle)) {
+      newQrSettings.finderStyle = finderStyle;
+    }
+    if (quietZone && validQuietZones.includes(quietZone)) {
+      newQrSettings.quietZone = quietZone;
+    }
+    if (centerImage && typeof centerImage === 'object') {
+      newQrSettings.centerImage = {
+        src: typeof centerImage.src === 'string' ? centerImage.src : null,
+        sizePercent: typeof centerImage.sizePercent === 'number' ? Math.min(Math.max(centerImage.sizePercent, 10), 30) : 22,
+        radius: typeof centerImage.radius === 'number' ? Math.min(Math.max(centerImage.radius, 0), 50) : 20,
+        padding: typeof centerImage.padding === 'number' ? Math.min(Math.max(centerImage.padding, 0), 12) : 4,
+        bgColor: typeof centerImage.bgColor === 'string' ? centerImage.bgColor.trim() : '#ffffff',
+      };
+    }
+    newQrSettings.updatedAt = new Date();
+
+    urlRecord.qrSettings = newQrSettings;
+    await urlRecord.save();
+
+    return res.status(200).json({
+      success: true,
+      data: urlRecord.qrSettings,
     });
   } catch (error) {
     next(error);

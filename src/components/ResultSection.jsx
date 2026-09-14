@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { QRCodeCanvas } from 'qrcode.react';
+import QrCustomizationModal from './QrCustomizationModal';
 import { API_BASE_URL } from '../config/api';
 import './ResultSection.css';
 
@@ -8,14 +8,16 @@ function ResultSection({ result }) {
   const [copyError, setCopyError] = useState('');
   const [clickCount, setClickCount] = useState(result?.clickCount || 0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showQr, setShowQr] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [qrSettings, setQrSettings] = useState(result?.qrSettings || null);
 
   // Sync state and hide QR code whenever a new short URL result is generated
   useEffect(() => {
     setIsCopied(false);
     setCopyError('');
     setClickCount(result?.clickCount || 0);
-    setShowQr(false);
+    setIsQrModalOpen(false);
+    setQrSettings(result?.qrSettings || null);
   }, [result]);
 
   if (!result) {
@@ -65,25 +67,16 @@ function ResultSection({ result }) {
     }
   };
 
-  const handleToggleQr = () => {
-    setShowQr((prev) => !prev);
+  const handleOpenQr = () => {
+    setIsQrModalOpen(true);
   };
 
-  const handleDownloadQr = () => {
-    try {
-      const canvas = document.getElementById('qrCodeCanvas');
-      if (!canvas) return;
+  const handleCloseQr = () => {
+    setIsQrModalOpen(false);
+  };
 
-      const imageUri = canvas.toDataURL('image/png');
-      const downloadLink = document.createElement('a');
-      downloadLink.href = imageUri;
-      downloadLink.download = 'qr-short-url.png';
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    } catch (error) {
-      console.error('Failed to download QR code image:', error);
-    }
+  const handleQrSaved = (code, savedSettings) => {
+    setQrSettings(savedSettings);
   };
 
   return (
@@ -113,10 +106,9 @@ function ResultSection({ result }) {
         <div className="resultCardActions">
           <button
             type="button"
-            className={`actionBtn qrToggleBtn ${showQr ? 'active' : ''}`}
-            onClick={handleToggleQr}
-            aria-label={showQr ? 'Hide QR Code' : 'Show QR Code'}
-            aria-expanded={showQr}
+            className={`actionBtn qrToggleBtn ${isQrModalOpen ? 'active' : ''}`}
+            onClick={handleOpenQr}
+            aria-label="Customize QR Code"
           >
             <span className="btnIcon">📷</span>
             <span>QR Code</span>
@@ -133,34 +125,14 @@ function ResultSection({ result }) {
         </div>
       </div>
 
-      {showQr && (
-        <div className="qrDrawer" aria-label="QR Code section">
-          <div
-            className="qrCanvasWrapper"
-            title={`QR code encoding ${result.shortUrl}`}
-          >
-            <QRCodeCanvas
-              id="qrCodeCanvas"
-              value={result.shortUrl}
-              size={150}
-              bgColor="#ffffff"
-              fgColor="#0f172a"
-              level="H"
-              marginSize={1}
-            />
-          </div>
-
-          <button
-            type="button"
-            className="downloadQrBtn"
-            onClick={handleDownloadQr}
-            aria-label="Download QR code image as PNG"
-          >
-            <span className="btnIcon">⬇</span>
-            <span>Download QR</span>
-          </button>
-        </div>
-      )}
+      <QrCustomizationModal
+        isOpen={isQrModalOpen}
+        onClose={handleCloseQr}
+        shortCode={result.shortCode}
+        shortUrl={result.shortUrl}
+        initialSettings={qrSettings}
+        onSettingsSaved={handleQrSaved}
+      />
 
       <div className="statsFooter">
         <div className="clickStats">
