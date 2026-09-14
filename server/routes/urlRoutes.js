@@ -1,5 +1,6 @@
 import express from 'express';
 import Url from '../models/Url.js';
+import User from '../models/User.js';
 import { generateShortCode } from '../utils/generateShortCode.js';
 import { shortenLimiter } from '../middleware/rateLimiter.js';
 import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
@@ -167,6 +168,7 @@ router.get('/urls/mine', requireAuth, async (req, res, next) => {
         createdAt: item.createdAt,
         lastClick: lastClick,
         qrSettings: item.qrSettings || null,
+        originalShortCode: item.originalShortCode || null,
       };
     });
 
@@ -223,6 +225,7 @@ router.get('/urls/:shortCode', async (req, res, next) => {
         lastClick: lastClick,
         clicks: clicks,
         qrSettings: urlRecord.qrSettings || null,
+        originalShortCode: urlRecord.originalShortCode || null,
       },
     });
   } catch (error) {
@@ -327,6 +330,276 @@ router.patch('/urls/:shortCode/qr', optionalAuth, async (req, res, next) => {
     return res.status(200).json({
       success: true,
       data: urlRecord.qrSettings,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * DELETE /api/urls/:shortCode
+ * Permanently removes a URL document from MongoDB.
+ * Requires authentication and ownership: only the user who created the link
+ * can delete it. Returns 403 if the authenticated user is not the owner.
+ */
+router.delete('/urls/:shortCode', requireAuth, async (req, res, next) => {
+  try {
+    const { shortCode } = req.params;
+
+    if (!shortCode || typeof shortCode !== 'string' || !shortCode.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide a valid short code.',
+      });
+    }
+
+    const trimmedCode = shortCode.trim();
+    const userId = req.user.uid;
+
+    // Find the document first so we can verify ownership before deleting
+    const urlRecord = await Url.findOne({ shortCode: trimmedCode });
+
+    if (!urlRecord) {
+      // Already gone — treat as success so frontend stays consistent
+      return res.status(200).json({ success: true });
+    }
+
+    // Ownership check: reject if this URL belongs to a different user
+    if (urlRecord.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: 'You do not have permission to delete this link.',
+      });
+    }
+
+    await Url.deleteOne({ _id: urlRecord._id });
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PATCH /api/urls/:shortCode/rename
+ * Pro-only: assigns a custom URL of the form /@userIdentifier/customText.
+ * Requires authentication, Pro membership, and ownership.
+ *
+ * The user supplies only the `customText` portion.
+ * The `userIdentifier` is derived server-side from the authenticated user's profile:
+ *   - username (if set), otherwise the local part of their email address.
+ * The composite shortCode stored in MongoDB becomes "@userIdentifier/customText".
+ */
+router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
+  try {
+    const { shortCode } = req.params;
+    const { customText } = req.body || {};
+    const userId = req.user.uid;
+
+    // --- Basic param validation ---
+    if (!shortCode || typeof shortCode !== 'string' || !shortCode.trim()) {
+      return res.status(400).json({ success: false, error: 'Geçersiz kısa kod.' });
+    }
+
+    if (!customText || typeof customText !== 'string') {
+      return res.status(400).json({ success: false, error: 'Özel bağlantı metni gerekli.' });
+    }
+
+    const trimmedText = customText.trim();
+
+    // Allowed characters: A-Z a-z 0-9 - _   Length: 3-30
+    const TEXT_REGEX = /^[A-Za-z0-9_-]{3,30}$/;
+    if (!TEXT_REGEX.test(trimmedText)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Özel metin 3-30 karakter olmalı; harf, rakam, tire veya alt çizgi içerebilir.',
+      });
+    }
+
+    // Reserved words — customText must not collide with system routes
+    const RESERVED = new Set([
+      'api', 'link', 'user', 'health', 'favicon', 'robots',
+      'login', 'logout', 'register', 'signup', 'settings', 'stats',
+      'admin', 'dashboard', 'profile', 'pricing', 'help', 'search',
+      'qr', 'static', 'assets', 'public', 'undefined', 'null',
+    ]);
+    if (RESERVED.has(trimmedText.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Bu özel metin sistem tarafından ayrılmıştır.',
+      });
+    }
+
+    // --- Pro membership check (server-side, from User collection) ---
+    const userDoc = await User.findOne({ userId });
+    if (!userDoc || userDoc.membershipPlan !== 'pro') {
+      return res.status(403).json({
+        success: false,
+        error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
+      });
+    }
+
+    // --- Derive user identifier: username > email prefix ---
+    let userIdent = '';
+    if (userDoc.username && userDoc.username.trim()) {
+      userIdent = userDoc.username.trim().toLowerCase();
+    } else if (req.user.email) {
+      // Take only the local part before @ and sanitize it
+      userIdent = req.user.email.split('@')[0]
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '-') // replace unsafe chars with dash
+        .replace(/-{2,}/g, '-')        // collapse consecutive dashes
+        .replace(/^-|-$/g, '')         // strip leading/trailing dashes
+        .slice(0, 30);
+    }
+
+    if (!userIdent) {
+      return res.status(400).json({
+        success: false,
+        error: 'Kullanıcı tanımlayıcı belirlenemedi. Lütfen profil sayfasından bir kullanıcı adı belirleyin.',
+      });
+    }
+
+    // Build composite shortCode: "@userIdent/customText"
+    const compositeCode = `@${userIdent}/${trimmedText}`;
+
+    // --- Ownership + existence check for the current record ---
+    const urlRecord = await Url.findOne({ shortCode: shortCode.trim() });
+    if (!urlRecord) {
+      return res.status(404).json({ success: false, error: 'Bağlantı bulunamadı.' });
+    }
+    if (urlRecord.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: 'Bu bağlantıyı değiştirme yetkiniz yok.',
+      });
+    }
+
+    // No-op if composite is identical to current shortCode
+    if (urlRecord.shortCode === compositeCode) {
+      const baseUrl = getBaseUrl(req);
+      return res.status(200).json({
+        success: true,
+        data: {
+          shortCode: compositeCode,
+          shortUrl: `${baseUrl}/${compositeCode}`,
+          userIdent,
+          customText: trimmedText,
+        },
+      });
+    }
+
+    // --- Uniqueness check on the composite code ---
+    const conflict = await Url.findOne({ shortCode: compositeCode });
+    if (conflict) {
+      return res.status(409).json({
+        success: false,
+        error: 'Bu özel bağlantı zaten kullanılıyor.',
+      });
+    }
+
+    // --- Update the same document's shortCode ---
+    // Set originalShortCode once on the first customization (set-once semantics)
+    if (!urlRecord.originalShortCode) {
+      urlRecord.originalShortCode = urlRecord.shortCode;
+    }
+    urlRecord.shortCode = compositeCode;
+    await urlRecord.save();
+
+    const baseUrl = getBaseUrl(req);
+    return res.status(200).json({
+      success: true,
+      data: {
+        shortCode: compositeCode,
+        shortUrl: `${baseUrl}/${compositeCode}`,
+        userIdent,
+        customText: trimmedText,
+        originalShortCode: urlRecord.originalShortCode || null,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PATCH /api/urls/:shortCode/restore
+ * Pro-only: restores the URL's short code to the original auto-generated code.
+ * Requires authentication, Pro membership, and ownership.
+ * The original code is taken from originalShortCode field (set on first customization).
+ */
+router.patch('/urls/:shortCode/restore', requireAuth, async (req, res, next) => {
+  try {
+    const { shortCode } = req.params;
+    const userId = req.user.uid;
+
+    if (!shortCode || typeof shortCode !== 'string' || !shortCode.trim()) {
+      return res.status(400).json({ success: false, error: 'Geçersiz kısa kod.' });
+    }
+
+    // --- Pro membership check ---
+    const userDoc = await User.findOne({ userId });
+    if (!userDoc || userDoc.membershipPlan !== 'pro') {
+      return res.status(403).json({
+        success: false,
+        error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
+      });
+    }
+
+    // --- Ownership + existence check ---
+    const urlRecord = await Url.findOne({ shortCode: shortCode.trim() });
+    if (!urlRecord) {
+      return res.status(404).json({ success: false, error: 'Bağlantı bulunamadı.' });
+    }
+    if (urlRecord.userId !== userId) {
+      return res.status(403).json({
+        success: false,
+        error: 'Bu bağlantıyı değiştirme yetkiniz yok.',
+      });
+    }
+
+    // Nothing to restore
+    if (!urlRecord.originalShortCode) {
+      return res.status(400).json({
+        success: false,
+        error: 'Bu bağlantı hiç özelleştirilmemiş; geri alınacak bir şey yok.',
+      });
+    }
+
+    // Already on original — no-op
+    if (urlRecord.shortCode === urlRecord.originalShortCode) {
+      const baseUrl = getBaseUrl(req);
+      return res.status(200).json({
+        success: true,
+        data: {
+          shortCode: urlRecord.originalShortCode,
+          shortUrl: `${baseUrl}/${urlRecord.originalShortCode}`,
+          originalShortCode: urlRecord.originalShortCode,
+        },
+      });
+    }
+
+    // Ensure the original code is still free (edge case: someone else took it)
+    const conflict = await Url.findOne({ shortCode: urlRecord.originalShortCode });
+    if (conflict) {
+      return res.status(409).json({
+        success: false,
+        error: 'Orijinal bağlantı kodu başka bir bağlantı tarafından alınmış.',
+      });
+    }
+
+    // Restore: set shortCode back to originalShortCode
+    urlRecord.shortCode = urlRecord.originalShortCode;
+    await urlRecord.save();
+
+    const baseUrl = getBaseUrl(req);
+    return res.status(200).json({
+      success: true,
+      data: {
+        shortCode: urlRecord.shortCode,
+        shortUrl: `${baseUrl}/${urlRecord.shortCode}`,
+        originalShortCode: urlRecord.originalShortCode,
+      },
     });
   } catch (error) {
     next(error);

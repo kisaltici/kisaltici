@@ -25,12 +25,16 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
 import './App.css';
 
-function MainComposerView({ onUrlShortened }) {
+function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, membershipPlan }) {
   const { t } = useTranslation();
   return (
     <section className="heroSection">
       <h1 className="heroTitle">{t('homeTitle')}</h1>
-      <UrlForm onUrlShortened={onUrlShortened} />
+      <UrlForm
+        onUrlShortened={onUrlShortened}
+        onUrlShortenedWithIntent={onUrlShortenedWithIntent}
+        membershipPlan={membershipPlan}
+      />
     </section>
   );
 }
@@ -486,7 +490,8 @@ function AppContent() {
   };
 
   // Called when a new URL is shortened successfully
-  const handleUrlShortened = (newRecord) => {
+  // intent: null (plain), 'qr', or 'customize'
+  const handleUrlShortened = (newRecord, intent = null) => {
     const defaultTitle = generateTitleFromUrl(newRecord.originalUrl);
 
     const historyItem = {
@@ -502,8 +507,15 @@ function AppContent() {
       ...prev.filter((item) => item.shortCode !== newRecord.shortCode),
     ]);
 
-    // Navigate directly to the dedicated link analytics page
-    navigate(`/link/${newRecord.shortCode}`);
+    // Navigate to detail page; pass intent in router state so the page
+    // can auto-open QR modal or custom-link editor on mount
+    navigate(`/link/${newRecord.shortCode}`, {
+      state: intent ? { intent } : undefined,
+    });
+  };
+
+  const handleUrlShortenedWithIntent = (record, intent) => {
+    handleUrlShortened(record, intent);
   };
 
   const handleNewLink = () => {
@@ -522,8 +534,47 @@ function AppContent() {
     );
   };
 
-  const handleDeleteLink = (shortCode) => {
-    setHistoryList((prev) => prev.filter((item) => item.shortCode !== shortCode));
+  const handleDeleteLink = async (shortCode) => {
+    if (!user) return;
+
+    try {
+      const token = await getIdToken();
+      if (!token) return;
+
+      const response = await fetch(`${API_BASE_URL}/api/urls/${encodeURIComponent(shortCode)}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (response.ok && payload?.success) {
+        // Backend confirmed deletion — now update frontend state
+        setHistoryList((prev) => prev.filter((item) => item.shortCode !== shortCode));
+      } else {
+        console.error(
+          'Delete failed:',
+          payload?.error || `HTTP ${response.status}`
+        );
+      }
+    } catch (err) {
+      console.error('Delete request error:', err);
+    }
+  };
+
+  const handleShortCodeChanged = (oldCode, newCode, newShortUrl) => {
+    setHistoryList((prev) =>
+      prev.map((item) =>
+        item.shortCode === oldCode
+          ? { ...item, shortCode: newCode, shortUrl: newShortUrl }
+          : item
+      )
+    );
+    // Composite codes like @user/text must be double-encoded so React Router
+    // treats them as a single param segment — or use the splat /link/* route
+    navigate(`/link/${encodeURIComponent(newCode)}`);
   };
 
   return (
@@ -566,7 +617,11 @@ function AppContent() {
             <Route
               path="/"
               element={
-                <MainComposerView onUrlShortened={handleUrlShortened} />
+                <MainComposerView
+                  onUrlShortened={handleUrlShortened}
+                  onUrlShortenedWithIntent={handleUrlShortenedWithIntent}
+                  membershipPlan={membershipPlan}
+                />
               }
             />
             <Route
@@ -574,13 +629,28 @@ function AppContent() {
               element={
                 <LinkAnalyticsPage
                   onOpenNewLink={() => setIsNewLinkOpen(true)}
+                  onShortCodeChanged={handleShortCodeChanged}
+                />
+              }
+            />
+            {/* Splat route for composite custom codes: /link/@user/customText */}
+            <Route
+              path="/link/*"
+              element={
+                <LinkAnalyticsPage
+                  onOpenNewLink={() => setIsNewLinkOpen(true)}
+                  onShortCodeChanged={handleShortCodeChanged}
                 />
               }
             />
             <Route
               path="*"
               element={
-                <MainComposerView onUrlShortened={handleUrlShortened} />
+                <MainComposerView
+                  onUrlShortened={handleUrlShortened}
+                  onUrlShortenedWithIntent={handleUrlShortenedWithIntent}
+                  membershipPlan={membershipPlan}
+                />
               }
             />
           </Routes>

@@ -125,6 +125,86 @@
   border-color: #16a34a;
 }
 
+/* ── Custom-link button — premium Pro treatment ──────────────────
+   Mirrors the visual language of the homepage .chipProFeature:
+   accent-tinted border at rest, shimmer sweep + soft glow on hover.
+   Uses position:relative + ::before pseudo-element for the shimmer.   */
+
+.actionBtn.customizeBtn {
+  position: relative;
+  overflow: hidden;
+  /* Idle: thin brand-color border; no gradient background */
+  border-color: rgba(222, 255, 54, 0.55);
+  color: var(--text-secondary);
+  transition: border-color 0.18s ease, color 0.18s ease,
+              background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Shimmer pseudo-element — sweeps on hover */
+.actionBtn.customizeBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    color-mix(in srgb, var(--accent-color) 18%, transparent) 50%,
+    transparent 75%
+  );
+  background-size: 220% 100%;
+  background-position: 220% 0;
+  pointer-events: none;
+}
+
+.actionBtn.customizeBtn:hover::before,
+.actionBtn.customizeBtn.active::before {
+  animation: customizeBtnShimmer 0.5s ease forwards;
+}
+
+@keyframes customizeBtnShimmer {
+  from { background-position: 220% 0; }
+  to   { background-position: -40% 0; }
+}
+
+/* Hover / active state: full accent + glow */
+.actionBtn.customizeBtn:hover,
+.actionBtn.customizeBtn.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: color-mix(in srgb, var(--accent-color) 7%, var(--badge-bg));
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent-color) 16%, transparent),
+    0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
+}
+
+/* Keyboard focus: same accent ring */
+.actionBtn.customizeBtn:focus-visible {
+  outline: none;
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  box-shadow:
+    0 0 0 2px var(--accent-color),
+    0 0 8px color-mix(in srgb, var(--accent-color) 14%, transparent);
+}
+
+/* Reduced motion: remove shimmer and glow movement */
+@media (prefers-reduced-motion: reduce) {
+  .actionBtn.customizeBtn {
+    transition: none;
+  }
+
+  .actionBtn.customizeBtn::before {
+    display: none;
+  }
+
+  .actionBtn.customizeBtn:hover,
+  .actionBtn.customizeBtn.active {
+    box-shadow: none;
+  }
+}
+
+
 .originalUrlRow {
   display: flex;
   align-items: center;
@@ -422,5 +502,152 @@
 
   .activitySection {
     padding: 1.1rem;
+  }
+}
+
+/* ── Inline short-code customization editor ──────────────────────── */
+
+.customizeMsg {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  display: inline-block;
+  animation: customizeMsgIn 0.18s ease;
+}
+
+@keyframes customizeMsgIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.customizeEditorWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.customizeEditorRow {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--accent-color);
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+.shortDomainPrefix {
+  padding: 0 0.6rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-right: 1px solid var(--surface-border);
+  line-height: 2.4rem;
+  background: var(--badge-bg);
+  user-select: none;
+}
+
+.shortCodeInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  padding: 0.55rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  letter-spacing: -0.01em;
+  outline: none;
+  font-family: inherit;
+}
+
+.shortCodeInput::placeholder {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.customizeActions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.inlineActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--badge-border);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.inlineActionBtn.save {
+  background: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border-color: transparent;
+}
+
+.inlineActionBtn.save:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.inlineActionBtn.save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.inlineActionBtn.cancel {
+  background: var(--badge-bg);
+  color: var(--text-secondary);
+}
+
+.inlineActionBtn.cancel:hover {
+  background: var(--surface-border);
+  color: var(--text-primary);
+}
+
+.customizeError {
+  font-size: 0.78rem;
+  color: #ef4444;
+  margin: 0;
+}
+
+.customizeSuccess {
+  font-size: 0.78rem;
+  color: var(--success-text);
+  margin: 0;
+}
+
+@media (max-width: 639px) {
+  .shortDomainPrefix {
+    font-size: 0.82rem;
+    padding: 0 0.45rem;
+  }
+
+  .shortCodeInput {
+    font-size: 0.92rem;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .customizeActions {
+    flex-wrap: wrap;
+  }
+
+  .inlineActionBtn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.76rem;
   }
 }

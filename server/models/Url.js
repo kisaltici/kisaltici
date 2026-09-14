@@ -17,6 +17,15 @@ const urlSchema = new mongoose.Schema({
     trim: true,
     index: true,
   },
+  /**
+   * The auto-generated short code assigned at creation time.
+   * Populated (set-once) on the first customization so the user can always
+   * restore the original link. Never overwritten after initial assignment.
+   */
+  originalShortCode: {
+    type: String,
+    default: null,
+  },
   userId: {
     type: String,
     index: true,

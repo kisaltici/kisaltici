@@ -30,6 +30,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/@:userIdent/:customText",
+      "destination": "/api/index.js"
+    },
+    {
       "source": "/:shortCode([a-zA-Z0-9]{6})",
       "destination": "/api/index.js"
     }

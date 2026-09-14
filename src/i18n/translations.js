@@ -1,7 +1,7 @@
 export const translations = {
   en: {
     // Header & Layout
-    homeTitle: 'Where do you want to start?',
+    homeTitle: 'What do you want to do with your link?',
     logoText: 'ShortURL',
     apiStatusOnline: 'API Online',
     apiStatusChecking: 'Checking...',
@@ -323,7 +323,7 @@ export const translations = {
   },
   tr: {
     // Header & Layout
-    homeTitle: 'Nereden başlamak istersiniz?',
+    homeTitle: 'Bağlantınız için ne yapmak istersiniz?',
     logoText: 'ShortURL',
     apiStatusOnline: 'API Çevrimiçi',
     apiStatusChecking: 'Kontrol ediliyor...',

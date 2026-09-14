@@ -1,15 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import AnalyticsChart from '../components/AnalyticsChart';
 import QrCustomizationModal from '../components/QrCustomizationModal';
 import { useTranslation } from '../i18n/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { isPaidPlan } from '../utils/membership';
 import { API_BASE_URL } from '../config/api';
 import './LinkAnalyticsPage.css';
 
-function LinkAnalyticsPage({ onOpenNewLink }) {
+function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
   const { t } = useTranslation();
-  const { shortCode } = useParams();
+  const params = useParams();
+  // shortCode from /link/:shortCode, or splat (*) from /link/* for composite @user/text
+  const rawCode = params.shortCode ?? params['*'] ?? '';
+  const shortCode = decodeURIComponent(rawCode);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { membershipPlan, getIdToken, profileUsername, user } = useAuth();
+
+  // Derive the user identifier for the fixed prefix (username > email local-part)
+  const userIdent = profileUsername
+    ? profileUsername.toLowerCase()
+    : (user?.email ? user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').slice(0, 30) : '');
 
   const [linkData, setLinkData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,16 +29,29 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
   const [isCopied, setIsCopied] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
+  // Inline short-code editor state
+  const [isCustomizing, setIsCustomizing] = useState(false);
+  const [customCode, setCustomCode] = useState('');
+  const [customError, setCustomError] = useState('');
+  const [customSuccess, setCustomSuccess] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [gateMsg, setGateMsg] = useState(false);
+  const gateMsgTimerRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const isPro = isPaidPlan(membershipPlan);
+
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
     setErrorStatus(null);
     setIsQrModalOpen(false);
+    setIsCustomizing(false);
 
     const fetchLinkStats = async () => {
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/urls/${shortCode}`
+          `${API_BASE_URL}/api/urls/${encodeURIComponent(shortCode)}`
         );
         if (!isMounted) return;
 
@@ -63,21 +88,62 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
     };
   }, [shortCode]);
 
-  const handleOpenQrModal = () => {
-    setIsQrModalOpen(true);
-  };
+  // Focus input when editor opens
+  useEffect(() => {
+    if (isCustomizing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isCustomizing]);
 
-  const handleCloseQrModal = () => {
-    setIsQrModalOpen(false);
-  };
+  // Cleanup gate message timer
+  useEffect(() => {
+    return () => {
+      if (gateMsgTimerRef.current) clearTimeout(gateMsgTimerRef.current);
+    };
+  }, []);
+
+  // Auto-open QR modal or custom editor when arriving from a homepage chip action.
+  // Fires once linkData is available so all state is ready.
+  const intentHandledRef = useRef(false);
+  useEffect(() => {
+    if (!linkData || intentHandledRef.current) return;
+    const intent = location.state?.intent;
+    if (!intent) return;
+
+    intentHandledRef.current = true;
+    // Clear the router state so a manual refresh doesn't re-trigger
+    navigate(location.pathname, { replace: true, state: {} });
+
+    if (intent === 'qr') {
+      setIsQrModalOpen(true);
+    } else if (intent === 'customize') {
+      // Reuse the existing sparkles-click logic inline
+      if (!isPro) {
+        setGateMsg(true);
+        if (gateMsgTimerRef.current) clearTimeout(gateMsgTimerRef.current);
+        gateMsgTimerRef.current = setTimeout(() => setGateMsg(false), 3500);
+      } else {
+        const customPrefix = `@${userIdent}/`;
+        const prefilled = linkData.shortCode.startsWith(customPrefix)
+          ? linkData.shortCode.slice(customPrefix.length)
+          : '';
+        setCustomCode(prefilled);
+        setCustomError('');
+        setCustomSuccess('');
+        setIsCustomizing(true);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkData]);
+
+  const handleOpenQrModal = () => setIsQrModalOpen(true);
+  const handleCloseQrModal = () => setIsQrModalOpen(false);
 
   const handleQrSettingsSaved = useCallback((code, savedSettings) => {
     setLinkData((prev) => {
       if (!prev || prev.shortCode !== code) return prev;
-      return {
-        ...prev,
-        qrSettings: savedSettings,
-      };
+      return { ...prev, qrSettings: savedSettings };
     });
   }, []);
 
@@ -89,6 +155,168 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
       setTimeout(() => setIsCopied(false), 2000);
     } catch (e) {
       console.error('Copy error:', e);
+    }
+  };
+
+  // Sparkles / customize icon click
+  const handleCustomizeClick = () => {
+    if (!isPro) {
+      // Show transient gate message — no editor
+      setGateMsg(true);
+      if (gateMsgTimerRef.current) clearTimeout(gateMsgTimerRef.current);
+      gateMsgTimerRef.current = setTimeout(() => setGateMsg(false), 3500);
+      return;
+    }
+    // Open inline editor — pre-fill with only the customText portion if already in @user/text format
+    const currentCode = linkData.shortCode;
+    const customPrefix = `@${userIdent}/`;
+    const prefilled = currentCode.startsWith(customPrefix)
+      ? currentCode.slice(customPrefix.length)
+      : '';
+    setCustomCode(prefilled);
+    setCustomError('');
+    setCustomSuccess('');
+    setIsCustomizing(true);
+  };
+
+  const handleCustomizeCancel = () => {
+    setIsCustomizing(false);
+    setCustomCode('');
+    setCustomError('');
+    setCustomSuccess('');
+  };
+
+  const handleCustomizeSave = async () => {
+    const trimmed = customCode.trim();
+
+    // Client-side pre-validation (mirrors backend rules)
+    if (!trimmed) {
+      setCustomError('Bağlantı adı boş bırakılamaz.');
+      return;
+    }
+    if (!/^[A-Za-z0-9_-]{3,30}$/.test(trimmed)) {
+      setCustomError('3-30 karakter; harf, rakam, tire veya alt çizgi kullanın.');
+      return;
+    }
+
+    setIsSaving(true);
+    setCustomError('');
+    setCustomSuccess('');
+
+    try {
+      const token = await getIdToken();
+      if (!token) {
+        setCustomError('Oturum süresi dolmuş. Lütfen tekrar giriş yapın.');
+        setIsSaving(false);
+        return;
+      }
+
+      // URL-encode shortCode because it may contain @ and / (composite format)
+      const encodedCode = encodeURIComponent(linkData.shortCode);
+      const response = await fetch(
+        `${API_BASE_URL}/api/urls/${encodedCode}/rename`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ customText: trimmed }),
+        }
+      );
+
+      const payload = await response.json().catch(() => null);
+
+      if (response.ok && payload?.success) {
+        const { shortCode: newCode, shortUrl: newShortUrl, originalShortCode: origCode } = payload.data;
+        // Update local page state immediately
+        setLinkData((prev) => ({
+          ...prev,
+          shortCode: newCode,
+          shortUrl: newShortUrl,
+          originalShortCode: origCode ?? prev.originalShortCode ?? null,
+        }));
+        setCustomSuccess('Bağlantı adı güncellendi.');
+        setIsCustomizing(false);
+        setCustomCode('');
+        // Sync history list in App.jsx and navigate to new route
+        // Use encodeURIComponent so the React route path is safe for composite codes
+        if (onShortCodeChanged) {
+          onShortCodeChanged(linkData.shortCode, newCode, newShortUrl);
+        } else {
+          navigate(`/link/${encodeURIComponent(newCode)}`, { replace: true });
+        }
+      } else {
+        setCustomError(payload?.error || 'Bağlantı adı güncellenemedi.');
+      }
+    } catch (err) {
+      console.error('Rename request error:', err);
+      setCustomError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Restore original auto-generated code
+  const handleRestoreOriginal = async () => {
+    if (!isPro) return;
+    setIsSaving(true);
+    setCustomError('');
+    setCustomSuccess('');
+
+    try {
+      const token = await getIdToken();
+      if (!token) { setIsSaving(false); return; }
+
+      const encodedCode = encodeURIComponent(linkData.shortCode);
+      const response = await fetch(
+        `${API_BASE_URL}/api/urls/${encodedCode}/restore`,
+        {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const payload = await response.json().catch(() => null);
+
+      if (response.ok && payload?.success) {
+        const { shortCode: restoredCode, shortUrl: restoredUrl } = payload.data;
+        setLinkData((prev) => ({
+          ...prev,
+          shortCode: restoredCode,
+          shortUrl: restoredUrl,
+        }));
+        setCustomSuccess('Otomatik bağlantıya dönüldü.');
+        if (onShortCodeChanged) {
+          onShortCodeChanged(linkData.shortCode, restoredCode, restoredUrl);
+        } else {
+          navigate(`/link/${restoredCode}`, { replace: true });
+        }
+      } else {
+        setCustomError(payload?.error || 'Bağlantı geri alınamadı.');
+      }
+    } catch (err) {
+      console.error('Restore request error:', err);
+      setCustomError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCustomizeKeyDown = (e) => {
+    if (e.key === 'Enter') handleCustomizeSave();
+    if (e.key === 'Escape') handleCustomizeCancel();
+  };
+
+  // Build the full fixed prefix shown in the editor: "https://lnk1.tr/@user/"
+  const getDomainPrefix = () => {
+    if (!linkData?.shortUrl) return '';
+    try {
+      const url = new URL(linkData.shortUrl);
+      const base = `${url.protocol}//${url.host}`;
+      return userIdent ? `${base}/@${userIdent}/` : `${base}/`;
+    } catch {
+      return '';
     }
   };
 
@@ -143,6 +371,8 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
       })
     : t('noClicksYet');
 
+  const domainPrefix = getDomainPrefix();
+
   return (
     <div className="analyticsPage">
       <div className="analyticsTopNav">
@@ -168,18 +398,146 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
         <div className="linkHeaderTop">
           <div className="shortUrlGroup">
             <span className="analyticsBadge">{t('shortUrl')}</span>
-            <a
-              href={linkData.shortUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="mainShortLink"
-            >
-              {linkData.shortUrl}
-            </a>
+
+            {/* Inline editor (Pro) or normal link display */}
+            {isCustomizing ? (
+              <div className="customizeEditorWrapper">
+                <div className="customizeEditorRow">
+                  <span className="shortDomainPrefix" aria-hidden="true" title={domainPrefix}>
+                    {domainPrefix}
+                  </span>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    className="shortCodeInput"
+                    value={customCode}
+                    onChange={(e) => {
+                      setCustomCode(e.target.value);
+                      setCustomError('');
+                    }}
+                    onKeyDown={handleCustomizeKeyDown}
+                    maxLength={30}
+                    placeholder="Özel bağlantı metni"
+                    aria-label="Özel bağlantı adı"
+                    spellCheck={false}
+                    autoComplete="off"
+                  />
+                </div>
+                {customError && (
+                  <p className="customizeError" role="alert">{customError}</p>
+                )}
+                <div className="customizeActions">
+                  <button
+                    type="button"
+                    className="inlineActionBtn save"
+                    onClick={handleCustomizeSave}
+                    disabled={isSaving}
+                    aria-label="Kaydet"
+                  >
+                    {isSaving ? (
+                      <>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                        </svg>
+                        Kaydediliyor…
+                      </>
+                    ) : (
+                      <>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Kaydet
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="inlineActionBtn cancel"
+                    onClick={handleCustomizeCancel}
+                    disabled={isSaving}
+                    aria-label="İptal"
+                  >
+                    İptal
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <a
+                  href={linkData.shortUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mainShortLink"
+                >
+                  {linkData.shortUrl}
+                </a>
+                {customSuccess && (
+                  <span className="customizeSuccess">{customSuccess}</span>
+                )}
+                {/* Gate message for free users */}
+                {gateMsg && (
+                  <span className="customizeMsg" role="status">
+                    Bağlantıyı özelleştirmek için Pro üyelik gereklidir.
+                  </span>
+                )}
+              </>
+            )}
           </div>
 
           <div className="linkHeaderActions">
-            {/* QR Code Icon-Only Button - Opens Modern QR Customization Modal */}
+            {/* Sparkles/customize icon — visible to all, functional for Pro */}
+            <button
+              type="button"
+              className={`actionBtn customizeBtn ${isCustomizing ? 'active' : ''}`}
+              onClick={handleCustomizeClick}
+              aria-label="Bağlantıyı özelleştir"
+              title="Bağlantıyı özelleştir"
+            >
+              {/* Sparkles icon */}
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" />
+                <path d="M19 15l.75 2.25L22 18l-2.25.75L19 21l-.75-2.25L16 18l2.25-.75z" />
+                <path d="M5 3l.5 1.5L7 5l-1.5.5L5 7l-.5-1.5L3 5l1.5-.5z" />
+              </svg>
+            </button>
+
+            {/* Restore-to-original undo icon — visible only when link is customized */}
+            {isPro && linkData.originalShortCode && linkData.shortCode !== linkData.originalShortCode && !isCustomizing && (
+              <button
+                type="button"
+                className="actionBtn"
+                onClick={handleRestoreOriginal}
+                disabled={isSaving}
+                aria-label="Otomatik bağlantıya dön"
+                title="Otomatik bağlantıya dön"
+              >
+                {/* Undo / rotate-ccw icon */}
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="1 4 1 10 7 10" />
+                  <path d="M3.51 15a9 9 0 1 0 .49-4.95" />
+                </svg>
+              </button>
+            )}
+
+            {/* QR Code Icon-Only Button */}
             <button
               type="button"
               className={`actionBtn ${isQrModalOpen ? 'active' : ''}`}
@@ -250,7 +608,7 @@ function LinkAnalyticsPage({ onOpenNewLink }) {
         </div>
       </section>
 
-      {/* Modern QR Customization Modal */}
+      {/* Modern QR Customization Modal — always uses current linkData.shortUrl */}
       <QrCustomizationModal
         isOpen={isQrModalOpen}
         onClose={handleCloseQrModal}

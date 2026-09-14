@@ -65,7 +65,7 @@ app.use(
       }
       return callback(null, false);
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
@@ -97,7 +97,47 @@ app.get('/api/health', (req, res) => {
 app.use('/api/user', requireDbReady, userRoutes);
 app.use('/api', requireDbReady, urlRoutes);
 
-// 6. Short URL Redirection Route (GET /:shortCode)
+// 6a. Custom short URL redirect: GET /@:userIdent/:customText
+// Handles the new Pro custom format: https://lnk1.tr/@emrecan/portfolio
+// The composite shortCode stored in MongoDB is "@userIdent/customText"
+app.get('/@:userIdent/:customText', async (req, res, next) => {
+  try {
+    const { userIdent, customText } = req.params;
+    const compositeCode = `@${userIdent}/${customText}`;
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).send('<h1>Service Unavailable</h1>');
+    }
+
+    const urlRecord = await Url.findOneAndUpdate(
+      { shortCode: compositeCode },
+      {
+        $inc: { clickCount: 1 },
+        $push: { clicks: { timestamp: new Date() } },
+      },
+      { new: true }
+    );
+
+    if (!urlRecord) {
+      return res.status(404).send(`
+        <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>404</title>
+        <style>body{font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f8fafc;text-align:center}
+        .card{background:white;padding:2.5rem;border-radius:12px;border:1px solid #e2e8f0;max-width:420px}
+        h1{color:#ef4444}p{color:#64748b;margin-bottom:1.5rem}
+        a{text-decoration:none;background:#2563eb;color:white;padding:.625rem 1.25rem;border-radius:8px;font-weight:600}</style>
+        </head><body><div class="card"><h1>Link Not Found</h1>
+        <p>This custom link does not exist or may have been removed.</p>
+        <a href="${FRONTEND_URL}">Go to Homepage</a></div></body></html>
+      `);
+    }
+
+    return res.redirect(302, urlRecord.originalUrl);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 6b. Short URL Redirection Route (GET /:shortCode) — legacy 6-char codes
 app.get('/:shortCode', async (req, res, next) => {
   try {
     const { shortCode } = req.params;
