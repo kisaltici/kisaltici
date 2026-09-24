@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
 
-// Crucial: Disable buffering globally so operations fail immediately instead of hanging for 10s when DB is disconnected
-mongoose.set('bufferCommands', false);
-
 // Standard serverless-safe cached Mongoose connection pattern stored on globalThis
 let cached = globalThis.mongoose;
 
@@ -13,11 +10,13 @@ if (!cached) {
   };
 }
 
-// Connection options optimized for fast failure and resilience in serverless environments
+// Connection options optimized for resilience in serverless environments
 const MONGOOSE_OPTIONS = {
   serverSelectionTimeoutMS: 5000, // 5s timeout instead of default 30s
   connectTimeoutMS: 10000,
-  autoIndex: true,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  autoIndex: false,
 };
 
 // Wire up one-time connection logging listener without duplicate listeners across reloads
@@ -60,8 +59,8 @@ export const connectDB = async () => {
     return true;
   }
 
-  // 2. If disconnected, reset cached promise to allow fresh connection attempt
-  if (mongoose.connection.readyState === 0) {
+  // 2. If disconnected or broken, reset cached promise to allow fresh connection attempt
+  if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
     cached.promise = null;
     cached.conn = null;
   }

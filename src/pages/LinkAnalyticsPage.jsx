@@ -40,6 +40,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
   const inputRef = useRef(null);
 
   const isPro = isPaidPlan(membershipPlan);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,7 +49,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
     setIsQrModalOpen(false);
     setIsCustomizing(false);
 
-    const fetchLinkStats = async () => {
+    const fetchLinkStats = async (attempt = 1) => {
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/urls/${encodeURIComponent(shortCode)}`
@@ -61,6 +62,13 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
           return;
         }
 
+        // If server returned 500/503 (e.g. serverless cold start), retry up to 2 times
+        if ((response.status >= 500 || !response.ok) && attempt < 3) {
+          await new Promise((resolve) => setTimeout(resolve, 800 * attempt));
+          if (!isMounted) return;
+          return fetchLinkStats(attempt + 1);
+        }
+
         if (!response.ok) {
           setErrorStatus(response.status);
           setIsLoading(false);
@@ -70,11 +78,17 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
         const payload = await response.json();
         if (payload.success && payload.data) {
           setLinkData(payload.data);
+          setErrorStatus(null);
         } else {
           setErrorStatus(500);
         }
       } catch (err) {
         console.error('Failed to fetch link statistics:', err);
+        if (attempt < 3) {
+          await new Promise((resolve) => setTimeout(resolve, 800 * attempt));
+          if (!isMounted) return;
+          return fetchLinkStats(attempt + 1);
+        }
         if (isMounted) setErrorStatus(500);
       } finally {
         if (isMounted) setIsLoading(false);
@@ -86,7 +100,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
     return () => {
       isMounted = false;
     };
-  }, [shortCode]);
+  }, [shortCode, refreshKey]);
 
   // Focus input when editor opens
   useEffect(() => {
@@ -364,7 +378,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
     );
   }
 
-  if (errorStatus === 404 || !linkData) {
+  if (errorStatus === 404) {
     return (
       <div className="analyticsPage">
         <div className="notFoundContainer">
@@ -378,6 +392,37 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
           >
             {t('backToHome')}
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (errorStatus || !linkData) {
+    return (
+      <div className="analyticsPage">
+        <div className="notFoundContainer">
+          <div className="notFoundIcon">⚠️</div>
+          <h2 className="notFoundTitle">{t('errorDatabaseUnavailable') || 'Sunucuya Bağlanılamadı'}</h2>
+          <p className="notFoundSub">
+            {t('errorGeneric') || 'Sunucu şu anda yanıt veremiyor. Lütfen tekrar deneyin.'}
+          </p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '16px' }}>
+            <button
+              type="button"
+              className="primaryActionBtn"
+              onClick={() => setRefreshKey((k) => k + 1)}
+            >
+              🔄 {t('tryAgain') || 'Tekrar Dene'}
+            </button>
+            <button
+              type="button"
+              className="primaryActionBtn"
+              style={{ background: 'var(--card-bg, #1e293b)', color: 'var(--text-primary, #fff)', border: '1px solid rgba(255,255,255,0.1)' }}
+              onClick={() => navigate('/')}
+            >
+              {t('backToHome')}
+            </button>
+          </div>
         </div>
       </div>
     );

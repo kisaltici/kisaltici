@@ -111,14 +111,28 @@ app.get('/@:userIdent/:customText', async (req, res, next) => {
       return res.status(503).send('<h1>Service Unavailable</h1><p>Database is warming up. Please try again in a moment.</p>');
     }
 
-    const urlRecord = await Url.findOneAndUpdate(
-      { shortCode: compositeCode },
-      {
-        $inc: { clickCount: 1 },
-        $push: { clicks: { timestamp: new Date() } },
-      },
-      { new: true }
-    );
+    let urlRecord;
+    try {
+      urlRecord = await Url.findOneAndUpdate(
+        { shortCode: compositeCode },
+        {
+          $inc: { clickCount: 1 },
+          $push: { clicks: { timestamp: new Date() } },
+        },
+        { new: true }
+      );
+    } catch (dbErr) {
+      console.warn('Redirect DB query failed, attempting reconnect and retry:', dbErr.message);
+      await connectDB();
+      urlRecord = await Url.findOneAndUpdate(
+        { shortCode: compositeCode },
+        {
+          $inc: { clickCount: 1 },
+          $push: { clicks: { timestamp: new Date() } },
+        },
+        { new: true }
+      );
+    }
 
     if (!urlRecord) {
       return res.status(404).send(`
@@ -178,15 +192,29 @@ app.get('/:shortCode', async (req, res, next) => {
       `);
     }
 
-    // Atomically increment clickCount and push click timestamp into clicks array
-    const urlRecord = await Url.findOneAndUpdate(
-      { shortCode: shortCode },
-      {
-        $inc: { clickCount: 1 },
-        $push: { clicks: { timestamp: new Date() } },
-      },
-      { new: true }
-    );
+    // Atomically increment clickCount and push click timestamp into clicks array with transient reconnect retry
+    let urlRecord;
+    try {
+      urlRecord = await Url.findOneAndUpdate(
+        { shortCode: shortCode },
+        {
+          $inc: { clickCount: 1 },
+          $push: { clicks: { timestamp: new Date() } },
+        },
+        { new: true }
+      );
+    } catch (dbErr) {
+      console.warn('Redirect DB query failed, attempting reconnect and retry:', dbErr.message);
+      await connectDB();
+      urlRecord = await Url.findOneAndUpdate(
+        { shortCode: shortCode },
+        {
+          $inc: { clickCount: 1 },
+          $push: { clicks: { timestamp: new Date() } },
+        },
+        { new: true }
+      );
+    }
 
     // If shortCode does not exist in MongoDB, return 404
     if (!urlRecord) {
@@ -228,13 +256,13 @@ app.use((err, req, res, _next) => {
   console.error('Unhandled Error:', err.message);
 
   const isDbError =
-    err.name === 'MongooseServerSelectionError' ||
-    err.name === 'MongoNetworkError' ||
-    err.name === 'MongoTimeoutError' ||
-    err.name === 'MongoServerSelectionError' ||
-    err.name === 'MongooseError' ||
+    err.name?.startsWith('Mongo') ||
+    err.name?.startsWith('Mongoose') ||
     err.message?.includes('buffering timed out') ||
     err.message?.includes('ECONNREFUSED') ||
+    err.message?.includes('ECONNRESET') ||
+    err.message?.includes('ETIMEDOUT') ||
+    err.message?.includes('connection') ||
     err.message?.includes('whitelist');
 
   if (isDbError) {
