@@ -105,8 +105,10 @@ app.get('/@:userIdent/:customText', async (req, res, next) => {
     const { userIdent, customText } = req.params;
     const compositeCode = `@${userIdent}/${customText}`;
 
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(503).send('<h1>Service Unavailable</h1>');
+    // Ensure DB connection is established (critical for Vercel cold starts)
+    const isConnected = await connectDB();
+    if (!isConnected || mongoose.connection.readyState !== 1) {
+      return res.status(503).send('<h1>Service Unavailable</h1><p>Database is warming up. Please try again in a moment.</p>');
     }
 
     const urlRecord = await Url.findOneAndUpdate(
@@ -137,7 +139,7 @@ app.get('/@:userIdent/:customText', async (req, res, next) => {
   }
 });
 
-// 6b. Short URL Redirection Route (GET /:shortCode) — legacy 6-char codes
+// 6b. Short URL Redirection Route (GET /:shortCode) — auto-generated 6-char & admin custom slugs
 app.get('/:shortCode', async (req, res, next) => {
   try {
     const { shortCode } = req.params;
@@ -147,7 +149,9 @@ app.get('/:shortCode', async (req, res, next) => {
       return res.status(404).end();
     }
 
-    if (mongoose.connection.readyState !== 1) {
+    // Ensure DB connection is established (critical for Vercel cold starts)
+    const isConnected = await connectDB();
+    if (!isConnected || mongoose.connection.readyState !== 1) {
       return res.status(503).send(`
         <!DOCTYPE html>
         <html lang="tr">
