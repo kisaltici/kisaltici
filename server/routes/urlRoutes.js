@@ -460,8 +460,12 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
       });
     }
 
-    // Build composite shortCode: "@userIdent/customText"
-    const compositeCode = `@${userIdent}/${trimmedText}`;
+    // Build composite shortCode:
+    // - For the special "admin" user: just use customText directly (no @admin/ prefix)
+    //   so the URL becomes: domain/custom-text
+    // - For all other users: "@userIdent/customText"
+    const isAdminUser = userIdent === 'admin';
+    const compositeCode = isAdminUser ? trimmedText : `@${userIdent}/${trimmedText}`;
 
     // --- Ownership + existence check for the current record ---
     const urlRecord = await Url.findOne({ shortCode: shortCode.trim() });

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { isPaidPlan } from '../utils/membership';
-import { API_BASE_URL } from '../config/api';
+
 import './Header.css';
 
 function Header({
@@ -31,7 +31,7 @@ function Header({
     signOutUser,
     clearAuthError,
   } = useAuth();
-  const [backendStatus, setBackendStatus] = useState('checking');
+
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
@@ -63,35 +63,7 @@ function Header({
     };
   }, []);
 
-  useEffect(() => {
-    let isMounted = true;
 
-    // Check connection to backend health endpoint
-    const checkBackendHealth = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/health`);
-        if (!isMounted) return;
-        if (response.ok) {
-          const data = await response.json();
-          setBackendStatus(data.status === 'ok' ? 'online' : 'error');
-        } else {
-          setBackendStatus('offline');
-        }
-      } catch (error) {
-        if (isMounted) setBackendStatus('offline');
-      }
-    };
-
-    checkBackendHealth();
-
-    // Re-check periodically every 10 seconds to recover if backend starts or restarts
-    const interval = setInterval(checkBackendHealth, 10000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
 
   const handleGoogleAuth = async () => {
     if (isSigningIn || authLoading) return;
@@ -110,11 +82,12 @@ function Header({
   return (
     <header className="header">
       <div className="headerContainer">
-        {/* LEFT GROUP: [ Logo ] [ Sidebar Toggle ] [ Search ] */}
+        {/* LEFT GROUP (desktop): [ Logo ] [ Sidebar Toggle ] [ Search ]
+            LEFT GROUP (mobile): [ Sidebar Toggle ] [ Search ] */}
         <div className="headerLeft">
-          {/* Logo */}
+          {/* Logo — visible on desktop inside left group, hidden on mobile (shown in center) */}
           <div
-            className="logo"
+            className="logo headerLogoDesktop"
             onClick={() => navigate('/')}
             role="button"
             tabIndex={0}
@@ -190,19 +163,26 @@ function Header({
           </button>
         </div>
 
-        {/* RIGHT GROUP: [ API Status ] [ Theme Switch (Guest only) ] [ Auth Controls ] */}
+        {/* CENTER — Logo, only visible on mobile */}
+        <div
+          className="logo headerLogoMobile"
+          onClick={() => navigate('/')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') navigate('/');
+          }}
+          title="KSLT"
+        >
+          <img
+            src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'}
+            alt="KSLT"
+            className="brandLogoImg"
+          />
+        </div>
+
+        {/* RIGHT GROUP: [ Theme Switch (Guest only) ] [ Auth Controls ] */}
         <div className="headerRight">
-          {/* API Status Badge */}
-          <div className="backendBadge" title={t('apiStatusOnline')}>
-            <span className={`statusDot ${backendStatus}`}></span>
-            <span className="statusText">
-              {backendStatus === 'online'
-                ? t('apiStatusOnline')
-                : backendStatus === 'checking'
-                ? t('apiStatusChecking')
-                : t('apiStatusOffline')}
-            </span>
-          </div>
 
           {isAuthInitializing ? (
             <div className="headerAuthLoading">

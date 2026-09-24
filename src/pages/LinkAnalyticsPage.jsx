@@ -124,10 +124,19 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
         if (gateMsgTimerRef.current) clearTimeout(gateMsgTimerRef.current);
         gateMsgTimerRef.current = setTimeout(() => setGateMsg(false), 3500);
       } else {
-        const customPrefix = `@${userIdent}/`;
-        const prefilled = linkData.shortCode.startsWith(customPrefix)
-          ? linkData.shortCode.slice(customPrefix.length)
-          : '';
+        const isAdmin = userIdent === 'admin';
+        let prefilled = '';
+        if (isAdmin) {
+          // Admin: shortCode is just customText (no prefix)
+          // Only prefill if it doesn't look like an auto-generated 6-char code
+          const autoGenRegex = /^[A-Za-z0-9]{6}$/;
+          prefilled = autoGenRegex.test(linkData.shortCode) ? '' : linkData.shortCode;
+        } else {
+          const customPrefix = `@${userIdent}/`;
+          prefilled = linkData.shortCode.startsWith(customPrefix)
+            ? linkData.shortCode.slice(customPrefix.length)
+            : '';
+        }
         setCustomCode(prefilled);
         setCustomError('');
         setCustomSuccess('');
@@ -167,12 +176,20 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
       gateMsgTimerRef.current = setTimeout(() => setGateMsg(false), 3500);
       return;
     }
-    // Open inline editor — pre-fill with only the customText portion if already in @user/text format
+    // Open inline editor — pre-fill with only the customText portion
     const currentCode = linkData.shortCode;
-    const customPrefix = `@${userIdent}/`;
-    const prefilled = currentCode.startsWith(customPrefix)
-      ? currentCode.slice(customPrefix.length)
-      : '';
+    const isAdmin = userIdent === 'admin';
+    let prefilled = '';
+    if (isAdmin) {
+      // Admin: shortCode is the customText itself (no @admin/ prefix)
+      const autoGenRegex = /^[A-Za-z0-9]{6}$/;
+      prefilled = autoGenRegex.test(currentCode) ? '' : currentCode;
+    } else {
+      const customPrefix = `@${userIdent}/`;
+      prefilled = currentCode.startsWith(customPrefix)
+        ? currentCode.slice(customPrefix.length)
+        : '';
+    }
     setCustomCode(prefilled);
     setCustomError('');
     setCustomSuccess('');
@@ -308,12 +325,18 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
     if (e.key === 'Escape') handleCustomizeCancel();
   };
 
-  // Build the full fixed prefix shown in the editor: "https://lnk1.tr/@user/"
+  // Build the full fixed prefix shown in the editor
+  // Admin: "https://domain/" (no @admin/ segment)
+  // Others: "https://domain/@user/"
   const getDomainPrefix = () => {
     if (!linkData?.shortUrl) return '';
     try {
       const url = new URL(linkData.shortUrl);
       const base = `${url.protocol}//${url.host}`;
+      const isAdmin = userIdent === 'admin';
+      if (isAdmin) {
+        return `${base}/`;
+      }
       return userIdent ? `${base}/@${userIdent}/` : `${base}/`;
     } catch {
       return '';

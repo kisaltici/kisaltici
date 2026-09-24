@@ -36,6 +36,10 @@
     {
       "source": "/:shortCode([a-zA-Z0-9]{6})",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/:slug([A-Za-z0-9_-]{3,30})",
+      "destination": "/api/index.js"
     }
   ]
 }

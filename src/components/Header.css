@@ -48,6 +48,14 @@
   object-fit: contain;
 }
 
+/* Desktop: show logo in left group, hide the mobile-centered one */
+.headerLogoDesktop {
+  display: flex;
+}
+.headerLogoMobile {
+  display: none;
+}
+
 .headerControlBtn {
   background-color: var(--badge-bg);
   border: 1px solid var(--badge-border);
@@ -329,23 +337,54 @@
 }
 
 @media (max-width: 639px) {
+  .header {
+    height: 52px;
+    min-height: 52px;
+  }
   .headerContainer {
-    padding: 0 0.85rem;
+    padding: 0 0.75rem;
+    height: 52px;
+    position: relative; /* needed for absolute center logo */
   }
   .headerLeft {
-    gap: 0.5rem;
+    gap: 0.4rem;
+    /* left group only has toggle + search */
   }
   .headerRight {
-    gap: 0.45rem;
+    gap: 0.4rem;
+  }
+  /* Desktop logo hidden on mobile */
+  .headerLogoDesktop {
+    display: none;
+  }
+  /* Mobile logo: absolutely centered in header */
+  .headerLogoMobile {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .headerLogoMobile .brandLogoImg {
+    height: 22px;
+  }
+  /* Sidebar toggle IS shown on mobile */
+  .sidebarToggleHeaderBtn {
+    display: flex;
   }
   .searchBtnText,
   .headerSearchKbd {
     display: none;
   }
   .searchHeaderBtn {
-    padding: 0.45rem 0.55rem;
+    padding: 0.4rem;
     width: 32px;
     height: 32px;
+    justify-content: center;
+  }
+  .brandLogoImg {
+    height: 22px;
   }
   .statusText {
     display: none;
@@ -354,17 +393,21 @@
     padding: 0.35rem 0.45rem;
     height: 30px;
   }
-  .userDisplayName {
-    max-width: 65px;
-    font-size: 0.75rem;
-  }
   .authGuestBtn {
-    padding: 0.35rem 0.5rem;
+    padding: 0.35rem 0.55rem;
     font-size: 0.75rem;
     height: 30px;
   }
-  .brandLogoImg {
-    height: 24px;
+  .authGuestBtn.signInBtn {
+    padding: 0.35rem 0.45rem;
+  }
+  .userDisplayName {
+    max-width: 60px;
+    font-size: 0.75rem;
+  }
+  .headerAvatarBtn {
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -466,28 +509,3 @@
   opacity: 1;
 }
 
-@media (max-width: 640px) {
-  .headerContainer {
-    padding: 0.75rem 1rem;
-  }
-  .searchBtnText,
-  .headerSearchKbd {
-    display: none;
-  }
-  .searchHeaderBtn {
-    padding: 0.45rem 0.55rem;
-  }
-  .statusText {
-    display: none;
-  }
-  .backendBadge {
-    padding: 0.35rem 0.5rem;
-  }
-  .userDisplayName {
-    max-width: 75px;
-  }
-  .authGuestBtn {
-    padding: 0.35rem 0.55rem;
-    font-size: 0.75rem;
-  }
-}
