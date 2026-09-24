@@ -38,7 +38,7 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/:slug([A-Za-z0-9_-]{3,30})",
+      "source": "/:slug([A-Za-z0-9_-]{1,30})",
       "destination": "/api/index.js"
     }
   ]

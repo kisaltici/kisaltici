@@ -407,12 +407,41 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
 
     const trimmedText = customText.trim();
 
-    // Allowed characters: A-Z a-z 0-9 - _   Length: 3-30
-    const TEXT_REGEX = /^[A-Za-z0-9_-]{3,30}$/;
+    // --- Pro membership check (server-side, from User collection) ---
+    // Done before length validation so we know if this is admin
+    const userDoc = await User.findOne({ userId });
+    if (!userDoc || userDoc.membershipPlan !== 'pro') {
+      return res.status(403).json({
+        success: false,
+        error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
+      });
+    }
+
+    // Derive user identifier early so we can apply admin-specific rules
+    let userIdentEarly = '';
+    if (userDoc.username && userDoc.username.trim()) {
+      userIdentEarly = userDoc.username.trim().toLowerCase();
+    } else if (req.user.email) {
+      userIdentEarly = req.user.email.split('@')[0]
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '-')
+        .replace(/-{2,}/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 30);
+    }
+
+    const isAdminUser = userIdentEarly === 'admin';
+
+    // Allowed characters: A-Z a-z 0-9 - _
+    // Length: 1-30 for admin, 3-30 for everyone else
+    const TEXT_REGEX = isAdminUser
+      ? /^[A-Za-z0-9_-]{1,30}$/
+      : /^[A-Za-z0-9_-]{3,30}$/;
+    const lengthDesc = isAdminUser ? '1-30' : '3-30';
     if (!TEXT_REGEX.test(trimmedText)) {
       return res.status(400).json({
         success: false,
-        error: 'Özel metin 3-30 karakter olmalı; harf, rakam, tire veya alt çizgi içerebilir.',
+        error: `Özel metin ${lengthDesc} karakter olmalı; harf, rakam, tire veya alt çizgi içerebilir.`,
       });
     }
 
@@ -430,28 +459,8 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
       });
     }
 
-    // --- Pro membership check (server-side, from User collection) ---
-    const userDoc = await User.findOne({ userId });
-    if (!userDoc || userDoc.membershipPlan !== 'pro') {
-      return res.status(403).json({
-        success: false,
-        error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
-      });
-    }
-
-    // --- Derive user identifier: username > email prefix ---
-    let userIdent = '';
-    if (userDoc.username && userDoc.username.trim()) {
-      userIdent = userDoc.username.trim().toLowerCase();
-    } else if (req.user.email) {
-      // Take only the local part before @ and sanitize it
-      userIdent = req.user.email.split('@')[0]
-        .toLowerCase()
-        .replace(/[^a-z0-9_-]/g, '-') // replace unsafe chars with dash
-        .replace(/-{2,}/g, '-')        // collapse consecutive dashes
-        .replace(/^-|-$/g, '')         // strip leading/trailing dashes
-        .slice(0, 30);
-    }
+    // userIdent already derived above as userIdentEarly
+    const userIdent = userIdentEarly;
 
     if (!userIdent) {
       return res.status(400).json({

@@ -207,12 +207,16 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
     const trimmed = customCode.trim();
 
     // Client-side pre-validation (mirrors backend rules)
+    // Admin: minimum 1 char, everyone else: minimum 3 chars
+    const isAdmin = userIdent === 'admin';
     if (!trimmed) {
       setCustomError('Bağlantı adı boş bırakılamaz.');
       return;
     }
-    if (!/^[A-Za-z0-9_-]{3,30}$/.test(trimmed)) {
-      setCustomError('3-30 karakter; harf, rakam, tire veya alt çizgi kullanın.');
+    const validRegex = isAdmin ? /^[A-Za-z0-9_-]{1,30}$/ : /^[A-Za-z0-9_-]{3,30}$/;
+    const lengthHint = isAdmin ? '1-30' : '3-30';
+    if (!validRegex.test(trimmed)) {
+      setCustomError(`${lengthHint} karakter; harf, rakam, tire veya alt çizgi kullanın.`);
       return;
     }
 
