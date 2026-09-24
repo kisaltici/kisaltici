@@ -10,6 +10,7 @@ import { requireDbReady } from './middleware/dbMiddleware.js';
 import urlRoutes from './routes/urlRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import Url from './models/Url.js';
+import { getDeepLinkInfo, isMobileDevice, renderDeepLinkBridge } from './utils/deepLinkHelper.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -97,6 +98,22 @@ app.get('/api/health', (req, res) => {
 app.use('/api/user', requireDbReady, userRoutes);
 app.use('/api', requireDbReady, urlRoutes);
 
+// Helper to perform smart redirection (deep linking on mobile, standard 302 on desktop)
+const performRedirect = (req, res, originalUrl) => {
+  const userAgent = req.headers['user-agent'] || '';
+  const isMobile = isMobileDevice(userAgent);
+  const bypassDeepLink = req.query.noredirect === '1' || req.query.web === '1';
+
+  if (isMobile && !bypassDeepLink) {
+    const deepLinkInfo = getDeepLinkInfo(originalUrl);
+    if (deepLinkInfo) {
+      return res.status(200).send(renderDeepLinkBridge(deepLinkInfo));
+    }
+  }
+
+  return res.redirect(302, originalUrl);
+};
+
 // 6a. Custom short URL redirect: GET /@:userIdent/:customText
 // Handles the new Pro custom format: https://lnk1.tr/@emrecan/portfolio
 // The composite shortCode stored in MongoDB is "@userIdent/customText"
@@ -147,7 +164,7 @@ app.get('/@:userIdent/:customText', async (req, res, next) => {
       `);
     }
 
-    return res.redirect(302, urlRecord.originalUrl);
+    return performRedirect(req, res, urlRecord.originalUrl);
   } catch (error) {
     next(error);
   }
@@ -244,8 +261,8 @@ app.get('/:shortCode', async (req, res, next) => {
       `);
     }
 
-    // Perform HTTP 302 Found redirect to validated originalUrl
-    return res.redirect(302, urlRecord.originalUrl);
+    // Perform smart redirection (mobile deep link or HTTP 302 Found)
+    return performRedirect(req, res, urlRecord.originalUrl);
   } catch (error) {
     next(error);
   }
