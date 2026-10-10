@@ -111,12 +111,12 @@ router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => 
         const isGuest = plan === 'guest';
         return res.status(429).json({
           success: false,
-          code: isGuest ? 'GUEST_LIMIT' : plan === 'free' ? 'NO_PLAN' : 'DAILY_LINK_LIMIT',
+          code: isGuest ? 'GUEST_LIMIT' : limits.dailyLinks === 0 && plan === 'free' ? 'NO_PLAN' : 'DAILY_LINK_LIMIT',
           plan,
           limit: limits.dailyLinks,
           error: isGuest
             ? 'Misafir hakkını kullandın. Daha fazla bağlantı kısaltmak için giriş yap.'
-            : plan === 'free'
+            : limits.dailyLinks === 0 && plan === 'free'
             ? 'Yeni bağlantı oluşturmak için bir plan başlat. Mevcut bağlantıların çalışmaya devam eder.'
             : `Bugünkü ${limits.dailyLinks} bağlantı hakkını kullandın. Limit ertesi gün sıfırlanır, daha fazlası için planını yükseltebilirsin.`,
         });
@@ -218,12 +218,12 @@ router.post('/qr/consume', optionalAuth, async (req, res, next) => {
       const isGuest = plan === 'guest';
       return res.status(429).json({
         success: false,
-        code: isGuest ? 'GUEST_LIMIT' : plan === 'free' ? 'NO_PLAN' : 'DAILY_QR_LIMIT',
+        code: isGuest ? 'GUEST_LIMIT' : limits.dailyLinks === 0 && plan === 'free' ? 'NO_PLAN' : 'DAILY_QR_LIMIT',
         plan,
         limit: limits.dailyQr,
         error: isGuest
           ? 'Misafir QR hakkını kullandın. Daha fazlası için giriş yap.'
-          : plan === 'free'
+          : limits.dailyQr === 0 && plan === 'free'
           ? 'QR kod oluşturmak için bir plan başlat. Mevcut bağlantıların çalışmaya devam eder.'
           : `Bugünkü ${limits.dailyQr} QR kod hakkını kullandın. Limit ertesi gün sıfırlanır, daha fazlası için planını yükseltebilirsin.`,
       });
