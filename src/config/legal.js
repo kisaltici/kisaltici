@@ -19,3 +19,4 @@ export const SELLER = {
 // Bump when a legal text changes materially; stored with each order as the accepted version.
 export const LEGAL_VERSION = '1.1';
 export const LEGAL_UPDATED = '11 Ekim 2026';
+export const LEGAL_DATES = { tr: LEGAL_UPDATED, en: 'October 11, 2026' };

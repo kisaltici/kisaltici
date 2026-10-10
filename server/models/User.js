@@ -44,6 +44,8 @@ const userSchema = new mongoose.Schema(
       default: 'none',
     },
     autoRenew: { type: Boolean, default: false },
+    // Currency of the subscription (set at checkout): renewals are charged in it
+    billingCurrency: { type: String, enum: ['TRY', 'USD'], default: 'TRY' },
     trialUsedAt: { type: Date, default: null },
     canceledAt: { type: Date, default: null },
     lastRenewalAttemptAt: { type: Date, default: null },

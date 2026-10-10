@@ -1,10 +1,9 @@
+/* Blog: editorial layout. Plain surfaces, hairline rules, type-led hierarchy (no glows, no glass). */
 .blPage {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background:
-    radial-gradient(60% 40% at 85% -5%, color-mix(in srgb, var(--accent-color) 12%, transparent), transparent 70%),
-    var(--bg-color);
+  background-color: var(--bg-color);
   color: var(--text-primary);
 }
 
@@ -14,9 +13,7 @@
   top: 0;
   z-index: 30;
   border-bottom: 1px solid var(--surface-border);
-  background-color: color-mix(in srgb, var(--bg-color) 86%, transparent);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  background-color: var(--bg-color);
 }
 
 .blTopInner {
@@ -35,21 +32,19 @@
   gap: 0.45rem;
   justify-self: start;
   min-height: 36px;
-  padding: 0 0.85rem 0 0.65rem;
+  padding: 0;
   background: transparent;
-  border: 1px solid var(--surface-border);
-  border-radius: 999px;
+  border: none;
   color: var(--text-secondary);
   font-family: inherit;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .blBack:hover {
   color: var(--text-primary);
-  border-color: var(--text-muted);
 }
 
 .blLogo {
@@ -58,7 +53,22 @@
   width: auto;
 }
 
-/* Reading progress (article pages) */
+.blLang {
+  justify-self: end;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font: 600 0.75rem/1 'Geist Mono', ui-monospace, monospace;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.blLang:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
 .blProgress {
   position: fixed;
   top: 60px;
@@ -66,7 +76,6 @@
   right: 0;
   z-index: 31;
   height: 2px;
-  background: transparent;
   pointer-events: none;
 }
 
@@ -74,7 +83,6 @@
   display: block;
   height: 100%;
   background: var(--accent-color);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 70%, transparent);
   transition: width 0.12s linear;
 }
 
@@ -83,25 +91,32 @@
   width: 100%;
   max-width: 1140px;
   margin: 0 auto;
-  padding: clamp(2rem, 5vw, 3.5rem) 1.25rem 4rem;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1.25rem 4rem;
 }
 
-/* ---------- Shared ---------- */
-.blChip {
-  align-self: flex-start;
-  padding: 0.28rem 0.65rem;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, var(--surface-border));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-color) 9%, transparent);
-  color: var(--accent-color);
-  font: 500 0.75rem/1 'Geist Mono', ui-monospace, monospace;
+.blSrOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Type ---------- */
+.blEyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font: 500 0.8125rem/1.4 'Geist Mono', ui-monospace, monospace;
+  letter-spacing: 0.02em;
 }
 
 .blLead {
-  margin: 0.9rem 0 0;
+  max-width: 62ch;
+  margin: 1rem 0 0;
   color: var(--text-secondary);
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-size: 1.125rem;
+  line-height: 1.6;
 }
 
 .blBtn {
@@ -111,7 +126,7 @@
   min-height: 44px;
   margin-top: 0.75rem;
   padding: 0 1.25rem;
-  border-radius: 12px;
+  border-radius: 10px;
   background-color: var(--accent-color);
   color: var(--action-btn-text);
   font-weight: 600;
@@ -119,177 +134,155 @@
 }
 
 /* ---------- Index ---------- */
-.blHero {
-  max-width: 760px;
-}
-
-.blEyebrow {
-  color: var(--accent-color);
-  font: 500 0.8125rem/1 'Geist Mono', ui-monospace, monospace;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .blHeroTitle {
-  margin: 0.9rem 0 0;
-  font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+  max-width: 16ch;
+  margin: 1rem 0 0;
+  font-size: clamp(2.4rem, 7vw, 4.6rem);
   font-weight: 650;
-  letter-spacing: -0.04em;
-  line-height: 1.06;
+  letter-spacing: -0.045em;
+  line-height: 1;
 }
 
 .blTools {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.blSearch {
-  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.6rem;
-  max-width: 420px;
-  min-height: 46px;
-  padding: 0 1rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 14px;
-  background: var(--surface-bg);
-  color: var(--text-muted);
-  transition: border-color 0.2s ease;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--surface-border);
 }
 
-.blSearch:focus-within {
-  border-color: var(--accent-color);
+.blTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+}
+
+.blTab {
+  position: relative;
+  padding: 0.35rem 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.blTab:hover {
+  color: var(--text-primary);
+}
+
+.blTab.isOn {
+  color: var(--text-primary);
+}
+
+.blTab.isOn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.0625rem;
+  height: 2px;
+  background: var(--accent-color);
 }
 
 .blSearch input {
-  flex: 1;
-  min-width: 0;
+  width: min(240px, 100%);
+  padding: 0.4rem 0;
   border: none;
+  border-bottom: 1px solid var(--surface-border);
+  border-radius: 0;
   outline: none;
+  box-shadow: none;
   background: transparent;
   color: var(--text-primary);
   font-family: inherit;
   font-size: 0.9375rem;
+  transition: border-color 0.2s ease;
 }
 
-.blChips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.blSearch input:focus {
+  border-bottom-color: var(--accent-color);
 }
 
-.blFilter {
-  min-height: 36px;
-  padding: 0 0.95rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+.blSearch input::placeholder {
+  color: var(--text-muted);
 }
 
-.blFilter:hover {
-  color: var(--text-primary);
-  border-color: var(--text-muted);
-}
-
-.blFilter.isOn {
-  border-color: var(--accent-color);
-  background: var(--accent-color);
-  color: var(--action-btn-text);
-}
-
-.blListing {
+.blList {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.85rem, 1.6vw, 1.25rem);
-  margin-top: 2.5rem;
 }
 
-.blCards {
+.blRow {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(0.85rem, 1.6vw, 1.25rem);
+  grid-template-columns: 150px minmax(0, 1fr) 32px;
+  gap: 1.5rem;
+  align-items: start;
+  padding: clamp(1.4rem, 3vw, 2rem) 0;
+  border-bottom: 1px solid var(--surface-border);
+  color: inherit;
+  text-decoration: none;
 }
 
-.blCards.isThree {
-  margin-top: 0;
-}
-
-.blCard {
+.blRowMeta {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  padding: clamp(1.15rem, 2vw, 1.5rem);
-  border: 1px solid var(--surface-border);
-  border-radius: 20px;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--text-primary) 6%, transparent), color-mix(in srgb, var(--text-primary) 2%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent);
-  text-decoration: none;
-  transition: border-color 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 0.35rem;
+  padding-top: 0.35rem;
+  color: var(--text-muted);
+  font: 500 0.8125rem/1.3 'Geist Mono', ui-monospace, monospace;
 }
 
-.blCard:hover {
-  border-color: var(--accent-color);
-  transform: translateY(-3px);
+.blRowNum {
+  color: var(--accent-color);
 }
 
-.blCard.isFeatured {
-  padding: clamp(1.5rem, 3.5vw, 2.4rem);
-  border-color: color-mix(in srgb, var(--accent-color) 35%, var(--surface-border));
-  background:
-    radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--accent-color) 14%, transparent), transparent 70%),
-    linear-gradient(160deg, color-mix(in srgb, var(--text-primary) 7%, transparent), color-mix(in srgb, var(--text-primary) 2%, transparent));
-}
-
-.blCard.isFeatured .blCardTitle {
-  max-width: 24ch;
-  font-size: clamp(1.5rem, 3.2vw, 2.2rem);
-  letter-spacing: -0.03em;
-}
-
-.blCard.isFeatured .blCardText {
-  max-width: 58ch;
-  font-size: 1rem;
-}
-
-.blCardTitle {
-  color: var(--text-primary);
-  font-size: 1.125rem;
-  font-weight: 650;
-  line-height: 1.3;
-  letter-spacing: -0.015em;
-}
-
-.blCardText {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.55;
-}
-
-.blCardFoot {
+.blRowBody {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: auto;
-  padding-top: 0.5rem;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.blRowTitle {
+  max-width: 30ch;
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.blRowText {
+  max-width: 62ch;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.blRowFoot {
   color: var(--text-muted);
   font-size: 0.8125rem;
 }
 
-.blCardMore {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--text-primary);
-  font-weight: 600;
+.blRowArrow {
+  padding-top: 0.5rem;
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.blRow:hover .blRowTitle {
+  color: var(--accent-color);
+}
+
+.blRow:hover .blRowArrow {
+  color: var(--accent-color);
+  transform: translateX(4px);
 }
 
 .blEmpty {
@@ -300,78 +293,63 @@
 /* ---------- Article ---------- */
 .blDoc {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: clamp(2.5rem, 6vw, 5rem);
   align-items: start;
 }
 
 .blArticle {
   min-width: 0;
-  max-width: 720px;
-}
-
-.blArticleHead {
-  display: flex;
-  flex-direction: column;
+  max-width: 700px;
 }
 
 .blTitle {
   margin: 1rem 0 0;
-  font-size: clamp(1.9rem, 4.6vw, 2.9rem);
+  font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 650;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-}
-
-.blMetaRow {
-  margin: 1rem 0 0;
-  color: var(--text-muted);
-  font-size: 0.875rem;
+  letter-spacing: -0.04em;
+  line-height: 1.06;
 }
 
 .blHighlights {
-  margin-top: 2rem;
-  padding: 1.15rem 1.3rem;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 38%, var(--surface-border));
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--accent-color) 7%, transparent);
+  margin-top: 2.25rem;
+  padding: 0.2rem 0 0.2rem 1.25rem;
+  border-left: 2px solid var(--accent-color);
 }
 
 .blHighlights strong {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--accent-color);
-  font: 600 0.8125rem/1 'Geist Mono', ui-monospace, monospace;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: var(--text-muted);
+  font: 500 0.8125rem/1.3 'Geist Mono', ui-monospace, monospace;
 }
 
 .blHighlights ul {
   margin: 0;
   padding-left: 1.1rem;
   color: var(--text-primary);
-  font-size: 0.9875rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .blSection {
-  margin-top: 2.25rem;
+  margin-top: 2.5rem;
 }
 
 .blSection h2 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.85rem;
   scroll-margin-top: 90px;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 650;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   line-height: 1.25;
 }
 
 .blSection p,
 .blSection ul {
-  margin: 0 0 0.9rem;
+  margin: 0 0 1rem;
   color: var(--text-secondary);
-  font-size: 1.025rem;
+  font-size: 1.0625rem;
   line-height: 1.85;
 }
 
@@ -383,47 +361,34 @@
   margin-bottom: 0.45rem;
 }
 
-/* Side panel ("mini dashboard") */
+/* Side column */
 .blSide {
   position: sticky;
-  top: 84px;
+  top: 88px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
-.blPanel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  padding: 1.15rem 1.2rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 18px;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--text-primary) 6%, transparent), color-mix(in srgb, var(--text-primary) 2%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-}
-
-.blPanelTitle {
+.blSideLabel {
+  margin: 0 0 0.75rem;
   color: var(--text-muted);
   font: 500 0.75rem/1 'Geist Mono', ui-monospace, monospace;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .blToc {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
   border-left: 1px solid var(--surface-border);
 }
 
 .blToc a {
   margin-left: -1px;
-  padding: 0.4rem 0 0.4rem 0.85rem;
+  padding: 0.4rem 0 0.4rem 0.9rem;
   border-left: 2px solid transparent;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.875rem;
   line-height: 1.4;
   text-decoration: none;
@@ -437,61 +402,55 @@
 .blToc a.isActive {
   border-left-color: var(--accent-color);
   color: var(--text-primary);
-  font-weight: 600;
 }
 
 .blStats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
-}
-
-.blStats div {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 12px;
+  gap: 1.75rem;
+  margin: 1.25rem 0 0;
 }
 
-.blStats span {
+.blStats dt {
   color: var(--text-muted);
   font-size: 0.75rem;
 }
 
-.blStats strong {
-  font-size: 1.05rem;
+.blStats dd {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
   font-variant-numeric: tabular-nums;
 }
 
-.blCopy {
-  min-height: 40px;
-  border: 1px solid var(--surface-border);
-  border-radius: 12px;
-  background: transparent;
-  color: var(--text-primary);
+.blTextBtn {
+  margin-top: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
   font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
   cursor: pointer;
-  transition: border-color 0.2s ease;
 }
 
-.blCopy:hover {
-  border-color: var(--accent-color);
+.blTextBtn:hover {
+  color: var(--text-primary);
 }
 
 .blTry {
-  gap: 0.4rem;
-  border-color: color-mix(in srgb, var(--accent-color) 35%, var(--surface-border));
-  background:
-    radial-gradient(100% 120% at 100% 0%, color-mix(in srgb, var(--accent-color) 14%, transparent), transparent 70%),
-    linear-gradient(160deg, color-mix(in srgb, var(--text-primary) 6%, transparent), color-mix(in srgb, var(--text-primary) 2%, transparent));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
 }
 
 .blTry strong {
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .blTry span {
@@ -500,19 +459,15 @@
   line-height: 1.5;
 }
 
-.blTry .blBtn {
-  margin-top: 0.5rem;
-}
-
 .blRelated {
-  margin-top: 4rem;
-  padding-top: 2.25rem;
-  border-top: 1px solid var(--surface-border);
+  margin-top: 5rem;
 }
 
 .blRelated h2 {
-  margin: 0 0 1.25rem;
-  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--surface-border);
+  font-size: 1.25rem;
   font-weight: 650;
   letter-spacing: -0.02em;
 }
@@ -545,10 +500,9 @@
 }
 
 .blPage a:focus-visible,
-.blPage button:focus-visible,
-.blSearch input:focus-visible {
+.blPage button:focus-visible {
   outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* ---------- Responsive ---------- */
@@ -557,40 +511,39 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* The panel moves above the article text as a compact block */
   .blSide {
     position: static;
-    order: -1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    order: 1;
   }
 
-  .blStats,
-  .blCopy {
+  .blSideToc {
     display: none;
-  }
-
-  .blCards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 640px) {
-  .blSide {
-    order: 1;
-    grid-template-columns: minmax(0, 1fr);
+@media (max-width: 720px) {
+  .blRow {
+    grid-template-columns: minmax(0, 1fr) 24px;
+    gap: 0.75rem;
   }
 
-  .blSide .blPanel:first-child {
-    display: none;
+  .blRowMeta {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    gap: 0.75rem;
+    padding-top: 0;
   }
 
-  .blToc {
-    display: none;
+  .blRowBody {
+    grid-column: 1;
   }
 
-  .blCards,
-  .blCards.isThree {
-    grid-template-columns: minmax(0, 1fr);
+  .blRowArrow {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .blTab.isOn::after {
+    bottom: -0.2rem;
   }
 }

@@ -1,10 +1,9 @@
-// Post-build SEO step (runs after `vite build`): the app is a client-rendered SPA, so crawlers and
-// link previews would otherwise only see an empty <div id="root">. This script
-//  - injects JSON-LD and static, crawlable content for the landing page into dist/index.html
-//  - writes a static HTML file per legal page (dist/yasal/<slug>/index.html) with its own title/description/canonical
-//  - writes dist/sitemap.xml
-// The static markup is replaced by React as soon as the app mounts. Content is generated from the same
-// copy/config modules the UI uses, so it can never drift from what users see.
+// Post-build SEO step (runs after `vite build`): the app is a client-rendered SPA, so crawlers and link previews
+// would otherwise only see an empty <div id="root">. For BOTH languages (Turkish at the root, English under /en) this
+// script writes static HTML with its own <title>, description, canonical, hreflang alternates, JSON-LD and crawlable
+// content for: the landing page, the blog (index + every post) and the legal pages, plus dist/sitemap.xml.
+// The static markup is replaced by React as soon as the app mounts. Content comes from the same modules the UI uses,
+// so it can never drift from what users see.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,6 +13,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const SITE = 'https://kisaltici.com';
 const NAME = 'Kısaltıcı';
+const LANGS = ['tr', 'en'];
+const intlPricing = process.env.INTL_PRICING === '1';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -25,124 +26,53 @@ const vite = await createServer({
   appType: 'custom',
   server: { middlewareMode: true, hmr: false, watch: null },
   optimizeDeps: { noDiscovery: true },
+  define: { __INTL_PRICING__: JSON.stringify(intlPricing) },
 });
 
 try {
   const { LANDING_COPY } = await vite.ssrLoadModule('/src/i18n/landingCopy.js');
   const plansCfg = await vite.ssrLoadModule('/src/config/plans.js');
-  const { LEGAL_DOCS } = await vite.ssrLoadModule('/src/pages/legalDocs.js');
-  const { SELLER, LEGAL_UPDATED } = await vite.ssrLoadModule('/src/config/legal.js');
-  const { BLOG_POSTS, getRelatedPosts, formatPostDate, headingId } = await vite.ssrLoadModule('/src/content/blogPosts.js');
+  const { SELLER, LEGAL_DATES } = await vite.ssrLoadModule('/src/config/legal.js');
+  const { getLegalDocs, LEGAL_UI } = await vite.ssrLoadModule('/src/pages/legalDocs.js');
+  const blog = await vite.ssrLoadModule('/src/content/blogPosts.js');
+  const { legalPath } = await vite.ssrLoadModule('/src/content/legalSlugs.js');
+  const { LANDING_SEO } = await vite.ssrLoadModule('/src/config/seo.js');
 
-  const tr = LANDING_COPY.tr;
-  const planCopy = plansCfg.getPlanCopy('tr');
   const baseHtml = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
-  if (!baseHtml.includes('<!--SEO_STATIC-->') || !baseHtml.includes('<!--SEO_JSONLD-->')) {
-    throw new Error('index.html is missing the SEO_STATIC / SEO_JSONLD placeholders');
+  for (const marker of ['<!--SEO_STATIC-->', '<!--SEO_JSONLD-->', '<!--SEO_HREFLANG-->']) {
+    if (!baseHtml.includes(marker)) throw new Error(`index.html is missing the ${marker} placeholder`);
   }
 
-  /* ---------- Landing page ---------- */
-  const planBlocks = plansCfg.SALE_PLANS.map((id) => {
-    const l = plansCfg.PLAN_LIMITS[id];
-    const items = [
-      planCopy.links(l.dailyLinks),
-      planCopy.qr(l.dailyQr),
-      planCopy.stats(l.statsDays),
-      l.customLinks ? planCopy.custom : null,
-      l.customQr ? planCopy.customQr : null,
-      planCopy.themes(l.themes),
-      planCopy.support[id],
-    ].filter(Boolean);
-    const price = id === 'free' ? '₺0' : `₺${plansCfg.PLAN_PRICES[id]} ${planCopy.period}`;
-    return `<li><h3>${esc(planCopy.names[id])} – ${esc(price)}</h3><p>${esc(planCopy.descs[id])}</p><ul>${items
-      .map((i) => `<li>${esc(i)}</li>`)
-      .join('')}</ul></li>`;
-  }).join('');
+  const homePath = (lang) => (lang === 'en' ? '/en' : '/');
+  const abs = (p) => `${SITE}${p}`;
+  const currencyOf = (lang) => (intlPricing && lang === 'en' ? 'USD' : 'TRY');
 
-  const landingStatic = `<div id="seo-static"><main>
-<h1>${esc(tr.hero.title)}</h1>
-<p>${esc(tr.hero.sub)}</p>
-<h2>${esc(tr.how.title)}</h2>
-<p>${esc(tr.how.sub)}</p>
-<ol>${tr.how.steps.map((s) => `<li><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>
-<h2>${esc(tr.statement.lead)} ${esc(tr.statement.accent)}</h2>
-<ul>${tr.stack.items.map((s) => `<li><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ul>
-<h2>${esc(tr.themes.title)}</h2>
-<p>${esc(tr.themes.text)}</p>
-<h2>${esc(tr.plans.title)}</h2>
-<p>${esc(tr.plans.sub)} ${esc(tr.plans.guestNote)}</p>
-<ul>${planBlocks}</ul>
-<h2>${esc(tr.faq.title)}</h2>
-<dl>${tr.faq.items.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl>
-<h2>Blog</h2>
-<ul>${BLOG_POSTS.map((b) => `<li><a href="/blog/${b.slug}">${esc(b.title)}</a> – ${esc(b.description)}</li>`).join('')}</ul>
-<nav aria-label="Yasal">${LEGAL_DOCS.map((d) => `<a href="/yasal/${d.slug}">${esc(d.title)}</a>`).join(' ')}</nav>
-</main></div>`;
+  /* ---------- head helpers ---------- */
+  const alternatesBlock = (paths) =>
+    [
+      ...LANGS.map((l) => `<link rel="alternate" hreflang="${l}" href="${abs(paths[l])}" />`),
+      `<link rel="alternate" hreflang="x-default" href="${abs(paths.tr)}" />`,
+    ].join('\n    ');
 
-  const homeLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: NAME,
-      url: `${SITE}/`,
-      logo: `${SITE}/icon-512.png`,
-      email: SELLER.email,
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: NAME,
-      url: `${SITE}/`,
-      inLanguage: 'tr-TR',
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'SoftwareApplication',
-      name: NAME,
-      url: `${SITE}/`,
-      applicationCategory: 'BusinessApplication',
-      operatingSystem: 'Web',
-      description:
-        'Uzun bağlantıları kısaltan, özelleştirilebilir QR kod üreten ve tıklama istatistiklerini gösteren web uygulaması.',
-      inLanguage: 'tr-TR',
-      offers: plansCfg.SALE_PLANS.map((id) => ({
-        '@type': 'Offer',
-        name: planCopy.names[id],
-        price: String(plansCfg.PLAN_PRICES[id]),
-        priceCurrency: 'TRY',
-        url: `${SITE}/#planlar`,
-      })),
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: tr.faq.items.map((f) => ({
-        '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
-      })),
-    },
-  ]
-    .map(jsonLd)
-    .join('\n    ');
-
-  fs.writeFileSync(
-    path.join(dist, 'index.html'),
-    baseHtml.replace('<!--SEO_STATIC-->', landingStatic).replace('<!--SEO_JSONLD-->', homeLd)
-  );
-
-  /* ---------- Legal pages ---------- */
-  const setHead = (html, { title, description, url, ld }) =>
-    html
+  const setHead = (html, { lang, title, description, urlPath, ld, paths }) => {
+    const seo = LANDING_SEO[lang];
+    return html
+      .replace(/<html lang="[^"]*"/, `<html lang="${lang}"`)
       .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
       .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(description)}$2`)
-      .replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${url}$2`)
-      .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${url}$2`)
+      .replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${abs(urlPath)}$2`)
+      .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${abs(urlPath)}$2`)
       .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
       .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
+      .replace(/(<meta property="og:locale" content=")[^"]*(")/, `$1${seo.locale}$2`)
+      .replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${abs(seo.image)}$2`)
+      .replace(/(<meta property="og:image:alt" content=")[^"]*(")/, `$1${esc(seo.ogAlt)}$2`)
       .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
       .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
+      .replace(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${abs(seo.image)}$2`)
+      .replace('<!--SEO_HREFLANG-->', paths ? alternatesBlock(paths) : '')
       .replace('<!--SEO_JSONLD-->', ld || '');
+  };
 
   const shell = (inner) => baseHtml.replace('<!--SEO_STATIC-->', `<div id="seo-static"><main>${inner}</main></div>`);
 
@@ -150,146 +80,281 @@ try {
     jsonLd({
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
-      itemListElement: items.map((it, i) => ({
-        '@type': 'ListItem',
-        position: i + 1,
-        name: it.name,
-        item: it.url,
-      })),
+      itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })),
     });
 
-  const writePage = (relDir, html) => {
-    const dir = path.join(dist, relDir);
+  const writePage = (urlPath, html) => {
+    const dir = urlPath === '/' ? dist : path.join(dist, urlPath.replace(/^\//, ''));
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, 'index.html'), html);
   };
 
-  const legalNav = `<nav aria-label="Yasal">${LEGAL_DOCS.map(
-    (d) => `<a href="/yasal/${d.slug}">${esc(d.title)}</a>`
-  ).join(' ')}</nav>`;
+  const sitemapEntries = [];
+  const addToSitemap = (paths, priority, changefreq, lastmod) => sitemapEntries.push({ paths, priority, changefreq, lastmod });
 
-  // /yasal index
-  writePage(
-    'yasal',
-    setHead(
-      shell(`<h1>Yasal</h1><p>Hizmet koşulları, gizlilik ve satış sözleşmesi metinleri.</p>${legalNav}`),
+  /* ---------- Landing (both languages) ---------- */
+  const landingPaths = { tr: homePath('tr'), en: homePath('en') };
+  for (const lang of LANGS) {
+    const copy = LANDING_COPY[lang];
+    const planCopy = plansCfg.getPlanCopy(lang);
+    const currency = currencyOf(lang);
+    const posts = blog.getPosts(lang);
+
+    const planBlocks = plansCfg.SALE_PLANS.map((id) => {
+      const l = plansCfg.PLAN_LIMITS[id];
+      const items = [
+        planCopy.links(l.dailyLinks),
+        planCopy.qr(l.dailyQr),
+        planCopy.stats(l.statsDays),
+        l.customLinks ? planCopy.custom : null,
+        l.customQr ? planCopy.customQr : null,
+        planCopy.themes(l.themes),
+        planCopy.support[id],
+      ].filter(Boolean);
+      const price = `${plansCfg.formatPrice(id, 'monthly', currency)} ${planCopy.period}`;
+      return `<li><h3>${esc(planCopy.names[id])} – ${esc(price)}</h3><p>${esc(planCopy.descs[id])}</p><ul>${items
+        .map((i) => `<li>${esc(i)}</li>`)
+        .join('')}</ul></li>`;
+    }).join('');
+
+    const legalDocs = getLegalDocs(lang);
+    const landingStatic = `<h1>${esc(copy.hero.title)}</h1>
+<p>${esc(copy.hero.sub)}</p>
+<h2>${esc(copy.how.title)}</h2>
+<p>${esc(copy.how.sub)}</p>
+<ol>${copy.how.steps.map((s) => `<li><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>
+<h2>${esc(copy.statement.lead)} ${esc(copy.statement.accent)}</h2>
+<ul>${copy.stack.items.map((s) => `<li><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ul>
+<h2>${esc(copy.themes.title)}</h2>
+<p>${esc(copy.themes.text)}</p>
+<h2>${esc(copy.plans.title)}</h2>
+<p>${esc(copy.plans.sub)} ${esc(copy.plans.guestNote)}</p>
+<ul>${planBlocks}</ul>
+<h2>${esc(copy.faq.title)}</h2>
+<dl>${copy.faq.items.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl>
+<h2>Blog</h2>
+<ul>${posts.map((b) => `<li><a href="${blog.blogPath(lang, b.slug)}">${esc(b.title)}</a> – ${esc(b.description)}</li>`).join('')}</ul>
+<nav aria-label="${lang === 'en' ? 'Legal' : 'Yasal'}">${legalDocs.map((d) => `<a href="${legalPath(lang, d.id)}">${esc(d.title)}</a>`).join(' ')}</nav>`;
+
+    const seo = LANDING_SEO[lang];
+    const homeLd = [
       {
-        title: `Yasal Metinler | ${NAME}`,
-        description: 'Kısaltıcı hizmet koşulları, gizlilik politikası, KVKK aydınlatma metni ve mesafeli satış sözleşmesi.',
-        url: `${SITE}/yasal`,
-        ld: breadcrumb([
-          { name: NAME, url: `${SITE}/` },
-          { name: 'Yasal', url: `${SITE}/yasal` },
-        ]),
-      }
-    )
-  );
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: NAME,
+        url: abs(homePath(lang)),
+        logo: abs('/icon-512.png'),
+        email: SELLER.email,
+      },
+      { '@context': 'https://schema.org', '@type': 'WebSite', name: NAME, url: abs(homePath(lang)), inLanguage: lang === 'en' ? 'en' : 'tr-TR' },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: NAME,
+        url: abs(homePath(lang)),
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
+        description:
+          lang === 'en'
+            ? 'A web app that shortens long links, creates customizable QR codes and shows click statistics.'
+            : 'Uzun bağlantıları kısaltan, özelleştirilebilir QR kod üreten ve tıklama istatistiklerini gösteren web uygulaması.',
+        inLanguage: lang === 'en' ? 'en' : 'tr-TR',
+        offers: plansCfg.SALE_PLANS.map((id) => ({
+          '@type': 'Offer',
+          name: planCopy.names[id],
+          price: String(plansCfg.getPlanPrice(id, 'monthly', currency)),
+          priceCurrency: currency,
+          url: `${abs(homePath(lang))}#planlar`,
+        })),
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: copy.faq.items.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
+    ]
+      .map(jsonLd)
+      .join('\n    ');
 
-  for (const doc of LEGAL_DOCS) {
-    const sections = doc.sections
-      .map(
-        (s) =>
-          `<section><h2>${esc(s.h)}</h2>${(s.p || []).map((p) => `<p>${esc(p)}</p>`).join('')}${
-            s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
-          }</section>`
-      )
-      .join('');
     writePage(
-      `yasal/${doc.slug}`,
-      setHead(shell(`<h1>${esc(doc.title)}</h1><p>Son güncelleme: ${esc(LEGAL_UPDATED)}</p>${sections}${legalNav}`), {
-        title: `${doc.title} | ${NAME}`,
-        description: doc.summary,
-        url: `${SITE}/yasal/${doc.slug}`,
-        ld: breadcrumb([
-          { name: NAME, url: `${SITE}/` },
-          { name: 'Yasal', url: `${SITE}/yasal` },
-          { name: doc.title, url: `${SITE}/yasal/${doc.slug}` },
-        ]),
+      homePath(lang),
+      setHead(shell(landingStatic), {
+        lang,
+        title: seo.title,
+        description: seo.description,
+        urlPath: homePath(lang),
+        ld: homeLd,
+        paths: landingPaths,
       })
     );
   }
+  addToSitemap(landingPaths, '1.0', 'weekly');
 
-  /* ---------- Blog ---------- */
-  const blogNav = `<nav aria-label="Blog">${BLOG_POSTS.map((b) => `<a href="/blog/${b.slug}">${esc(b.title)}</a>`).join(' ')}</nav>`;
-  writePage(
-    'blog',
-    setHead(shell(`<h1>Blog</h1><p>Link kısaltma, QR kod ve tıklama takibi hakkında rehberler ve ipuçları.</p><ul>${BLOG_POSTS.map((b) => `<li><a href="/blog/${b.slug}">${esc(b.title)}</a><p>${esc(b.description)}</p></li>`).join('')}</ul>`), {
-      title: `Blog | ${NAME}`,
-      description: 'Link kısaltma, QR kod ve tıklama takibi hakkında rehberler ve ipuçları.',
-      url: `${SITE}/blog`,
-      ld: breadcrumb([
-        { name: NAME, url: `${SITE}/` },
-        { name: 'Blog', url: `${SITE}/blog` },
-      ]),
-    })
-  );
+  /* ---------- Legal pages (both languages) ---------- */
+  const legalIndexPaths = { tr: legalPath('tr'), en: legalPath('en') };
+  for (const lang of LANGS) {
+    const ui = LEGAL_UI[lang];
+    const docs = getLegalDocs(lang);
+    const nav = `<nav aria-label="${lang === 'en' ? 'Legal' : 'Yasal'}">${docs
+      .map((d) => `<a href="${legalPath(lang, d.id)}">${esc(d.title)}</a>`)
+      .join(' ')}</nav>`;
+    const note = ui.translationNote ? `<p>${esc(ui.translationNote)}</p>` : '';
 
-  for (const post of BLOG_POSTS) {
-    const body = post.sections
-      .map(
-        (s) =>
-          `<section>${s.h ? `<h2 id="${headingId(s.h)}">${esc(s.h)}</h2>` : ''}${(s.p || []).map((t) => `<p>${esc(t)}</p>`).join('')}${
-            s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
-          }</section>`
-      )
-      .join('');
-    const related = getRelatedPosts(post.slug)
-      .map((r) => `<li><a href="/blog/${r.slug}">${esc(r.title)}</a></li>`)
-      .join('');
-    const article = jsonLd({
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: post.title,
-      description: post.description,
-      datePublished: post.date,
-      dateModified: post.date,
-      inLanguage: 'tr-TR',
-      mainEntityOfPage: `${SITE}/blog/${post.slug}`,
-      image: `${SITE}/og-image.png`,
-      author: { '@type': 'Organization', name: NAME, url: `${SITE}/` },
-      publisher: { '@type': 'Organization', name: NAME, logo: { '@type': 'ImageObject', url: `${SITE}/icon-512.png` } },
-    });
     writePage(
-      `blog/${post.slug}`,
+      legalIndexPaths[lang],
+      setHead(shell(`<h1>${esc(ui.title)}</h1><p>${esc(ui.subtitle)}</p>${note}${nav}`), {
+        lang,
+        title: ui.pageTitle,
+        description: ui.pageDescription,
+        urlPath: legalIndexPaths[lang],
+        paths: legalIndexPaths,
+        ld: breadcrumb([
+          { name: NAME, url: abs(homePath(lang)) },
+          { name: ui.title, url: abs(legalIndexPaths[lang]) },
+        ]),
+      })
+    );
+
+    for (const doc of docs) {
+      const paths = { tr: legalPath('tr', doc.id), en: legalPath('en', doc.id) };
+      const sections = doc.sections
+        .map(
+          (s) =>
+            `<section><h2>${esc(s.h)}</h2>${(s.p || []).map((p) => `<p>${esc(p)}</p>`).join('')}${
+              s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
+            }</section>`
+        )
+        .join('');
+      writePage(
+        paths[lang],
+        setHead(shell(`<h1>${esc(doc.title)}</h1><p>${esc(ui.updated)}: ${esc(LEGAL_DATES[lang])}</p>${note}${sections}${nav}`), {
+          lang,
+          title: `${doc.title} | ${NAME}`,
+          description: doc.summary,
+          urlPath: paths[lang],
+          paths,
+          ld: breadcrumb([
+            { name: NAME, url: abs(homePath(lang)) },
+            { name: ui.title, url: abs(legalIndexPaths[lang]) },
+            { name: doc.title, url: abs(paths[lang]) },
+          ]),
+        })
+      );
+      if (lang === 'tr') addToSitemap(paths, '0.3', 'yearly');
+    }
+  }
+  addToSitemap(legalIndexPaths, '0.3', 'yearly');
+
+  /* ---------- Blog (both languages) ---------- */
+  const blogIndexPaths = { tr: blog.blogPath('tr'), en: blog.blogPath('en') };
+  for (const lang of LANGS) {
+    const ui = blog.BLOG_UI[lang];
+    const posts = blog.getPosts(lang);
+    const blogNav = `<nav aria-label="Blog">${posts.map((b) => `<a href="${blog.blogPath(lang, b.slug)}">${esc(b.title)}</a>`).join(' ')}</nav>`;
+
+    writePage(
+      blogIndexPaths[lang],
       setHead(
-        shell(`<article><p>${esc(post.category)} · ${esc(formatPostDate(post.date))}</p><h1>${esc(post.title)}</h1><p>${esc(post.description)}</p>${post.highlights ? `<aside><strong>Kısaca</strong><ul>${post.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></aside>` : ''}${body}</article><h2>Önerilen yazılar</h2><ul>${related}</ul>${blogNav}`),
+        shell(
+          `<h1>${esc(ui.heroTitle)}</h1><p>${esc(ui.heroText)}</p><ul>${posts
+            .map((b) => `<li><a href="${blog.blogPath(lang, b.slug)}">${esc(b.title)}</a><p>${esc(b.description)}</p></li>`)
+            .join('')}</ul>`
+        ),
         {
-          title: `${post.title} | ${NAME}`,
-          description: post.description,
-          url: `${SITE}/blog/${post.slug}`,
-          ld:
-            article +
-            '\n    ' +
-            breadcrumb([
-              { name: NAME, url: `${SITE}/` },
-              { name: 'Blog', url: `${SITE}/blog` },
-              { name: post.title, url: `${SITE}/blog/${post.slug}` },
-            ]),
+          lang,
+          title: ui.pageTitle,
+          description: ui.pageDescription,
+          urlPath: blogIndexPaths[lang],
+          paths: blogIndexPaths,
+          ld: breadcrumb([
+            { name: NAME, url: abs(homePath(lang)) },
+            { name: 'Blog', url: abs(blogIndexPaths[lang]) },
+          ]),
         }
       )
     );
-  }
 
-  /* ---------- Sitemap ---------- */
+    for (const post of posts) {
+      const paths = {
+        tr: blog.blogPath('tr', blog.getPostById(post.id, 'tr').slug),
+        en: blog.blogPath('en', blog.getPostById(post.id, 'en').slug),
+      };
+      const body = post.sections
+        .map(
+          (s) =>
+            `<section>${s.h ? `<h2 id="${blog.headingId(s.h)}">${esc(s.h)}</h2>` : ''}${(s.p || []).map((t) => `<p>${esc(t)}</p>`).join('')}${
+              s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
+            }</section>`
+        )
+        .join('');
+      const related = blog
+        .getRelatedPosts(post.id, lang)
+        .map((r) => `<li><a href="${blog.blogPath(lang, r.slug)}">${esc(r.title)}</a></li>`)
+        .join('');
+      const article = jsonLd({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.description,
+        datePublished: post.date,
+        dateModified: post.date,
+        inLanguage: lang === 'en' ? 'en' : 'tr-TR',
+        mainEntityOfPage: abs(paths[lang]),
+        image: abs(LANDING_SEO[lang].image),
+        author: { '@type': 'Organization', name: NAME, url: abs(homePath(lang)) },
+        publisher: { '@type': 'Organization', name: NAME, logo: { '@type': 'ImageObject', url: abs('/icon-512.png') } },
+      });
+      writePage(
+        paths[lang],
+        setHead(
+          shell(
+            `<article><p>${esc(post.category)} · ${esc(blog.formatPostDate(post.date, lang))}</p><h1>${esc(post.title)}</h1><p>${esc(post.description)}</p>${
+              post.highlights
+                ? `<aside><strong>${esc(ui.summary)}</strong><ul>${post.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></aside>`
+                : ''
+            }${body}</article><h2>${esc(ui.related)}</h2><ul>${related}</ul>${blogNav}`
+          ),
+          {
+            lang,
+            title: `${post.title} | ${NAME}`,
+            description: post.description,
+            urlPath: paths[lang],
+            paths,
+            ld:
+              article +
+              '\n    ' +
+              breadcrumb([
+                { name: NAME, url: abs(homePath(lang)) },
+                { name: 'Blog', url: abs(blogIndexPaths[lang]) },
+                { name: post.title, url: abs(paths[lang]) },
+              ]),
+          }
+        )
+      );
+      if (lang === 'tr') addToSitemap(paths, '0.8', 'monthly', post.date);
+    }
+  }
+  addToSitemap(blogIndexPaths, '0.7', 'weekly');
+
+  /* ---------- Sitemap with hreflang alternates ---------- */
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [
-    { loc: `${SITE}/`, priority: '1.0', changefreq: 'weekly' },
-    { loc: `${SITE}/blog`, priority: '0.7', changefreq: 'weekly' },
-    ...BLOG_POSTS.map((b) => ({ loc: `${SITE}/blog/${b.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: b.date })),
-    { loc: `${SITE}/yasal`, priority: '0.3', changefreq: 'yearly' },
-    ...LEGAL_DOCS.map((d) => ({ loc: `${SITE}/yasal/${d.slug}`, priority: '0.3', changefreq: 'yearly' })),
-  ];
+  const entry = (loc, e) =>
+    `  <url><loc>${abs(loc)}</loc><lastmod>${e.lastmod || today}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority>${LANGS.map(
+      (l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${abs(e.paths[l])}"/>`
+    ).join('')}<xhtml:link rel="alternate" hreflang="x-default" href="${abs(e.paths.tr)}"/></url>`;
+  const urlset = sitemapEntries.flatMap((e) => LANGS.map((l) => entry(e.paths[l], e))).join('\n');
   fs.writeFileSync(
     path.join(dist, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-      .map(
-        (u) =>
-          `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod || today}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`
-      )
-      .join('\n')}\n</urlset>\n`
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urlset}\n</urlset>\n`
   );
 
-  console.log(`prerender: landing + ${LEGAL_DOCS.length + 1} legal + ${BLOG_POSTS.length + 1} blog pages + sitemap (${urls.length} urls)`);
+  console.log(
+    `prerender: ${sitemapEntries.length * LANGS.length} pages in ${LANGS.length} languages + sitemap (intl pricing ${intlPricing ? 'on' : 'off'})`
+  );
 } finally {
   await vite.close();
 }

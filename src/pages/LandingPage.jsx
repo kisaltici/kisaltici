@@ -18,11 +18,13 @@ import {
   formatPrice,
   getPlanCopy,
 } from '../config/plans';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BillingToggle from '../components/BillingToggle';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import LegalLinks from '../components/LegalLinks';
-import { BLOG_POSTS } from '../content/blogPosts';
+import { BLOG_UI, blogPath, getPosts } from '../content/blogPosts';
+import { alternatePath } from '../i18n/siteLang';
+import { detectBrowserLanguage } from '../i18n/LanguageContext';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -112,6 +114,18 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
   const { t, lang, setLanguageMode } = useTranslation();
   const { signInWithGoogle, getIdToken } = useAuth();
   const copy = LANDING_COPY[lang] || LANDING_COPY.en;
+  const blogUi = BLOG_UI[lang] || BLOG_UI.en;
+
+  // Suggest the other language when the browser prefers it (never redirects automatically)
+  const browserLang = detectBrowserLanguage();
+  const [hintDismissed, setHintDismissed] = useState(() => {
+    try {
+      return localStorage.getItem('kslt_lang_hint') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const showLangHint = !hintDismissed && browserLang !== lang;
 
   const rootRef = useRef(null);
   const inputRef = useRef(null);
@@ -125,6 +139,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const [period, setPeriod] = useState(DEFAULT_PERIOD);
   // Trial wording is only shown while it is true: before payments open, or when the server has trials enabled
   const billing = useBillingConfig();
@@ -478,6 +493,35 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
     <div className="lp" ref={rootRef}>
       <div ref={sentinelRef} className="lpSentinel" aria-hidden="true" />
 
+      {showLangHint && (
+        <div className="lpLangHint" role="note">
+          <span>{lang === 'tr' ? 'This page is also available in English.' : 'Bu sayfanın Türkçe sürümü de var.'}</span>
+          <a
+            href={alternatePath(location.pathname, browserLang)}
+            onClick={(event) => {
+              event.preventDefault();
+              navigate(alternatePath(location.pathname, browserLang));
+            }}
+          >
+            {browserLang === 'en' ? 'View in English' : 'Türkçe görüntüle'}
+          </a>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => {
+              setHintDismissed(true);
+              try {
+                localStorage.setItem('kslt_lang_hint', '1');
+              } catch {
+                /* storage unavailable */
+              }
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* NAVIGATION */}
       <header className={`lpNavWrap ${isScrolled ? 'isScrolled' : ''}`}>
         <nav className="lpNav" aria-label="Main">
@@ -502,7 +546,11 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <button
               type="button"
               className="lpIconBtn lpLangBtn"
-              onClick={() => setLanguageMode(lang === 'tr' ? 'en' : 'tr')}
+              onClick={() => {
+                const next = lang === 'tr' ? 'en' : 'tr';
+                setLanguageMode(next);
+                navigate(alternatePath(location.pathname, next));
+              }}
               aria-label={nav.language}
               title={nav.language}
             >
@@ -767,13 +815,13 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
                     </div>
                     <p className="lpCellText">{planCopy.descs[planId]}</p>
                     <div className="lpPrice">
-                      {formatListPrice(planId, period) && (
+                      {formatListPrice(planId, period, billing.currency) && (
                         <span className="lpPriceWas" aria-label={planCopy.launchPrice}>
-                          {formatListPrice(planId, period)}
+                          {formatListPrice(planId, period, billing.currency)}
                         </span>
                       )}
                       <div className="lpPriceNow">
-                        <span className="lpPriceAmount">{formatPrice(planId, period)}</span>
+                        <span className="lpPriceAmount">{formatPrice(planId, period, billing.currency)}</span>
                         <span className="lpPricePeriod">{period === 'yearly' ? planCopy.periodYear : planCopy.period}</span>
                       </div>
                       <span className="lpPriceTag">{showTrial ? `${planCopy.launchPrice} · ${planCopy.trialBadge(TRIAL_DAYS)}` : planCopy.launchPrice}</span>
@@ -846,39 +894,46 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
         <section className="lpSection lpBlog" id="blog">
           <div className="lpSectionHead" data-reveal>
             <h2 className="lpH2">Blog</h2>
-            <p className="lpLead">Link kısaltma, QR kod ve tıklama takibi hakkında rehberler.</p>
+            <p className="lpLead">{blogUi.landingText}</p>
           </div>
-          <div className="lpBlogGrid">
-            {BLOG_POSTS.slice(0, 3).map((post, index) => (
+          <div className="lpBlogList">
+            {getPosts(lang).slice(0, 3).map((post, index) => (
               <a
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="lpBlogCard"
+                key={post.id}
+                href={blogPath(lang, post.slug)}
+                className="lpBlogRow"
                 data-reveal
                 style={{ '--i': index }}
                 onClick={(event) => {
                   if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
                   event.preventDefault();
-                  navigate(`/blog/${post.slug}`);
+                  navigate(blogPath(lang, post.slug));
                 }}
               >
-                <span className="lpBlogMeta">{post.category} · {post.readMinutes} dk okuma</span>
-                <span className="lpBlogTitle">{post.title}</span>
-                <span className="lpBlogText">{post.description}</span>
-                <span className="lpBlogMore">Devamını oku →</span>
+                <span className="lpBlogMeta">
+                  <span>{post.category}</span>
+                  <span>{post.readMinutes} {blogUi.minShort}</span>
+                </span>
+                <span className="lpBlogBody">
+                  <span className="lpBlogTitle">{post.title}</span>
+                  <span className="lpBlogText">{post.description}</span>
+                </span>
+                <span className="lpBlogArrow" aria-hidden="true">
+                  <Icon name="arrow" />
+                </span>
               </a>
             ))}
           </div>
           <p className="lpBlogAll" data-reveal>
             <a
-              href="/blog"
+              href={blogPath(lang)}
               onClick={(event) => {
                 if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
                 event.preventDefault();
-                navigate('/blog');
+                navigate(blogPath(lang));
               }}
             >
-              Tüm yazılar →
+              {blogUi.allLink} →
             </a>
           </p>
         </section>
@@ -930,7 +985,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <li><a href="#blog">Blog</a></li>
           </ul>
           <span className="lpFooterRights">{footer.rights}</span>
-          <LegalLinks className="lpFooterLegal" />
+          <LegalLinks className="lpFooterLegal" lang={lang} />
         </div>
       </footer>
     </div>

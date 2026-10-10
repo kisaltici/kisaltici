@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import Order from '../models/Order.js';
 import { PLAN_IDS } from '../config/plans.js';
-import { TRIAL_DAYS, addPeriod, priceTry, toKurus, getPaytrConfig } from '../config/billing.js';
+import { TRIAL_DAYS, addPeriod, priceFor, toKurus, getPaytrConfig } from '../config/billing.js';
 import { newMerchantOid, chargeStoredCard } from './paytr.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -19,6 +19,7 @@ export const startTrial = async (order, tokens = {}) => {
     planExpiresAt: endsAt,
     billingPeriod: order.period,
     subscriptionStatus: 'trialing',
+    billingCurrency: order.currency || 'TRY',
     autoRenew: true,
     trialUsedAt: now,
     subscriptionStartedAt: now,
@@ -85,11 +86,13 @@ export const processDueRenewals = async ({ charger = chargeStoredCard, now = new
     if (claim.modifiedCount !== 1) continue;
     result.due += 1;
 
-    const amountKurus = toKurus(priceTry(user.membershipPlan, user.billingPeriod || 'monthly'));
+    const currency = user.billingCurrency || 'TRY';
+    const amountKurus = toKurus(priceFor(user.membershipPlan, user.billingPeriod || 'monthly', currency));
     const order = await Order.create({
       orderId: newMerchantOid(),
       userId: user.userId,
       kind: 'renewal',
+      currency,
       plan: user.membershipPlan,
       period: user.billingPeriod || 'monthly',
       amountKurus,

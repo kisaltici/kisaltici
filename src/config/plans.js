@@ -23,6 +23,15 @@ export const TRIAL_DAYS = 7;
 export const SHOW_LIST_PRICE = true;
 export const LIST_PRICES = { starter: 79, pro: 229, business: 599 };
 
+// Regional pricing: customers outside Türkiye pay in US dollars (only when INTL_PRICING is on, see server/config/billing.js)
+export const PLAN_PRICES_USD = { free: 0, starter: 3, pro: 5, business: 10 };
+export const LIST_PRICES_USD = { starter: 5, pro: 9, business: 19 };
+export const INTL_PRICING = typeof __INTL_PRICING__ !== 'undefined' && __INTL_PRICING__;
+export const CURRENCY_SYMBOL = { TRY: '₺', USD: '$' };
+
+/** Currency to show before the server has answered: English pages assume the international price when it is enabled. */
+export const defaultCurrency = (lang) => (INTL_PRICING && lang === 'en' ? 'USD' : 'TRY');
+
 export const PLAN_PRICES = { free: 0, starter: 49, pro: 149, business: 399 };
 
 export const PLAN_LIMITS = {
@@ -134,16 +143,21 @@ const COPY = {
 
 export const getPlanCopy = (lang) => COPY[lang] || COPY.en;
 
-export const getPlanPrice = (planId, period = 'monthly') =>
-  period === 'yearly' ? PLAN_PRICES[planId] * YEARLY_MONTHS_CHARGED : PLAN_PRICES[planId];
+export const getPlanPrice = (planId, period = 'monthly', currency = 'TRY') => {
+  const table = currency === 'USD' ? PLAN_PRICES_USD : PLAN_PRICES;
+  return period === 'yearly' ? table[planId] * YEARLY_MONTHS_CHARGED : table[planId];
+};
 
-export const formatPrice = (planId, period = 'monthly') => `₺${getPlanPrice(planId, period)}`;
+export const formatPrice = (planId, period = 'monthly', currency = 'TRY') =>
+  `${CURRENCY_SYMBOL[currency] || '₺'}${getPlanPrice(planId, period, currency)}`;
 
 /** Struck-through regular price for display, or null when it should not be shown. */
-export const formatListPrice = (planId, period = 'monthly') => {
-  if (!SHOW_LIST_PRICE || !LIST_PRICES[planId] || LIST_PRICES[planId] <= PLAN_PRICES[planId]) return null;
+export const formatListPrice = (planId, period = 'monthly', currency = 'TRY') => {
+  const list = currency === 'USD' ? LIST_PRICES_USD : LIST_PRICES;
+  const now = currency === 'USD' ? PLAN_PRICES_USD : PLAN_PRICES;
+  if (!SHOW_LIST_PRICE || !list[planId] || list[planId] <= now[planId]) return null;
   const months = period === 'yearly' ? YEARLY_MONTHS_CHARGED : 1;
-  return `₺${LIST_PRICES[planId] * months}`;
+  return `${CURRENCY_SYMBOL[currency] || '₺'}${list[planId] * months}`;
 };
 
 export const isBillingPeriod = (value) => BILLING_PERIODS.includes(value);

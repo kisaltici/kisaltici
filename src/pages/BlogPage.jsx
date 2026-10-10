@@ -1,117 +1,106 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  BLOG_POSTS,
-  BLOG_CATEGORIES,
+  BLOG_UI,
+  blogPath,
   getBlogPost,
+  getCategories,
+  getPosts,
   getRelatedPosts,
   formatPostDate,
   headingId,
 } from '../content/blogPosts';
 import LegalLinks from '../components/LegalLinks';
 import { applySeo } from '../utils/seo';
+import { alternatePath, homePath, langFromPath } from '../i18n/siteLang';
 import './BlogPage.css';
 
 const Arrow = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
 
-function PostCard({ post, featured = false }) {
+function PostRow({ post, lang, ui, index }) {
   return (
-    <Link to={`/blog/${post.slug}`} className={`blCard ${featured ? 'isFeatured' : ''}`}>
-      <span className="blChip">{post.category}</span>
-      <span className="blCardTitle">{post.title}</span>
-      <span className="blCardText">{post.description}</span>
-      <span className="blCardFoot">
-        <span>
-          {formatPostDate(post.date)} · {post.readMinutes} dk
+    <Link to={blogPath(lang, post.slug)} className="blRow">
+      <span className="blRowMeta">
+        <span className="blRowNum">{String(index + 1).padStart(2, '0')}</span>
+        <span>{post.category}</span>
+      </span>
+      <span className="blRowBody">
+        <span className="blRowTitle">{post.title}</span>
+        <span className="blRowText">{post.description}</span>
+        <span className="blRowFoot">
+          {formatPostDate(post.date, lang)} · {post.readMinutes} {ui.minRead}
         </span>
-        <span className="blCardMore">
-          Oku <Arrow />
-        </span>
+      </span>
+      <span className="blRowArrow">
+        <Arrow />
       </span>
     </Link>
   );
 }
 
-/* ---------------- /blog ---------------- */
-function BlogIndex() {
+/* ---------------- index ---------------- */
+function BlogIndex({ lang, ui }) {
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('Tümü');
+  const [category, setCategory] = useState('all');
 
+  const categories = useMemo(() => getCategories(lang), [lang]);
   const posts = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase('tr-TR');
-    return BLOG_POSTS.filter((post) => {
-      if (category !== 'Tümü' && post.category !== category) return false;
+    const q = query.trim().toLocaleLowerCase(lang === 'en' ? 'en-US' : 'tr-TR');
+    return getPosts(lang).filter((post) => {
+      if (category !== 'all' && post.categoryKey !== category) return false;
       if (!q) return true;
-      return `${post.title} ${post.description} ${post.category}`.toLocaleLowerCase('tr-TR').includes(q);
+      return `${post.title} ${post.description} ${post.category}`.toLocaleLowerCase(lang === 'en' ? 'en-US' : 'tr-TR').includes(q);
     });
-  }, [query, category]);
-
-  const [first, ...rest] = posts;
+  }, [query, category, lang]);
 
   return (
     <>
       <section className="blHero">
-        <span className="blEyebrow">Blog</span>
-        <h1 className="blHeroTitle">Link, QR kod ve ölçüm üzerine rehberler</h1>
-        <p className="blLead">
-          Bağlantılarını daha iyi paylaşmak, QR kodlarını doğru hazırlamak ve sonuçları ölçmek için kısa, uygulanabilir yazılar.
-        </p>
-
-        <div className="blTools">
-          <label className="blSearch">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" />
-            </svg>
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Yazılarda ara"
-              aria-label="Yazılarda ara"
-            />
-          </label>
-          <div className="blChips" role="tablist" aria-label="Kategoriler">
-            {['Tümü', ...BLOG_CATEGORIES].map((item) => (
-              <button
-                key={item}
-                type="button"
-                role="tab"
-                aria-selected={category === item}
-                className={`blFilter ${category === item ? 'isOn' : ''}`}
-                onClick={() => setCategory(item)}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
+        <p className="blEyebrow">{ui.eyebrow}</p>
+        <h1 className="blHeroTitle">{ui.heroTitle}</h1>
+        <p className="blLead">{ui.heroText}</p>
       </section>
 
-      {first ? (
-        <section className="blListing" aria-label="Yazılar">
-          <PostCard post={first} featured />
-          {rest.length > 0 && (
-            <div className="blCards">
-              {rest.map((post) => (
-                <PostCard key={post.slug} post={post} />
-              ))}
-            </div>
-          )}
+      <div className="blTools">
+        <div className="blTabs" role="tablist" aria-label="Categories">
+          {[{ key: 'all', label: ui.all }, ...categories].map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              role="tab"
+              aria-selected={category === item.key}
+              className={`blTab ${category === item.key ? 'isOn' : ''}`}
+              onClick={() => setCategory(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <label className="blSearch">
+          <span className="blSrOnly">{ui.search}</span>
+          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={ui.search} />
+        </label>
+      </div>
+
+      {posts.length > 0 ? (
+        <section className="blList" aria-label="Posts">
+          {posts.map((post, index) => (
+            <PostRow key={post.id} post={post} lang={lang} ui={ui} index={index} />
+          ))}
         </section>
       ) : (
-        <p className="blEmpty">Aramana uyan yazı bulunamadı.</p>
+        <p className="blEmpty">{ui.empty}</p>
       )}
     </>
   );
 }
 
-/* ---------------- /blog/:slug ---------------- */
-function BlogArticle({ post }) {
+/* ---------------- article ---------------- */
+function BlogArticle({ post, lang, ui }) {
   const [progress, setProgress] = useState(0);
   const [activeId, setActiveId] = useState('');
   const [copied, setCopied] = useState(false);
@@ -119,15 +108,14 @@ function BlogArticle({ post }) {
 
   const toc = post.sections.filter((section) => section.h).map((section) => ({ id: headingId(section.h), text: section.h }));
 
-  // Reading progress
   useEffect(() => {
     const onScroll = () => {
       const el = articleRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const total = rect.height - window.innerHeight * 0.6;
-      const done = Math.min(Math.max(-(rect.top - 70), 0), Math.max(total, 1));
-      setProgress(Math.round((done / Math.max(total, 1)) * 100));
+      const total = Math.max(rect.height - window.innerHeight * 0.6, 1);
+      const done = Math.min(Math.max(-(rect.top - 70), 0), total);
+      setProgress(Math.round((done / total) * 100));
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -136,9 +124,8 @@ function BlogArticle({ post }) {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, [post.slug]);
+  }, [post.id]);
 
-  // Active heading in the table of contents
   useEffect(() => {
     const headings = toc.map((item) => document.getElementById(item.id)).filter(Boolean);
     if (!headings.length || typeof IntersectionObserver === 'undefined') return undefined;
@@ -153,10 +140,10 @@ function BlogArticle({ post }) {
     headings.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post.slug]);
+  }, [post.id, lang]);
 
   const copyLink = async () => {
-    const url = `${window.location.origin}/blog/${post.slug}`;
+    const url = `${window.location.origin}${blogPath(lang, post.slug)}`;
     try {
       await navigator.clipboard.writeText(url);
     } catch {
@@ -186,17 +173,16 @@ function BlogArticle({ post }) {
       <div className="blDoc">
         <article className="blArticle" ref={articleRef}>
           <header className="blArticleHead">
-            <span className="blChip">{post.category}</span>
+            <p className="blEyebrow">
+              {post.category} · {formatPostDate(post.date, lang)} · {post.readMinutes} {ui.minRead}
+            </p>
             <h1 className="blTitle">{post.title}</h1>
             <p className="blLead">{post.description}</p>
-            <p className="blMetaRow">
-              {formatPostDate(post.date)} · {post.readMinutes} dk okuma
-            </p>
           </header>
 
           {post.highlights && post.highlights.length > 0 && (
-            <aside className="blHighlights" aria-label="Kısaca">
-              <strong>Kısaca</strong>
+            <aside className="blHighlights" aria-label={ui.summary}>
+              <strong>{ui.summary}</strong>
               <ul>
                 {post.highlights.map((item) => (
                   <li key={item}>{item}</li>
@@ -220,9 +206,9 @@ function BlogArticle({ post }) {
           ))}
         </article>
 
-        <aside className="blSide" aria-label="Yazı paneli">
-          <div className="blPanel">
-            <span className="blPanelTitle">Bu yazıda</span>
+        <aside className="blSide">
+          <div className="blSideBlock blSideToc">
+            <p className="blSideLabel">{ui.onThisPage}</p>
             <nav className="blToc">
               {toc.map((item) => (
                 <a
@@ -235,36 +221,38 @@ function BlogArticle({ post }) {
                 </a>
               ))}
             </nav>
-            <div className="blStats">
+            <dl className="blStats">
               <div>
-                <span>Okuma</span>
-                <strong>{post.readMinutes} dk</strong>
+                <dt>{ui.reading}</dt>
+                <dd>
+                  {post.readMinutes} {ui.minShort}
+                </dd>
               </div>
               <div>
-                <span>İlerleme</span>
-                <strong>%{progress}</strong>
+                <dt>{ui.progress}</dt>
+                <dd>%{progress}</dd>
               </div>
-            </div>
-            <button type="button" className="blCopy" onClick={copyLink}>
-              {copied ? 'Bağlantı kopyalandı' : 'Bağlantıyı kopyala'}
+            </dl>
+            <button type="button" className="blTextBtn" onClick={copyLink}>
+              {copied ? ui.copied : ui.copyLink}
             </button>
           </div>
 
-          <div className="blPanel blTry">
-            <strong>Bağlantını hemen kısalt</strong>
-            <span>Kısa bağlantı ve QR kod oluştur, tıklamaları takip et.</span>
-            <Link to="/" className="blBtn">
-              Kısaltıcı’yı dene
+          <div className="blSideBlock blTry">
+            <strong>{ui.tryTitle}</strong>
+            <span>{ui.tryText}</span>
+            <Link to={homePath(lang)} className="blBtn">
+              {ui.tryButton}
             </Link>
           </div>
         </aside>
       </div>
 
-      <section className="blRelated" aria-label="Önerilen yazılar">
-        <h2>Önerilen yazılar</h2>
-        <div className="blCards isThree">
-          {getRelatedPosts(post.slug).map((item) => (
-            <PostCard key={item.slug} post={item} />
+      <section className="blRelated" aria-label={ui.related}>
+        <h2>{ui.related}</h2>
+        <div className="blList">
+          {getRelatedPosts(post.id, lang).map((item, index) => (
+            <PostRow key={item.id} post={item} lang={lang} ui={ui} index={index} />
           ))}
         </div>
       </section>
@@ -272,63 +260,68 @@ function BlogArticle({ post }) {
   );
 }
 
-/** Public blog: /blog (index with search and categories) and /blog/:slug (article). Turkish only. */
+/** Public blog: /blog and /en/blog (index with search and categories), /blog/:slug and /en/blog/:slug (article). */
 function BlogPage({ theme }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isDark = theme === 'dark';
+  const lang = langFromPath(location.pathname);
+  const ui = BLOG_UI[lang];
 
-  const slug = location.pathname.replace(/^\/blog\/?/, '').replace(/\/+$/, '');
-  const post = slug ? getBlogPost(slug) : null;
+  const rest = location.pathname.replace(/^\/en(?=\/|$)/, '').replace(/^\/blog\/?/, '').replace(/\/+$/, '');
+  const slug = decodeURIComponent(rest);
+  const post = slug ? getBlogPost(slug, lang) : null;
 
   useEffect(() => {
     window.scrollTo(0, 0);
     applySeo({
-      title: post ? `${post.title} | Kısaltıcı` : 'Blog | Kısaltıcı',
-      description: post
-        ? post.description
-        : 'Link kısaltma, QR kod ve tıklama takibi hakkında rehberler ve ipuçları.',
-      path: slug ? `/blog/${slug}` : '/blog',
+      title: post ? `${post.title} | Kısaltıcı` : ui.pageTitle,
+      description: post ? post.description : ui.pageDescription,
+      path: blogPath(lang, slug),
       noindex: Boolean(slug && !post),
     });
-  }, [post, slug]);
+  }, [post, slug, lang, ui]);
+
+  const otherLang = lang === 'en' ? 'tr' : 'en';
 
   return (
     <div className="blPage">
       <header className="blTop">
         <div className="blTopInner">
-          <button type="button" className="blBack" onClick={() => navigate(post ? '/blog' : '/')}>
+          <button type="button" className="blBack" onClick={() => navigate(post ? blogPath(lang) : homePath(lang))}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
-            <span>{post ? 'Tüm yazılar' : 'Ana sayfa'}</span>
+            <span>{post ? ui.allPosts : ui.home}</span>
           </button>
-          <Link to="/" aria-label="Kısaltıcı">
+          <Link to={homePath(lang)} aria-label="Kısaltıcı">
             <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="blLogo" />
           </Link>
-          <span />
+          <Link to={alternatePath(location.pathname, otherLang)} className="blLang" hrefLang={otherLang} aria-label={otherLang === 'en' ? 'English' : 'Türkçe'}>
+            {otherLang.toUpperCase()}
+          </Link>
         </div>
       </header>
 
       <main className="blMain">
         {slug && !post ? (
           <div className="blNotFound">
-            <h1 className="blTitle">Yazı bulunamadı</h1>
-            <p className="blLead">Aradığın blog yazısı mevcut değil.</p>
-            <Link to="/blog" className="blBtn">
-              Tüm yazılar
+            <h1 className="blTitle">{ui.notFoundTitle}</h1>
+            <p className="blLead">{ui.notFoundText}</p>
+            <Link to={blogPath(lang)} className="blBtn">
+              {ui.allPosts}
             </Link>
           </div>
         ) : post ? (
-          <BlogArticle key={post.slug} post={post} />
+          <BlogArticle key={post.id + lang} post={post} lang={lang} ui={ui} />
         ) : (
-          <BlogIndex />
+          <BlogIndex key={lang} lang={lang} ui={ui} />
         )}
       </main>
 
       <footer className="blFooter">
         <div className="blFooterInner">
-          <LegalLinks />
+          <LegalLinks lang={lang} />
           <span className="blRights">© 2026 Kısaltıcı</span>
         </div>
       </footer>

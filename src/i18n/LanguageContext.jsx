@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { translations } from './translations';
+import { isPublicPath, langFromPath } from './siteLang';
 
 const LanguageContext = createContext();
 
@@ -29,6 +30,10 @@ export function LanguageProvider({ children }) {
   });
 
   const [lang, setLangState] = useState(() => {
+    // Public pages (landing, blog, legal) carry their language in the URL: /en/... is English, the rest Turkish
+    if (typeof window !== 'undefined' && isPublicPath(window.location.pathname)) {
+      return langFromPath(window.location.pathname);
+    }
     try {
       const savedMode = localStorage.getItem('language_mode') || 'auto';
       if (savedMode === 'tr') return 'tr';

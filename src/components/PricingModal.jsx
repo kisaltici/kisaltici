@@ -146,10 +146,10 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
                     </div>
                     <p className="planDesc">{copy.descs[planId]}</p>
                     <div className="planPriceRow">
-                      {formatListPrice(planId, period) && (
-                        <span className="priceWas">{formatListPrice(planId, period)}</span>
+                      {formatListPrice(planId, period, billing.currency) && (
+                        <span className="priceWas">{formatListPrice(planId, period, billing.currency)}</span>
                       )}
-                      <span className="priceAmount">{formatPrice(planId, period)}</span>
+                      <span className="priceAmount">{formatPrice(planId, period, billing.currency)}</span>
                       <span className="pricePeriod">{period === 'yearly' ? copy.periodYear : copy.period}</span>
                     </div>
                   </div>

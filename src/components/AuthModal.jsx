@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth, getAuthErrorMessage } from '../context/AuthContext';
+import { legalPath } from '../content/legalSlugs';
 import './AuthModal.css';
 
 function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
@@ -347,11 +348,22 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
           </div>
           {isRegister && (
             <p className="authLegalNote">
-              Kaydolarak{' '}
-              <a href="/yasal/kullanim-kosullari" target="_blank" rel="noopener noreferrer">Kullanım Koşulları</a>
-              {' '}ve{' '}
-              <a href="/yasal/kvkk-aydinlatma-metni" target="_blank" rel="noopener noreferrer">KVKK Aydınlatma Metni</a>
-              {"'ni okuduğunu kabul edersin."}
+              {lang === 'en' ? (
+                <>
+                  By signing up you accept the{' '}
+                  <a href={legalPath('en', 'kullanim-kosullari')} target="_blank" rel="noopener noreferrer">Terms of Use</a>
+                  {' '}and the{' '}
+                  <a href={legalPath('en', 'kvkk-aydinlatma-metni')} target="_blank" rel="noopener noreferrer">KVKK Privacy Notice</a>.
+                </>
+              ) : (
+                <>
+                  Kaydolarak{' '}
+                  <a href={legalPath('tr', 'kullanim-kosullari')} target="_blank" rel="noopener noreferrer">Kullanım Koşulları</a>
+                  {' '}ve{' '}
+                  <a href={legalPath('tr', 'kvkk-aydinlatma-metni')} target="_blank" rel="noopener noreferrer">KVKK Aydınlatma Metni</a>
+                  {"'ni okuduğunu kabul edersin."}
+                </>
+              )}
             </p>
           )}
         </form>

@@ -31,6 +31,8 @@ import { API_BASE_URL } from './config/api';
 import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout } from './utils/checkout';
 import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD } from './config/plans';
 import { applySeo } from './utils/seo';
+import { LANDING_SEO } from './config/seo';
+import { isPublicPath, langFromPath } from './i18n/siteLang';
 import './App.css';
 
 function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, membershipPlan }) {
@@ -53,23 +55,38 @@ function AppContent() {
   const location = useLocation();
   // If Firebase does not answer quickly (blocked network, extensions), fall back to the guest view
   const [authWaitExpired, setAuthWaitExpired] = useState(false);
+  const { lang, setLang } = useTranslation();
   const { user, getIdToken, authTransitioning, authLoading, membershipPlan, refetchProfile } = useAuth();
 
   // Keep the document head right for each route (legal pages set their own; app/private routes are noindex)
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith('/yasal') || path === '/blog' || path.startsWith('/blog/')) return;
-    if (path === '/') {
+    if (isPublicPath(path) && path !== '/' && path !== '/en') return; // blog and legal pages set their own head
+    if (path === '/' || path === '/en') {
+      const pageLang = langFromPath(path);
       applySeo({
-        title: 'Kısaltıcı | URL Kısaltma, QR Kod ve Link Takibi',
-        description:
-          'Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. Üyeliksiz hemen dene.',
-        path: '/',
+        title: LANDING_SEO[pageLang].title,
+        description: LANDING_SEO[pageLang].description,
+        path: path === '/en' ? '/en' : '/',
       });
     } else {
       applySeo({ title: 'Kısaltıcı', path: '/', noindex: true });
     }
   }, [location.pathname]);
+
+  // The URL decides the language on public pages (so search engines and visitors always see one language per URL)
+  useEffect(() => {
+    if (isPublicPath(location.pathname)) {
+      const pageLang = langFromPath(location.pathname);
+      if (pageLang !== lang) setLang(pageLang);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  // Signed-in users have no use for the English marketing landing: send /en to the app
+  useEffect(() => {
+    if (user && location.pathname === '/en') navigate('/', { replace: true });
+  }, [user, location.pathname, navigate]);
 
   // Signing out from anywhere in the app returns to the landing page (only on a signed-in -> signed-out change,
   // so guests who never signed in can keep using /link pages)
@@ -704,8 +721,8 @@ function AppContent() {
     }
   }, []);
 
-  // Blog pages are public and have their own layout
-  if (location.pathname === '/blog' || location.pathname.startsWith('/blog/')) {
+  // Blog pages (/blog, /en/blog) are public and have their own layout
+  if (/^\/(en\/)?blog(\/|$)/.test(location.pathname)) {
     return (
       <Suspense fallback={<div className="landingSplash" aria-hidden="true" />}>
         <BlogPage theme={theme} />
@@ -713,8 +730,8 @@ function AppContent() {
     );
   }
 
-  // Legal pages are public and have their own layout
-  if (location.pathname.startsWith('/yasal')) {
+  // Legal pages (/yasal, /en/legal) are public and have their own layout
+  if (/^\/(yasal|en\/legal)(\/|$)/.test(location.pathname)) {
     return (
       <Suspense fallback={<div className="landingSplash" aria-hidden="true" />}>
         <LegalPage theme={theme} />
@@ -733,7 +750,7 @@ function AppContent() {
   }
 
   // Signed-out visitors on the root path see the marketing landing page instead of the app shell
-  if (location.pathname === '/' && !user) {
+  if ((location.pathname === '/' || location.pathname === '/en') && !user) {
     // Only the very first auth check shows the placeholder; sign-in keeps the landing page visible
     if (authLoading && !authWaitExpired) {
       return <div className="landingSplash" aria-hidden="true" />;

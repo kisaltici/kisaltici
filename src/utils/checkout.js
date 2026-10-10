@@ -47,8 +47,9 @@ export const fetchBillingConfig = () => {
         enabled: Boolean(data?.enabled),
         testMode: Boolean(data?.testMode),
         trial: Boolean(data?.trial),
+        currency: data?.currency === 'USD' ? 'USD' : 'TRY',
       }))
-      .catch(() => ({ enabled: false, testMode: false, trial: false }));
+      .catch(() => ({ enabled: false, testMode: false, trial: false, currency: null }));
   }
   return configPromise;
 };

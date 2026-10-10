@@ -93,7 +93,7 @@ function SubscriptionCard() {
       <span className="subCardTitle">{text.title}</span>
       <p className="subCardText">{message}</p>
       {sub.status === 'trialing' && sub.autoRenew && (
-        <p className="subCardMuted">{text.thenCharge(formatPrice(sub.plan, sub.period || 'monthly'), date)}</p>
+        <p className="subCardMuted">{text.thenCharge(formatPrice(sub.plan, sub.period || 'monthly', sub.currency || 'TRY'), date)}</p>
       )}
       {error && (
         <p className="subCardError" role="alert">

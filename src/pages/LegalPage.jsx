@@ -1,60 +1,70 @@
 import { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LEGAL_DOCS, getLegalDoc } from './legalDocs';
-import { LEGAL_UPDATED, LEGAL_VERSION } from '../config/legal';
+import { getLegalDocs, getLegalDoc, LEGAL_UI } from './legalDocs';
+import { LEGAL_DATES, LEGAL_VERSION } from '../config/legal';
+import AbuseReportForm from '../components/AbuseReportForm';
 import LegalLinks from '../components/LegalLinks';
 import { applySeo } from '../utils/seo';
+import { alternatePath, homePath, langFromPath } from '../i18n/siteLang';
+import { legalPath } from '../content/legalSlugs';
 import './LegalPage.css';
 
-/** Public legal pages: /yasal (index) and /yasal/:slug (one document). Turkish only. */
+/** Public legal pages: /yasal(/:slug) in Turkish and /en/legal(/:slug) in English. */
 function LegalPage({ theme }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isDark = theme === 'dark';
+  const lang = langFromPath(location.pathname);
+  const ui = LEGAL_UI[lang];
 
-  const slug = location.pathname.replace(/^\/yasal\/?/, '').replace(/\/+$/, '');
-  const doc = slug ? getLegalDoc(slug) : null;
+  const root = lang === 'en' ? /^\/en\/legal\/?/ : /^\/yasal\/?/;
+  const slug = decodeURIComponent(location.pathname.replace(root, '').replace(/\/+$/, ''));
+  const doc = slug ? getLegalDoc(slug, lang) : null;
+  const docs = getLegalDocs(lang);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     applySeo({
-      title: doc ? `${doc.title} | Kısaltıcı` : 'Yasal Metinler | Kısaltıcı',
-      description: doc ? doc.summary : 'Kısaltıcı hizmet koşulları, gizlilik politikası, KVKK aydınlatma metni ve mesafeli satış sözleşmesi.',
-      path: slug ? `/yasal/${slug}` : '/yasal',
+      title: doc ? `${doc.title} | Kısaltıcı` : ui.pageTitle,
+      description: doc ? doc.summary : ui.pageDescription,
+      path: legalPath(lang, doc ? doc.id : ''),
       noindex: Boolean(slug && !doc),
     });
-  }, [doc, slug]);
+  }, [doc, slug, lang, ui]);
 
-  const goBack = () => navigate('/');
+  const otherLang = lang === 'en' ? 'tr' : 'en';
 
   return (
     <div className="lgPage">
       <header className="lgTop">
         <div className="lgTopInner">
-          <button type="button" className="lgBack" onClick={goBack}>
+          <button type="button" className="lgBack" onClick={() => navigate(homePath(lang))}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
-            <span>Ana sayfa</span>
+            <span>{ui.home}</span>
           </button>
-          <Link to="/" aria-label="Kısaltıcı">
+          <Link to={homePath(lang)} aria-label="Kısaltıcı">
             <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="lgLogo" />
           </Link>
-          <span />
+          <Link to={alternatePath(location.pathname, otherLang)} className="lgLang" hrefLang={otherLang} aria-label={otherLang === 'en' ? 'English' : 'Türkçe'}>
+            {otherLang.toUpperCase()}
+          </Link>
         </div>
       </header>
 
       <main className="lgMain">
         {slug && !doc ? (
           <div className="lgNotFound">
-            <h1 className="lgTitle">Sayfa bulunamadı</h1>
-            <p className="lgSummary">Aradığın yasal metin mevcut değil.</p>
-            <Link to="/yasal" className="lgBtn">Tüm yasal metinler</Link>
+            <h1 className="lgTitle">{ui.notFoundTitle}</h1>
+            <p className="lgSummary">{ui.notFoundText}</p>
+            <Link to={legalPath(lang)} className="lgBtn">{ui.allLegal}</Link>
           </div>
         ) : doc ? (
           <article className="lgDoc">
             <h1 className="lgTitle">{doc.title}</h1>
-            <p className="lgMeta">Son güncelleme: {LEGAL_UPDATED} · Sürüm {LEGAL_VERSION}</p>
+            <p className="lgMeta">{ui.updated}: {LEGAL_DATES[lang]} · {ui.version} {LEGAL_VERSION}</p>
+            {lang === 'en' && <p className="lgNote">{ui.translationNote}</p>}
 
             {doc.sections.map((section) => (
               <section key={section.h} className="lgSection">
@@ -69,14 +79,17 @@ function LegalPage({ theme }) {
                 )}
               </section>
             ))}
+
+            {doc.id === 'kotuye-kullanim-bildirimi' && <AbuseReportForm lang={lang} />}
           </article>
         ) : (
           <div className="lgIndex">
-            <h1 className="lgTitle">Yasal</h1>
-            <p className="lgSummary">Hizmet koşulları, gizlilik ve satış sözleşmesi metinleri.</p>
+            <h1 className="lgTitle">{ui.title}</h1>
+            <p className="lgSummary">{ui.subtitle}</p>
+            {lang === 'en' && <p className="lgNote">{ui.translationNote}</p>}
             <div className="lgCards">
-              {LEGAL_DOCS.map((item) => (
-                <Link key={item.slug} to={`/yasal/${item.slug}`} className="lgCard">
+              {docs.map((item) => (
+                <Link key={item.id} to={legalPath(lang, item.id)} className="lgCard">
                   <span className="lgCardTitle">{item.title}</span>
                   <span className="lgCardText">{item.summary}</span>
                 </Link>
@@ -88,7 +101,7 @@ function LegalPage({ theme }) {
 
       <footer className="lgFooter">
         <div className="lgFooterInner">
-          <LegalLinks />
+          <LegalLinks lang={lang} />
           <span className="lgRights">© 2026 Kısaltıcı</span>
         </div>
       </footer>

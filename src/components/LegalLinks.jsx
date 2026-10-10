@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
-import { LEGAL_DOCS } from '../pages/legalDocs';
+import { getLegalDocs } from '../pages/legalDocs';
+import { legalPath } from '../content/legalSlugs';
 import './LegalLinks.css';
 
-// Order shown in footers (the seller information page comes last)
-const FOOTER_SLUGS = [
+// Order shown in footers (the seller information page comes last, abuse reporting right before it)
+const FOOTER_IDS = [
   'mesafeli-satis-sozlesmesi',
   'on-bilgilendirme-formu',
   'iade-ve-iptal-kosullari',
@@ -11,16 +12,18 @@ const FOOTER_SLUGS = [
   'kvkk-aydinlatma-metni',
   'cerez-politikasi',
   'kullanim-kosullari',
+  'kotuye-kullanim-bildirimi',
   'satici-bilgileri',
 ];
 
-/** Row of links to every legal document (footer of the landing page, checkout and legal pages). */
-function LegalLinks({ className = '' }) {
-  const docs = FOOTER_SLUGS.map((slug) => LEGAL_DOCS.find((doc) => doc.slug === slug)).filter(Boolean);
+/** Row of links to every legal document in the given language (landing, checkout, blog and legal pages). */
+function LegalLinks({ className = '', lang = 'tr' }) {
+  const docs = getLegalDocs(lang);
+  const items = FOOTER_IDS.map((id) => docs.find((doc) => doc.id === id)).filter(Boolean);
   return (
-    <nav className={`legalLinks ${className}`} aria-label="Yasal">
-      {docs.map((doc) => (
-        <Link key={doc.slug} to={`/yasal/${doc.slug}`} className="legalLink">
+    <nav className={`legalLinks ${className}`} aria-label={lang === 'en' ? 'Legal' : 'Yasal'}>
+      {items.map((doc) => (
+        <Link key={doc.id} to={legalPath(lang, doc.id)} className="legalLink">
           {doc.title}
         </Link>
       ))}

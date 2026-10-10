@@ -19,6 +19,7 @@ import { checkoutPath } from '../utils/checkout';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import BillingToggle from '../components/BillingToggle';
 import LegalLinks from '../components/LegalLinks';
+import { legalPath } from '../content/legalSlugs';
 import './CheckoutPage.css';
 
 const formatDate = (value, lang) =>
@@ -253,7 +254,7 @@ function CheckoutForm({ theme }) {
     }
   };
 
-  const total = formatPrice(plan, period);
+  const total = formatPrice(plan, period, billing.currency);
   const isTrial = Boolean(billing.trial);
   const chargeDate = formatDate(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000, lang);
   const rows = buildPlanRows(plan, lang);
@@ -286,7 +287,7 @@ function CheckoutForm({ theme }) {
                     <span className="cxPlanDesc">{planCopy.descs[planId]}</span>
                   </span>
                   <span className="cxPlanPrice">
-                    {formatPrice(planId, period)}
+                    {formatPrice(planId, period, billing.currency)}
                     <em>{period === 'yearly' ? planCopy.periodYear : planCopy.period}</em>
                   </span>
                 </button>
@@ -379,9 +380,9 @@ function CheckoutForm({ theme }) {
                   <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
                   <span>
                     {text.termsLead}
-                    <a href="/yasal/on-bilgilendirme-formu" target="_blank" rel="noopener noreferrer">{text.termsForm}</a>
+                    <a href={legalPath(lang, 'on-bilgilendirme-formu')} target="_blank" rel="noopener noreferrer">{text.termsForm}</a>
                     {text.termsAnd}
-                    <a href="/yasal/mesafeli-satis-sozlesmesi" target="_blank" rel="noopener noreferrer">{text.termsContract}</a>
+                    <a href={legalPath(lang, 'mesafeli-satis-sozlesmesi')} target="_blank" rel="noopener noreferrer">{text.termsContract}</a>
                     {isTrial ? text.trialTermsTail : text.termsTail}
                   </span>
                 </label>
@@ -397,7 +398,7 @@ function CheckoutForm({ theme }) {
             )}
           </section>
         </div>
-        <LegalLinks className="cxLegal" />
+        <LegalLinks className="cxLegal" lang={lang} />
       </main>
     </div>
   );

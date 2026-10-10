@@ -10,6 +10,7 @@ import { requireDbReady } from './middleware/dbMiddleware.js';
 import urlRoutes from './routes/urlRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import billingRoutes from './routes/billingRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
 import Url from './models/Url.js';
 
 // Load environment variables from .env file
@@ -102,6 +103,7 @@ app.get('/api/health', (req, res) => {
 // 5. API Routers protected by database readiness check (fail fast with 503 instead of hanging)
 app.use('/api/user', requireDbReady, userRoutes);
 app.use('/api/billing', requireDbReady, billingRoutes);
+app.use('/api/report', requireDbReady, reportRoutes);
 app.use('/api', requireDbReady, urlRoutes);
 
 // 6. Short URL redirection (GET /@:userIdent/:customText and GET /:shortCode)

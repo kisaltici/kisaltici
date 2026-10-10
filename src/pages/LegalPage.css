@@ -202,3 +202,27 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.lgLang {
+  justify-self: end;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font: 600 0.75rem/1 'Geist Mono', ui-monospace, monospace;
+  text-decoration: none;
+}
+
+.lgLang:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.lgNote {
+  margin: 1rem 0 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent-color);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}

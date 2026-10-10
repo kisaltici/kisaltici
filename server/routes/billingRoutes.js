@@ -13,7 +13,10 @@ import {
   isTrialEnabled,
   YEARLY_MONTHS_CHARGED,
   PLAN_NAMES_TR,
-  priceTry,
+  priceFor,
+  currencyForRequest,
+  paytrCurrency,
+  MONTHLY_PRICE_USD,
   toKurus,
   addPeriod,
   getPaytrConfig,
@@ -61,6 +64,7 @@ export const activateSubscription = async (order) => {
     {
       $set: {
         membershipPlan: order.plan,
+        billingCurrency: order.currency || 'TRY',
         planExpiresAt: expiresAt,
         billingPeriod: order.period,
       },
@@ -83,7 +87,9 @@ router.get('/config', (req, res) => {
     testMode: config.testMode === '1',
     trial: isTrialEnabled(),
     trialDays: TRIAL_DAYS,
+    currency: currencyForRequest(req),
     prices: MONTHLY_PRICE_TRY,
+    pricesUsd: MONTHLY_PRICE_USD,
     yearlyMonthsCharged: YEARLY_MONTHS_CHARGED,
   });
 });
@@ -138,7 +144,8 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
     // First checkout of an account that has not used its trial: a card-verification payment starts the trial
     const account = await User.findOne({ userId: req.user.uid }).select('trialUsedAt').lean();
     const isTrial = isTrialEnabled() && !account?.trialUsedAt;
-    const amountKurus = isTrial ? TRIAL_VERIFY_KURUS : toKurus(priceTry(plan, period));
+    const currency = currencyForRequest(req);
+    const amountKurus = isTrial ? TRIAL_VERIFY_KURUS : toKurus(priceFor(plan, period, currency));
     const orderId = newMerchantOid();
     const appUrl = getAppUrl();
     const periodLabel = period === 'yearly' ? 'Yıllık' : 'Aylık';
@@ -156,7 +163,7 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       user_basket: basket,
       no_installment: '0',
       max_installment: '0',
-      currency: 'TL',
+      currency: paytrCurrency(currency),
       test_mode: config.testMode,
       user_name: name,
       user_address: addr,
@@ -164,7 +171,7 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       merchant_ok_url: `${appUrl}/checkout/success?oid=${orderId}`,
       merchant_fail_url: `${appUrl}/checkout/failed?oid=${orderId}`,
       timeout_limit: '30',
-      lang: 'tr',
+      lang: currency === 'USD' ? 'en' : 'tr',
       debug_on: config.testMode === '1' ? '1' : '0',
     };
     fields.paytr_token = buildIframeToken({
@@ -188,6 +195,7 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       plan,
       period,
       kind: isTrial ? 'trial' : 'payment',
+      currency,
       amountKurus,
       testMode: config.testMode === '1',
       email,

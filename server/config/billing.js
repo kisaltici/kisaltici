@@ -23,6 +23,29 @@ export const BILLING_PERIODS = ['monthly', 'yearly'];
 
 // TRY per month
 export const MONTHLY_PRICE_TRY = { starter: 49, pro: 149, business: 399 };
+// USD per month for customers outside Türkiye (only when INTL_PRICING=1 and PayTR has enabled USD on the store)
+export const MONTHLY_PRICE_USD = { starter: 3, pro: 5, business: 10 };
+
+export const isIntlPricingEnabled = () => process.env.INTL_PRICING === '1';
+
+/**
+ * Currency a request pays in. Türkiye (and anything unknown, e.g. local development) pays in TRY; other countries in USD
+ * once INTL_PRICING is on. Vercel provides the visitor's country in x-vercel-ip-country.
+ */
+export const currencyForRequest = (req) => {
+  if (!isIntlPricingEnabled()) return 'TRY';
+  const country = String(req.get('x-vercel-ip-country') || '').toUpperCase();
+  return country && country !== 'TR' ? 'USD' : 'TRY';
+};
+
+/** Price in whole currency units for a plan, period and currency. */
+export const priceFor = (plan, period, currency = 'TRY') => {
+  const table = currency === 'USD' ? MONTHLY_PRICE_USD : MONTHLY_PRICE_TRY;
+  return period === 'yearly' ? table[plan] * YEARLY_MONTHS_CHARGED : table[plan];
+};
+
+/** Currency code PayTR expects ('TL' for Turkish lira). */
+export const paytrCurrency = (currency) => (currency === 'USD' ? 'USD' : 'TL');
 
 // Yearly billing charges 10 months and gives 12 ("2 months free")
 export const YEARLY_MONTHS_CHARGED = 10;

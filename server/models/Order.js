@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema(
     plan: { type: String, enum: ['starter', 'pro', 'business'], required: true },
     period: { type: String, enum: ['monthly', 'yearly'], required: true },
     amountKurus: { type: Number, required: true },
-    currency: { type: String, default: 'TL' },
+    currency: { type: String, enum: ['TRY', 'USD'], default: 'TRY' },
     kind: { type: String, enum: ['payment', 'trial', 'renewal'], default: 'payment' },
     status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
     testMode: { type: Boolean, default: false },

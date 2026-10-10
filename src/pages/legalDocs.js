@@ -1,4 +1,6 @@
 import { SELLER as S, LEGAL_UPDATED } from '../config/legal';
+import { LEGAL_DOCS_EN } from './legalDocs.en';
+import { legalSlug } from '../content/legalSlugs';
 
 /**
  * Legal documents (Turkish). Each section: { h: heading, p: [paragraphs], list: [bullet items] }.
@@ -58,7 +60,7 @@ export const LEGAL_DOCS = [
         p: [
           `Hizmet; Başlangıç, Profesyonel veya Kurumsal plan olarak sunulan, günlük bağlantı ve QR kod hakları, istatistik geçmişi ve plana bağlı ek özellikler içeren, aylık veya yıllık dönemlerle yenilenen bir dijital abonelik hizmetidir. Planların kapsamı ve güncel fiyatları ödeme sayfasında ve sitedeki plan listesinde gösterilir.`,
           `İlk abonelikte, hesap başına bir defa olmak üzere ${S.trialDays} günlük ücretsiz deneme uygulanır. Deneme süresince seçilen planın tüm özellikleri kullanılabilir. Deneme başlangıcında ALICI'dan ödeme kartı bilgisi alınır.`,
-          `Satış bedeli, ALICI'nın seçtiği plan ve dönem için ödeme sayfasında gösterilen toplam tutardır ve Türk lirası olarak tahsil edilir. Yıllık dönem seçildiğinde 12 aylık hizmet, 10 aylık bedel üzerinden sunulur. ALICI, siparişi onaylamadan önce toplam bedeli ödeme sayfasında görür.`,
+          `Satış bedeli, ALICI'nın seçtiği plan ve dönem için ödeme sayfasında gösterilen toplam tutardır; Türkiye'deki müşteriler için Türk lirası, diğer ülkelerdeki müşteriler için ödeme sayfasında belirtildiği şekilde ABD doları olarak tahsil edilir. Yıllık dönem seçildiğinde 12 aylık hizmet, 10 aylık bedel üzerinden sunulur. ALICI, siparişi onaylamadan önce toplam bedeli ödeme sayfasında görür.`,
         ],
       },
       {
@@ -138,7 +140,7 @@ export const LEGAL_DOCS = [
       {
         h: 'Toplam bedel ve ödeme',
         p: [
-          `Seçilen plan ve dönem için toplam bedel, siparişi onaylamadan önce ödeme sayfasında Türk lirası olarak gösterilir. Kart bilgileri PayTR güvenli ödeme sayfasında alınır ve satıcıda saklanmaz. Deneme süresi bitiminde plan ücreti, tanımlanan karttan otomatik olarak tek çekim tahsil edilir ve abonelik iptal edilmedikçe her dönem aynı şekilde yenilenir. Ödeme sayfasında deneme sonrası çekilecek tutar ve tarih önceden gösterilir.`,
+          `Seçilen plan ve dönem için toplam bedel, siparişi onaylamadan önce ödeme sayfasında gösterilir; Türkiye'deki müşteriler için Türk lirası, diğer ülkelerdeki müşteriler için ABD doları olarak tahsil edilir. Kart bilgileri PayTR güvenli ödeme sayfasında alınır ve satıcıda saklanmaz. Deneme süresi bitiminde plan ücreti, tanımlanan karttan otomatik olarak tek çekim tahsil edilir ve abonelik iptal edilmedikçe her dönem aynı şekilde yenilenir. Ödeme sayfasında deneme sonrası çekilecek tutar ve tarih önceden gösterilir.`,
         ],
       },
       {
@@ -316,6 +318,34 @@ export const LEGAL_DOCS = [
   },
 
   {
+    slug: 'kotuye-kullanim-bildirimi',
+    title: 'Kötüye Kullanım Bildirimi',
+    summary: 'Kimlik avı, zararlı yazılım veya yasa dışı içeriğe giden bir kısa bağlantıyı bildir.',
+    sections: [
+      {
+        h: 'Neyi bildirebilirsin?',
+        p: [
+          `${S.brand} üzerinden oluşturulmuş bir kısa bağlantının aşağıdaki içeriklere yönlendirdiğini düşünüyorsan bize bildirebilirsin:`,
+        ],
+        list: [
+          'Kimlik avı (phishing) veya dolandırıcılık sayfaları',
+          'Zararlı yazılım, virüs veya istenmeyen yazılım indirten sayfalar',
+          'Yasa dışı, nefret veya taciz içeren içerikler',
+          'Telif hakkı veya marka hakkı ihlali',
+          'Aldatıcı veya yanıltıcı sayfalar',
+        ],
+      },
+      {
+        h: 'Bildirimi nasıl değerlendiriyoruz?',
+        p: [
+          `Bildirimleri inceleriz. Kullanım Koşulları'na aykırı olduğu tespit edilen bağlantıları devre dışı bırakır ve gerekirse ilgili hesabı kısıtlarız. Yasal bir talep olması halinde yetkili makamlarla iletişime geçebiliriz. Bildirimine her zaman bireysel yanıt veremeyebiliriz.`,
+          `Acil durumlarda doğrudan ${S.email} adresine de yazabilirsin.`,
+        ],
+      },
+    ],
+  },
+
+  {
     slug: 'cerez-politikasi',
     title: 'Çerez ve Yerel Depolama Politikası',
     summary: 'Tarayıcında hangi bilgileri sakladığımız.',
@@ -401,4 +431,45 @@ export const LEGAL_DOCS = [
   },
 ];
 
-export const getLegalDoc = (slug) => LEGAL_DOCS.find((doc) => doc.slug === slug) || null;
+export const LEGAL_UI = {
+  tr: {
+    home: 'Ana sayfa',
+    title: 'Yasal',
+    subtitle: 'Hizmet koşulları, gizlilik ve satış sözleşmesi metinleri.',
+    allLegal: 'Tüm yasal metinler',
+    notFoundTitle: 'Sayfa bulunamadı',
+    notFoundText: 'Aradığın yasal metin mevcut değil.',
+    updated: 'Son güncelleme',
+    version: 'Sürüm',
+    pageTitle: 'Yasal Metinler | Kısaltıcı',
+    pageDescription:
+      'Kısaltıcı hizmet koşulları, gizlilik politikası, KVKK aydınlatma metni ve mesafeli satış sözleşmesi.',
+    translationNote: '',
+  },
+  en: {
+    home: 'Home',
+    title: 'Legal',
+    subtitle: 'Terms of use, privacy and sales agreement texts.',
+    allLegal: 'All legal documents',
+    notFoundTitle: 'Page not found',
+    notFoundText: 'The legal document you are looking for does not exist.',
+    updated: 'Last updated',
+    version: 'Version',
+    pageTitle: 'Legal Documents | Kısaltıcı',
+    pageDescription:
+      'Kısaltıcı terms of use, privacy policy, KVKK privacy notice and distance sales agreement.',
+    translationNote:
+      'This is a courtesy translation. The Turkish version is the legally binding text and prevails in case of any difference.',
+  },
+};
+
+/** Legal documents in a language: { id (Turkish slug), slug (URL slug in that language), title, summary, sections }. */
+export const getLegalDocs = (lang) =>
+  LEGAL_DOCS.map((doc) => {
+    const en = lang === 'en' ? LEGAL_DOCS_EN[doc.slug] : null;
+    return en
+      ? { id: doc.slug, slug: legalSlug(doc.slug, 'en'), ...en }
+      : { id: doc.slug, ...doc };
+  });
+
+export const getLegalDoc = (slug, lang = 'tr') => getLegalDocs(lang).find((doc) => doc.slug === slug) || null;
