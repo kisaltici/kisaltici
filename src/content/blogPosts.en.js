@@ -5,6 +5,7 @@
 export const POSTS_EN = {
   'kisa-link-seo-etkisi': {
     slug: 'do-short-links-hurt-seo',
+    seoTitle: 'Do Short Links Hurt SEO?',
     title: 'Do Shortened Links Hurt SEO? A Guide to Using Them Correctly',
     description:
       'Do short links affect search rankings? Learn how redirects relate to SEO and where to use a short link and where not to.',
@@ -69,6 +70,7 @@ export const POSTS_EN = {
 
   'utm-parametreleri-nasil-olusturulur': {
     slug: 'how-to-create-utm-parameters',
+    seoTitle: 'How to Create UTM Parameters',
     title: 'How to Create UTM Parameters: A Step-by-Step Guide with Examples',
     description:
       'What are UTM tags, what do the five parameters do and how do you name them consistently? A guide to building UTM links with example addresses.',
@@ -131,6 +133,7 @@ export const POSTS_EN = {
 
   'statik-ve-dinamik-qr-kod-farki': {
     slug: 'static-vs-dynamic-qr-codes',
+    seoTitle: 'Static vs Dynamic QR Codes',
     title: 'Static vs Dynamic QR Codes: What Is the Difference and Which Should You Choose?',
     description:
       'The differences between static and dynamic QR codes, their advantages and when to choose which. Where a short link fits in.',
@@ -185,6 +188,7 @@ export const POSTS_EN = {
 
   'etkinlik-konferans-qr-kod-kullanimi': {
     slug: 'qr-codes-for-events-and-conferences',
+    seoTitle: 'QR Codes at Events and Conferences',
     title: 'QR Codes at Events and Conferences: Registration, Schedule and Feedback',
     description:
       'How to use QR codes at events for registration, schedules, maps and feedback. Placement tips and ideas for measuring results.',
@@ -241,6 +245,7 @@ export const POSTS_EN = {
 
   'e-posta-bultenlerinde-link-kullanimi': {
     slug: 'links-in-email-newsletters',
+    seoTitle: 'Links in Email Newsletters: 7 Tips',
     title: 'Links in Email Newsletters: 7 Ways to Get More Clicks',
     description:
       'How should you place links in your newsletters to get clicked more? Seven practical tips: a clear call to action, a single goal and measurement.',
@@ -302,6 +307,7 @@ export const POSTS_EN = {
 
   'kampanya-link-planlama-kontrol-listesi': {
     slug: 'link-campaign-planning-checklist',
+    seoTitle: 'Link Campaign Planning Checklist',
     title: 'Short Link Campaign Planning Checklist: Email, Social Media and Print',
     description:
       'Why is a separate short link per channel important in a campaign? A practical checklist from setting a goal to reporting.',
@@ -361,6 +367,7 @@ export const POSTS_EN = {
 
   'sosyal-medya-biyografi-link-ipuclari': {
     slug: 'social-media-bio-link-tips',
+    seoTitle: 'Social Media Bio Link Tips',
     title: 'Adding a Link to Your Social Media Bio: 6 Tips for More Clicks',
     description:
       'Ways to use the single link in your bio more effectively: a short, readable address, a clear call to action and per-platform measurement.',
@@ -418,6 +425,7 @@ export const POSTS_EN = {
 
   'kartvizit-afis-menu-qr-kod-ipuclari': {
     slug: 'qr-codes-on-print-materials',
+    seoTitle: 'QR Codes on Print Materials',
     title: 'QR Codes on Business Cards, Posters and Menus: Size, Placement and Design Tips',
     description:
       'How big should a QR code on print materials be, where should it go and how should it be designed? Practical sizes and common mistakes.',
@@ -477,6 +485,7 @@ export const POSTS_EN = {
 
   'sahte-qr-kod-quishing-korunma': {
     slug: 'protect-yourself-from-fake-qr-codes',
+    seoTitle: 'Protect Yourself from Fake QR Codes',
     title: 'How to Protect Yourself from Fake QR Codes (Quishing)',
     description:
       'How QR code phishing attacks work and how to spot them. Security tips for both users and people who share QR codes.',
@@ -533,6 +542,7 @@ export const POSTS_EN = {
 
   'ozel-kisa-link-marka-baglantisi': {
     slug: 'custom-short-links-for-your-brand',
+    seoTitle: 'Custom Short Links for Your Brand',
     title: 'What Is a Custom Short Link? 5 Benefits of a Branded Link',
     description:
       'How does a readable, memorable custom short link increase trust and recall compared to random codes? Benefits and tips.',
@@ -597,6 +607,7 @@ export const POSTS_EN = {
 
   'qr-kod-nasil-olusturulur': {
     slug: 'how-to-create-a-qr-code',
+    seoTitle: 'How to Create a QR Code',
     title: 'How to Create a QR Code: A Step-by-Step Guide',
     description:
       'Learn step by step how to create a QR code for a link, design one that scans well and looks good, and avoid the most common mistakes.',
@@ -663,6 +674,7 @@ export const POSTS_EN = {
 
   'link-kisaltma-nedir': {
     slug: 'what-is-link-shortening',
+    seoTitle: 'What Is Link Shortening?',
     title: 'What Is Link Shortening? Benefits and How to Use It',
     description:
       'How does link shortening work, what is it for and when does it help? Learn the benefits of short links and security tips.',
@@ -720,6 +732,7 @@ export const POSTS_EN = {
 
   'link-tiklamalari-nasil-takip-edilir': {
     slug: 'how-to-track-short-link-clicks',
+    seoTitle: 'How to Track Short Link Clicks',
     title: 'How to Track Short Link Clicks: Accurate Measurement with UTM',
     description:
       'How do you see how many times your shared link was clicked? The basics of click tracking and a guide to campaign measurement with UTM tags.',

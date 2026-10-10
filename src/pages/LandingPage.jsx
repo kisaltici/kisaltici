@@ -481,6 +481,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
               src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'}
               alt="Kısaltıcı"
               className="lpBrandImg"
+              width="80"
               height="26"
             />
           </a>
@@ -502,7 +503,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
                 setLanguageMode(next);
                 navigate(alternatePath(location.pathname, next));
               }}
-              aria-label={nav.language}
+              aria-label={`${lang === 'tr' ? 'EN' : 'TR'}: ${nav.language}`}
               title={nav.language}
             >
               {lang === 'tr' ? 'EN' : 'TR'}
@@ -881,6 +882,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
             <img
               src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'}
               alt="Kısaltıcı"
+              width="68"
               height="22"
             />
             <p>{footer.tagline}</p>

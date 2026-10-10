@@ -255,7 +255,7 @@ function BlogPage({ theme }) {
   useEffect(() => {
     window.scrollTo(0, 0);
     applySeo({
-      title: post ? `${post.title} | Kısaltıcı` : ui.pageTitle,
+      title: post ? `${post.seoTitle || post.title} | Kısaltıcı` : ui.pageTitle,
       description: post ? post.description : ui.pageDescription,
       path: blogPath(lang, slug),
       noindex: Boolean(slug && !post),
@@ -275,9 +275,9 @@ function BlogPage({ theme }) {
             <span>{post ? ui.allPosts : ui.home}</span>
           </button>
           <Link to={homePath(lang)} aria-label="Kısaltıcı">
-            <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="blLogo" />
+            <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="blLogo" width="74" height="24" />
           </Link>
-          <Link to={alternatePath(location.pathname, otherLang)} className="blLang" hrefLang={otherLang} aria-label={otherLang === 'en' ? 'English' : 'Türkçe'}>
+          <Link to={alternatePath(location.pathname, otherLang)} className="blLang" hrefLang={otherLang} aria-label={otherLang === 'en' ? 'EN: English' : 'TR: Türkçe'}>
             {otherLang.toUpperCase()}
           </Link>
         </div>

@@ -45,9 +45,9 @@ function LegalPage({ theme }) {
             <span>{ui.home}</span>
           </button>
           <Link to={homePath(lang)} aria-label="Kısaltıcı">
-            <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="lgLogo" />
+            <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="lgLogo" width="74" height="24" />
           </Link>
-          <Link to={alternatePath(location.pathname, otherLang)} className="lgLang" hrefLang={otherLang} aria-label={otherLang === 'en' ? 'English' : 'Türkçe'}>
+          <Link to={alternatePath(location.pathname, otherLang)} className="lgLang" hrefLang={otherLang} aria-label={otherLang === 'en' ? 'EN: English' : 'TR: Türkçe'}>
             {otherLang.toUpperCase()}
           </Link>
         </div>

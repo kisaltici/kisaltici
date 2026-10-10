@@ -46,8 +46,9 @@ export const BLOG_UI = {
     related: 'Önerilen yazılar',
     notFoundTitle: 'Yazı bulunamadı',
     notFoundText: 'Aradığın blog yazısı mevcut değil.',
-    pageTitle: 'Blog | Kısaltıcı',
-    pageDescription: 'Link kısaltma, QR kod ve tıklama takibi hakkında rehberler ve ipuçları.',
+    pageTitle: 'Blog: Link Kısaltma ve QR Kod Rehberleri | Kısaltıcı',
+    pageDescription:
+      'Link kısaltma, QR kod oluşturma, UTM ve tıklama takibi hakkında kısa, uygulanabilir rehberler ve ipuçları.',
     landingTitle: 'Rehberler ve ipuçları',
     landingText: 'Link kısaltma, QR kod ve tıklama takibi üzerine kısa yazılar.',
     allLink: 'Tüm yazılar',
@@ -77,8 +78,9 @@ export const BLOG_UI = {
     related: 'Recommended posts',
     notFoundTitle: 'Post not found',
     notFoundText: 'The blog post you are looking for does not exist.',
-    pageTitle: 'Blog | Kısaltıcı',
-    pageDescription: 'Guides and tips on link shortening, QR codes and click tracking.',
+    pageTitle: 'Blog: Link Shortening and QR Code Guides | Kısaltıcı',
+    pageDescription:
+      'Short, practical guides and tips on link shortening, creating QR codes, UTM tags and click tracking.',
     landingTitle: 'Guides and tips',
     landingText: 'Short articles on link shortening, QR codes and click tracking.',
     allLink: 'All posts',

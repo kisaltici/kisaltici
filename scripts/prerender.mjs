@@ -54,7 +54,7 @@ try {
       `<link rel="alternate" hreflang="x-default" href="${abs(paths.tr)}" />`,
     ].join('\n    ');
 
-  const setHead = (html, { lang, title, description, urlPath, ld, paths }) => {
+  const setHead = (html, { lang, title, description, urlPath, ld, paths, ogType = 'website', extraHead = '' }) => {
     const seo = LANDING_SEO[lang];
     return html
       .replace(/<html lang="[^"]*"/, `<html lang="${lang}"`)
@@ -62,6 +62,7 @@ try {
       .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(description)}$2`)
       .replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${abs(urlPath)}$2`)
       .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${abs(urlPath)}$2`)
+      .replace(/(<meta property="og:type" content=")[^"]*(")/, `$1${ogType}$2`)
       .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
       .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
       .replace(/(<meta property="og:locale" content=")[^"]*(")/, `$1${seo.locale}$2`)
@@ -70,7 +71,7 @@ try {
       .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
       .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${esc(description)}$2`)
       .replace(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${abs(seo.image)}$2`)
-      .replace('<!--SEO_HREFLANG-->', paths ? alternatesBlock(paths) : '')
+      .replace('<!--SEO_HREFLANG-->', (paths ? alternatesBlock(paths) : '') + extraHead)
       .replace('<!--SEO_JSONLD-->', ld || '');
   };
 
@@ -251,6 +252,7 @@ try {
 
   /* ---------- Blog (both languages) ---------- */
   const blogIndexPaths = { tr: blog.blogPath('tr'), en: blog.blogPath('en') };
+  const rssLink = (lang) => `\n    <link rel="alternate" type="application/rss+xml" title="${NAME} Blog" href="${blog.blogPath(lang)}/feed.xml" />`;
   for (const lang of LANGS) {
     const ui = blog.BLOG_UI[lang];
     const posts = blog.getPosts(lang);
@@ -270,6 +272,7 @@ try {
           description: ui.pageDescription,
           urlPath: blogIndexPaths[lang],
           paths: blogIndexPaths,
+          extraHead: rssLink(lang),
           ld: breadcrumb([
             { name: NAME, url: abs(homePath(lang)) },
             { name: 'Blog', url: abs(blogIndexPaths[lang]) },
@@ -320,10 +323,12 @@ try {
           ),
           {
             lang,
-            title: `${post.title} | ${NAME}`,
+            title: `${post.seoTitle || post.title} | ${NAME}`,
             description: post.description,
             urlPath: paths[lang],
             paths,
+            ogType: 'article',
+            extraHead: `${rssLink(lang)}\n    <meta property="article:published_time" content="${post.date}" />`,
             ld:
               article +
               '\n    ' +
@@ -339,6 +344,70 @@ try {
     }
   }
   addToSitemap(blogIndexPaths, '0.7', 'weekly');
+
+  /* ---------- RSS feeds (one per language) ---------- */
+  for (const lang of LANGS) {
+    const posts = blog.getPosts(lang);
+    const items = posts
+      .map(
+        (b) => `    <item>
+      <title>${esc(b.title)}</title>
+      <link>${abs(blog.blogPath(lang, b.slug))}</link>
+      <guid isPermaLink="true">${abs(blog.blogPath(lang, b.slug))}</guid>
+      <pubDate>${new Date(b.date + 'T09:00:00Z').toUTCString()}</pubDate>
+      <category>${esc(b.category)}</category>
+      <description>${esc(b.description)}</description>
+    </item>`
+      )
+      .join('\n');
+    const dir = path.join(dist, lang === 'en' ? 'en/blog' : 'blog');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'feed.xml'),
+      `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${NAME} Blog</title>
+    <link>${abs(blog.blogPath(lang))}</link>
+    <atom:link href="${abs(blog.blogPath(lang))}/feed.xml" rel="self" type="application/rss+xml" />
+    <description>${esc(blog.BLOG_UI[lang].pageDescription)}</description>
+    <language>${lang === 'en' ? 'en' : 'tr'}</language>
+${items}
+  </channel>
+</rss>
+`
+    );
+  }
+
+  /* ---------- 404 page (served with status 404 for unknown public URLs) ---------- */
+  fs.writeFileSync(
+    path.join(dist, '404.html'),
+    `<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>404 | ${NAME}</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <style>
+      body { margin: 0; min-height: 100dvh; display: grid; place-items: center; background: #000; color: #f2f3f5; font-family: system-ui, sans-serif; text-align: center; padding: 1.5rem; }
+      h1 { margin: 0 0 .5rem; font-size: clamp(3rem, 12vw, 6rem); letter-spacing: -.04em; color: #deff36; }
+      p { margin: .25rem 0; color: #a1a1aa; }
+      a { color: #deff36; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>404</h1>
+      <p>Aradığın sayfa bulunamadı.</p>
+      <p>The page you are looking for was not found.</p>
+      <p><a href="/">${NAME}</a> · <a href="/blog">Blog</a> · <a href="/en">English</a></p>
+    </main>
+  </body>
+</html>
+`
+  );
 
   /* ---------- Sitemap with hreflang alternates ---------- */
   const today = new Date().toISOString().slice(0, 10);

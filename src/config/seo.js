@@ -11,7 +11,7 @@ export const LANDING_SEO = {
     locale: 'tr_TR',
   },
   en: {
-    title: 'Kısaltıcı | URL Shortener, QR Code Generator and Link Tracking',
+    title: 'Kısaltıcı | URL Shortener, QR Codes and Link Tracking',
     description:
       'Shorten long links in seconds, create branded QR codes and track clicks. Try it free for 7 days.',
     ogAlt: 'Kısaltıcı: shorten, share and track your links',

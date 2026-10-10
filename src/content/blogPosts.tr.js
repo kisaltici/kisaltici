@@ -11,6 +11,7 @@
 export const POSTS_TR = [
   {
     slug: 'kisa-link-seo-etkisi',
+    seoTitle: 'Kısa Linkler SEO’ya Zarar Verir mi?',
     title: 'Kısaltılmış Linkler SEO’ya Zarar Verir mi? Doğru Kullanım Rehberi',
     description:
       'Kısa bağlantılar arama sıralamasını etkiler mi? Yönlendirmelerin SEO’ya etkisini ve kısa linki nerede kullanıp nerede kullanmaman gerektiğini öğren.',
@@ -77,6 +78,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'utm-parametreleri-nasil-olusturulur',
+    seoTitle: 'UTM Parametreleri Nasıl Oluşturulur?',
     title: 'UTM Parametreleri Nasıl Oluşturulur? Örneklerle Adım Adım Rehber',
     description:
       'UTM etiketleri nedir, beş parametre ne işe yarar ve tutarlı isimlendirme nasıl yapılır? Örnek adreslerle UTM oluşturma rehberi.',
@@ -141,6 +143,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'statik-ve-dinamik-qr-kod-farki',
+    seoTitle: 'Statik ve Dinamik QR Kod Farkı',
     title: 'Statik ve Dinamik QR Kod Farkı Nedir? Hangisini Seçmelisin?',
     description:
       'Statik QR kod ile dinamik QR kod arasındaki farklar, avantajları ve hangi durumda hangisini seçmen gerektiği. Kısa bağlantıyla QR kodun yeri.',
@@ -197,6 +200,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'etkinlik-konferans-qr-kod-kullanimi',
+    seoTitle: 'Etkinliklerde QR Kod Kullanımı',
     title: 'Etkinlik ve Konferanslarda QR Kod: Kayıt, Program ve Geri Bildirim',
     description:
       'Etkinliklerde QR kodu kayıt, program, harita ve geri bildirim için nasıl kullanırsın? Yerleşim önerileri ve ölçüm fikirleri.',
@@ -255,6 +259,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'e-posta-bultenlerinde-link-kullanimi',
+    seoTitle: 'E-posta Bültenlerinde Link Kullanımı',
     title: 'E-posta Bültenlerinde Link Kullanımı: Tıklamayı Artıran 7 Yöntem',
     description:
       'Bültenlerinde bağlantıları nasıl yerleştirirsen daha çok tıklanır? Net çağrı, tek hedef ve ölçüm odaklı yedi pratik öneri.',
@@ -318,6 +323,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'kampanya-link-planlama-kontrol-listesi',
+    seoTitle: 'Link Kampanyası Planlama Listesi',
     title: 'Kısa Link Kampanyası Planlama Kontrol Listesi: E-posta, Sosyal Medya ve Baskı',
     description:
       'Bir kampanyada her kanal için ayrı kısa bağlantı kullanmak neden önemli? Hedef belirlemeden raporlamaya kadar uygulanabilir bir kontrol listesi.',
@@ -379,6 +385,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'sosyal-medya-biyografi-link-ipuclari',
+    seoTitle: 'Sosyal Medya Biyografisine Link Ekleme',
     title: 'Sosyal Medya Biyografisine Link Ekleme: Daha Fazla Tıklama İçin 6 İpucu',
     description:
       'Biyografideki tek bağlantıyı daha etkili kullanmanın yolları: kısa ve okunur adres, net çağrı ve platform bazlı ölçüm.',
@@ -438,6 +445,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'kartvizit-afis-menu-qr-kod-ipuclari',
+    seoTitle: 'Kartvizit ve Afişte QR Kod Rehberi',
     title: 'Kartvizit, Afiş ve Menüde QR Kod: Boyut, Konum ve Tasarım İpuçları',
     description:
       'Basılı materyalde QR kod kullanırken en az ne kadar büyük olmalı, nereye konmalı ve nasıl tasarlanmalı? Pratik ölçüler ve sık yapılan hatalar.',
@@ -499,6 +507,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'sahte-qr-kod-quishing-korunma',
+    seoTitle: 'Sahte QR Kodlardan Korunma (Quishing)',
     title: 'Sahte QR Kodlardan (Quishing) Nasıl Korunursun?',
     description:
       'QR kod ile yapılan kimlik avı saldırıları nasıl çalışır, nasıl fark edilir? Hem kullanıcılar hem QR kod paylaşanlar için güvenlik önerileri.',
@@ -557,6 +566,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'ozel-kisa-link-marka-baglantisi',
+    seoTitle: 'Özel Kısa Link Nedir? 5 Fayda',
     title: 'Özel Kısa Link Nedir? Markana Özel Bağlantı Oluşturmanın 5 Faydası',
     description:
       'Rastgele kodlar yerine okunur, akılda kalan özel bir kısa bağlantı kullanmak güveni ve hatırlanabilirliği nasıl artırır? Faydalar ve ipuçları.',
@@ -623,6 +633,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'qr-kod-nasil-olusturulur',
+    seoTitle: 'QR Kod Nasıl Oluşturulur? Rehber',
     title: 'QR Kod Nasıl Oluşturulur? Adım Adım Rehber',
     description:
       'Bir bağlantı için QR kod oluşturmayı, taranabilir ve şık bir tasarım yapmayı ve en sık yapılan hataları adım adım öğren.',
@@ -691,6 +702,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'link-kisaltma-nedir',
+    seoTitle: 'Link Kısaltma Nedir? Faydaları',
     title: 'Link Kısaltma Nedir? Faydaları ve Nasıl Kullanılır',
     description:
       'Link kısaltma nasıl çalışır, ne işe yarar ve hangi durumlarda işine yarar? Kısa bağlantıların faydalarını ve güvenlik ipuçlarını öğren.',
@@ -750,6 +762,7 @@ export const POSTS_TR = [
   },
   {
     slug: 'link-tiklamalari-nasil-takip-edilir',
+    seoTitle: 'Kısa Link Tıklamaları Nasıl Takip Edilir?',
     title: 'Kısa Link Tıklamaları Nasıl Takip Edilir? UTM ile Doğru Ölçüm',
     description:
       'Paylaştığın bağlantının kaç kez tıklandığını nasıl görürsün? Tıklama takibinin temelleri ve UTM etiketleriyle kampanya ölçümü rehberi.',
