@@ -50,6 +50,15 @@ function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, onLimitRea
   );
 }
 
+// True when this browser had a signed-in session before: only then is the landing page held back until Firebase answers
+const hadSession = () => {
+  try {
+    return localStorage.getItem('kslt_returning') === '1';
+  } catch {
+    return false;
+  }
+};
+
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -752,7 +761,7 @@ function AppContent() {
   // Signed-out visitors on the root path see the marketing landing page instead of the app shell
   if ((location.pathname === '/' || location.pathname === '/en') && !user) {
     // Only the very first auth check shows the placeholder; sign-in keeps the landing page visible
-    if (authLoading && !authWaitExpired) {
+    if (authLoading && !authWaitExpired && hadSession()) {
       return <div className="landingSplash" aria-hidden="true" />;
     }
     return (

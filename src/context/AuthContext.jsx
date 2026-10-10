@@ -85,6 +85,12 @@ export function AuthProvider({ children }) {
         setUser(currentUser);
         setAuthLoading(false);
         setAuthTransitioning(false);
+        try {
+          if (currentUser) localStorage.setItem('kslt_returning', '1');
+          else localStorage.removeItem('kslt_returning');
+        } catch {
+          /* storage unavailable */
+        }
       },
       (error) => {
         console.error('Firebase Auth state change error:', error);
