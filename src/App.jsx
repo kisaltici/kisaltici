@@ -49,6 +49,16 @@ function AppContent() {
   const [authWaitExpired, setAuthWaitExpired] = useState(false);
   const { user, getIdToken, authTransitioning, authLoading, membershipPlan, refetchProfile } = useAuth();
 
+  // Signing out from anywhere in the app returns to the landing page (only on a signed-in -> signed-out change,
+  // so guests who never signed in can keep using /link pages)
+  const previousUidRef = useRef(null);
+  useEffect(() => {
+    if (previousUidRef.current && !user) {
+      navigate('/', { replace: true });
+    }
+    previousUidRef.current = user ? user.uid : null;
+  }, [user, navigate]);
+
   useEffect(() => {
     if (!authLoading) return undefined;
     const timer = setTimeout(() => setAuthWaitExpired(true), 3000);
