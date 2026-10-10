@@ -26,7 +26,7 @@ import { generateTitleFromUrl } from './utils/titleGenerator';
 import { applyColorTheme } from './utils/themePresets';
 import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
 import { LanguageProvider, useTranslation } from './i18n/LanguageContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth, preloadAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
 import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout } from './utils/checkout';
 import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD } from './config/plans';
@@ -134,6 +134,7 @@ function AppContent() {
   const historyInFlightUidRef = useRef(null);
 
   const handleOpenAuthModal = (mode = 'login') => {
+    preloadAuth().catch(() => {});
     setAuthModalMode(mode);
     setIsAuthModalOpen(true);
   };

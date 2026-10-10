@@ -53,7 +53,7 @@
 
 .lpSentinel {
   position: absolute;
-  top: 0;
+  top: 48px; /* the nav changes style 48px below the top, so iOS rubber-band overscroll never flips it back and forth */
   left: 0;
   width: 1px;
   height: 1px;
@@ -1968,4 +1968,56 @@
   font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
+}
+
+.lpBlogSkeleton {
+  width: 100%;
+  min-height: 340px;
+  border: 1px solid var(--lp-line);
+  border-radius: 20px;
+  background: var(--surface-bg);
+}
+
+/* Touch devices: no backdrop blur on the landing page. Stacked blurred layers over a sticky header make mobile
+   browsers flicker while scrolling; solid surfaces look the same at a fraction of the cost. */
+@media (max-width: 900px), (pointer: coarse) {
+  .lpGlass,
+  .lpPlan,
+  .lpBlogCard,
+  .lpNavWrap.isScrolled .lpNav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .lpGlass {
+    background: var(--surface-bg);
+  }
+
+  .lpNavWrap.isScrolled .lpNav {
+    background: var(--surface-bg);
+  }
+
+  .lpNavWrap {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .lpBrand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .lpLangHint a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+  }
+
+  .lpLangHint button {
+    width: 40px;
+    height: 40px;
+  }
 }

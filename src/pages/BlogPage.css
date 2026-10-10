@@ -478,3 +478,23 @@
     bottom: -0.2rem;
   }
 }
+
+@media (max-width: 900px) {
+  .blTab {
+    min-height: 40px;
+  }
+
+  .blLang,
+  .lgLang {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 0.8rem;
+  }
+
+  .blTopInner > a:not(.blLang) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}

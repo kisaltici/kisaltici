@@ -1,13 +1,42 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import {
-  onAuthStateChanged,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth';
-import { auth, googleProvider } from '../firebase';
 import { API_BASE_URL } from '../config/api';
+import { isPublicPath } from '../i18n/siteLang';
+
+/**
+ * Firebase (~150 KB) is loaded on demand instead of with the first bundle so public pages paint sooner:
+ * immediately for returning users and app pages, shortly after first paint (idle) for first-time visitors on the
+ * public marketing pages, and right away when someone opens the sign-in dialog (preloadAuth).
+ */
+let firebasePromise = null;
+let firebaseApi = null;
+export const preloadAuth = () => {
+  if (!firebasePromise) {
+    firebasePromise = Promise.all([import('../firebase'), import('firebase/auth')])
+      .then(([fb, authModule]) => {
+        firebaseApi = { auth: fb.auth, googleProvider: fb.googleProvider, ...authModule };
+        return firebaseApi;
+      })
+      .catch((error) => {
+        firebasePromise = null; // allow a retry on the next call
+        throw error;
+      });
+  }
+  return firebasePromise;
+};
+
+const hadSession = () => {
+  try {
+    return localStorage.getItem('kslt_returning') === '1';
+  } catch {
+    return false;
+  }
+};
+// First-time visitors of the public pages are treated as guests until Firebase answers
+const startsAsGuest = () => typeof window !== 'undefined' && isPublicPath(window.location.pathname) && !hadSession();
+const whenIdle = (callback) => {
+  if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(callback, { timeout: 2500 });
+  else window.setTimeout(callback, 1800);
+};
 
 const AuthContext = createContext(null);
 
@@ -66,7 +95,7 @@ export function getTurkishAuthErrorMessage(errorOrCode) {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(() => !startsAsGuest());
   const [authTransitioning, setAuthTransitioning] = useState(false);
   const [authError, setAuthError] = useState(null);
 
@@ -79,34 +108,57 @@ export function AuthProvider({ children }) {
   const fetchingProfileUidRef = useRef(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (currentUser) => {
-        setUser(currentUser);
-        setAuthLoading(false);
-        setAuthTransitioning(false);
-        try {
-          if (currentUser) localStorage.setItem('kslt_returning', '1');
-          else localStorage.removeItem('kslt_returning');
-        } catch {
-          /* storage unavailable */
-        }
-      },
-      (error) => {
-        console.error('Firebase Auth state change error:', error);
-        setAuthError(getAuthErrorMessage(error));
-        setAuthLoading(false);
-        setAuthTransitioning(false);
-      }
-    );
+    let unsubscribe = () => {};
+    let cancelled = false;
 
-    return () => unsubscribe();
+    const start = async () => {
+      let api;
+      try {
+        api = await preloadAuth();
+      } catch (error) {
+        console.error('Firebase failed to load:', error);
+        if (!cancelled) {
+          setAuthError(getAuthErrorMessage(error));
+          setAuthLoading(false);
+        }
+        return;
+      }
+      if (cancelled) return;
+      unsubscribe = api.onAuthStateChanged(
+        api.auth,
+        (currentUser) => {
+          setUser(currentUser);
+          setAuthLoading(false);
+          setAuthTransitioning(false);
+          try {
+            if (currentUser) localStorage.setItem('kslt_returning', '1');
+            else localStorage.removeItem('kslt_returning');
+          } catch {
+            /* storage unavailable */
+          }
+        },
+        (error) => {
+          console.error('Firebase Auth state change error:', error);
+          setAuthError(getAuthErrorMessage(error));
+          setAuthLoading(false);
+          setAuthTransitioning(false);
+        }
+      );
+    };
+
+    if (startsAsGuest()) whenIdle(start);
+    else start();
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const getIdToken = useCallback(async () => {
-    if (!auth.currentUser) return null;
+    if (!firebaseApi?.auth.currentUser) return null;
     try {
-      return await auth.currentUser.getIdToken();
+      return await firebaseApi.auth.currentUser.getIdToken();
     } catch (e) {
       console.error('Failed to get Firebase ID token:', e);
       return null;
@@ -117,7 +169,8 @@ export function AuthProvider({ children }) {
     setAuthError(null);
     setAuthTransitioning(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const api = await preloadAuth();
+      const userCredential = await api.signInWithEmailAndPassword(api.auth, email, password);
       return { success: true, user: userCredential.user };
     } catch (error) {
       console.error('Email Sign-In Error:', error);
@@ -133,7 +186,8 @@ export function AuthProvider({ children }) {
     setAuthError(null);
     setAuthTransitioning(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const api = await preloadAuth();
+      const userCredential = await api.createUserWithEmailAndPassword(api.auth, email, password);
       return { success: true, user: userCredential.user };
     } catch (error) {
       console.error('Email Sign-Up Error:', error);
@@ -149,7 +203,8 @@ export function AuthProvider({ children }) {
     setAuthError(null);
     setAuthTransitioning(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const api = await preloadAuth();
+      const result = await api.signInWithPopup(api.auth, api.googleProvider);
       return { success: true, user: result.user };
     } catch (error) {
       console.error('Google Sign-In Error:', error);
@@ -169,7 +224,8 @@ export function AuthProvider({ children }) {
     setAuthError(null);
     setAuthTransitioning(true);
     try {
-      await signOut(auth);
+      const api = await preloadAuth();
+      await api.signOut(api.auth);
       setUser(null);
       setUserProfile(null);
       setProfileError(null);

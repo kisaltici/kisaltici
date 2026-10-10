@@ -13,7 +13,8 @@ import {
 import LegalLinks from '../components/LegalLinks';
 import BlogCard from '../components/BlogCard';
 import { applySeo } from '../utils/seo';
-import { alternatePath, homePath, langFromPath } from '../i18n/siteLang';
+import { homePath, langFromPath } from '../i18n/siteLang';
+import { alternatePath } from '../i18n/alternatePath';
 import './BlogPage.css';
 
 /* ---------------- index ---------------- */

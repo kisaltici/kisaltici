@@ -207,3 +207,33 @@ h1, h2, h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/* iOS Safari zooms the page when a focused field has a font size under 16px: keep fields at 16px on small screens */
+@media (max-width: 900px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch targets: at least ~40px tall for controls and standalone links on small screens */
+@media (max-width: 900px) {
+  .legalLink {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .headerControlBtn,
+  .headerAvatarBtn,
+  .menuToggleBtn,
+  .chipBtn {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  .sidebarUpgradeBtn {
+    min-height: 36px;
+  }
+}

@@ -5,7 +5,8 @@ import { LEGAL_DATES, LEGAL_VERSION } from '../config/legal';
 import AbuseReportForm from '../components/AbuseReportForm';
 import LegalLinks from '../components/LegalLinks';
 import { applySeo } from '../utils/seo';
-import { alternatePath, homePath, langFromPath } from '../i18n/siteLang';
+import { homePath, langFromPath } from '../i18n/siteLang';
+import { alternatePath } from '../i18n/alternatePath';
 import { legalPath } from '../content/legalSlugs';
 import './LegalPage.css';
 

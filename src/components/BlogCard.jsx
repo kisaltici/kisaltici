@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { blogPath, formatPostDate } from '../content/blogPosts';
+import { blogPath, formatPostDate } from '../content/blogUi';
 import './BlogCard.css';
 
 // Seeded random numbers so every post gets its own stable cover

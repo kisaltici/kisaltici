@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { QRCodeSVG } from 'qrcode.react';
 import { useTranslation } from '../i18n/LanguageContext';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, preloadAuth } from '../context/AuthContext';
 import { LANDING_COPY } from '../i18n/landingCopy';
 import { COLOR_THEMES } from '../utils/themePresets';
 import {
@@ -20,13 +20,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import BillingToggle from '../components/BillingToggle';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import LegalLinks from '../components/LegalLinks';
-import { BLOG_UI, blogPath, getPosts } from '../content/blogPosts';
+import { BLOG_UI, blogPath } from '../content/blogUi';
 import BlogCard from '../components/BlogCard';
-import { alternatePath } from '../i18n/siteLang';
+import { homePath } from '../i18n/siteLang';
 import { detectBrowserLanguage } from '../i18n/LanguageContext';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
+// The mobile URL bar collapsing resizes the viewport; do not rebuild every trigger for that (causes jumps and flicker)
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const THEME_LIST = Object.values(COLOR_THEMES);
 
@@ -113,6 +115,30 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
   const { signInWithGoogle } = useAuth();
   const copy = LANDING_COPY[lang] || LANDING_COPY.en;
   const blogUi = BLOG_UI[lang] || BLOG_UI.en;
+
+  // The three newest posts are loaded after first paint: the post texts are large and the cards sit far below the fold
+  // Load Firebase as soon as the visitor shows intent (first touch, pointer move, key or scroll), so the Google
+  // popup can open straight from the click without waiting for a download
+  useEffect(() => {
+    const events = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
+    const warm = () => {
+      preloadAuth().catch(() => {});
+      events.forEach((name) => window.removeEventListener(name, warm));
+    };
+    events.forEach((name) => window.addEventListener(name, warm, { passive: true, once: true }));
+    return () => events.forEach((name) => window.removeEventListener(name, warm));
+  }, []);
+
+  const [latestPosts, setLatestPosts] = useState([]);
+  useEffect(() => {
+    let active = true;
+    import('../content/blogPosts').then((module) => {
+      if (active) setLatestPosts(module.getPosts(lang).slice(0, 3));
+    });
+    return () => {
+      active = false;
+    };
+  }, [lang]);
 
   // Suggest the other language when the browser prefers it (never redirects automatically)
   const browserLang = detectBrowserLanguage();
@@ -448,10 +474,10 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
         <div className="lpLangHint" role="note">
           <span>{lang === 'tr' ? 'This page is also available in English.' : 'Bu sayfanın Türkçe sürümü de var.'}</span>
           <a
-            href={alternatePath(location.pathname, browserLang)}
+            href={homePath(browserLang)}
             onClick={(event) => {
               event.preventDefault();
-              navigate(alternatePath(location.pathname, browserLang));
+              navigate(homePath(browserLang));
             }}
           >
             {browserLang === 'en' ? 'View in English' : 'Türkçe görüntüle'}
@@ -501,7 +527,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
               onClick={() => {
                 const next = lang === 'tr' ? 'en' : 'tr';
                 setLanguageMode(next);
-                navigate(alternatePath(location.pathname, next));
+                navigate(homePath(next));
               }}
               aria-label={`${lang === 'tr' ? 'EN' : 'TR'}: ${nav.language}`}
               title={nav.language}
@@ -827,9 +853,13 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
             <p className="lpLead">{blogUi.landingText}</p>
           </div>
           <div className="lpBlogGrid">
-            {getPosts(lang).slice(0, 3).map((post, index) => (
-              <div key={post.id} data-reveal style={{ '--i': index }}>
-                <BlogCard post={post} lang={lang} minLabel={blogUi.minRead} />
+            {[0, 1, 2].map((index) => (
+              <div key={index} data-reveal style={{ '--i': index }}>
+                {latestPosts[index] ? (
+                  <BlogCard post={latestPosts[index]} lang={lang} minLabel={blogUi.minRead} />
+                ) : (
+                  <div className="lpBlogSkeleton" aria-hidden="true" />
+                )}
               </div>
             ))}
           </div>
