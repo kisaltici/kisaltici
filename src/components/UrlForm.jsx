@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { isPaidPlan } from '../utils/membership';
@@ -6,11 +6,8 @@ import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
 import { useShortenAllowance } from '../utils/useShortenAllowance';
 import LimitBanner from './LimitBanner';
 import './UrlForm.css';
+import { useToast } from './Toast';
 
-/* ── Toast helpers ────────────────────────────────────────────── */
-
-let _toastId = 0;
-const nextId = () => ++_toastId;
 
 /**
  * UrlForm
@@ -28,54 +25,13 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
   const [isLoading, setIsLoading] = useState(false);
   const [activeIntent, setActiveIntent] = useState(null);
 
-  // Toast queue: [{ id, message, type: 'error'|'info' }]
-  const [toasts, setToasts] = useState([]);
-  const dismissTimers = useRef({});
-  // Track last message to avoid rapid-fire duplicates
-  const lastToastMsg = useRef('');
-  const lastToastTime = useRef(0);
+  const toast = useToast();
+  // Every message goes to the app-wide toast (top centre, fades, closes after 3 seconds)
+  const pushToast = (message, type = 'error') => toast.show(message, type);
 
   const isPro = isPaidPlan(membershipPlan);
   const allowance = useShortenAllowance();
   const blocked = allowance.blocked;
-
-  /* ── Toast management ──────────────────────────────────────── */
-
-  const dismissToast = useCallback((id) => {
-    // Mark as exiting so the CSS exit animation plays
-    setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
-    );
-    // Remove after animation completes (250 ms)
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 280);
-  }, []);
-
-  const pushToast = useCallback(
-    (message, type = 'error', durationMs = 2700) => {
-      const now = Date.now();
-      // Debounce: if the identical message was shown within 600 ms, skip
-      if (
-        message === lastToastMsg.current &&
-        now - lastToastTime.current < 600
-      ) {
-        return;
-      }
-      lastToastMsg.current = message;
-      lastToastTime.current = now;
-
-      const id = nextId();
-      setToasts((prev) => [...prev, { id, message, type, exiting: false }]);
-
-      // Auto-dismiss
-      dismissTimers.current[id] = setTimeout(() => {
-        dismissToast(id);
-        delete dismissTimers.current[id];
-      }, durationMs);
-    },
-    [dismissToast]
-  );
 
   /* ── Validation ────────────────────────────────────────────── */
 
@@ -309,30 +265,6 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
         </button>
       </div>
 
-      {/* Floating toast stack */}
-      {toasts.length > 0 && (
-        <div className="toastStack" role="status" aria-live="polite" aria-atomic="false">
-          {toasts.map((toast) => (
-            <div
-              key={toast.id}
-              className={`toast toast--${toast.type}${toast.exiting ? ' toast--exit' : ''}`}
-            >
-              {toast.type === 'error' ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-              ) : (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" />
-                </svg>
-              )}
-              <span>{toast.message}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </form>
   );
 }

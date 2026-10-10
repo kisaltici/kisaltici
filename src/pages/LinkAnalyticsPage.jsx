@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { isPaidPlan } from '../utils/membership';
 import { API_BASE_URL } from '../config/api';
 import './LinkAnalyticsPage.css';
+import { useToast } from '../components/Toast';
 
 function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal, onOpenPricing }) {
   const { t } = useTranslation();
@@ -33,6 +34,11 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [customCode, setCustomCode] = useState('');
   const [customError, setCustomError] = useState('');
+  const toast = useToast();
+  const showCustomError = (message) => {
+    setCustomError(message);
+    if (message) toast.error(message);
+  };
   const [customSuccess, setCustomSuccess] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [gateMsg, setGateMsg] = useState(false);
@@ -152,7 +158,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
             : '';
         }
         setCustomCode(prefilled);
-        setCustomError('');
+        showCustomError('');
         setCustomSuccess('');
         setIsCustomizing(true);
       }
@@ -205,7 +211,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
         : '';
     }
     setCustomCode(prefilled);
-    setCustomError('');
+    showCustomError('');
     setCustomSuccess('');
     setIsCustomizing(true);
   };
@@ -213,7 +219,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
   const handleCustomizeCancel = () => {
     setIsCustomizing(false);
     setCustomCode('');
-    setCustomError('');
+    showCustomError('');
     setCustomSuccess('');
   };
 
@@ -224,24 +230,24 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
     // Admin: minimum 1 char, everyone else: minimum 3 chars
     const isAdmin = userIdent === 'admin';
     if (!trimmed) {
-      setCustomError('Bağlantı adı boş bırakılamaz.');
+      showCustomError('Bağlantı adı boş bırakılamaz.');
       return;
     }
     const validRegex = isAdmin ? /^[A-Za-z0-9_-]{1,30}$/ : /^[A-Za-z0-9_-]{3,30}$/;
     const lengthHint = isAdmin ? '1-30' : '3-30';
     if (!validRegex.test(trimmed)) {
-      setCustomError(`${lengthHint} karakter; harf, rakam, tire veya alt çizgi kullanın.`);
+      showCustomError(`${lengthHint} karakter; harf, rakam, tire veya alt çizgi kullanın.`);
       return;
     }
 
     setIsSaving(true);
-    setCustomError('');
+    showCustomError('');
     setCustomSuccess('');
 
     try {
       const token = await getIdToken();
       if (!token) {
-        setCustomError('Oturum süresi dolmuş. Lütfen tekrar giriş yapın.');
+        showCustomError('Oturum süresi dolmuş. Lütfen tekrar giriş yapın.');
         setIsSaving(false);
         return;
       }
@@ -282,11 +288,11 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
           navigate(`/link/${encodeURIComponent(newCode)}`, { replace: true });
         }
       } else {
-        setCustomError(payload?.error || 'Bağlantı adı güncellenemedi.');
+        showCustomError(payload?.error || 'Bağlantı adı güncellenemedi.');
       }
     } catch (err) {
       console.error('Rename request error:', err);
-      setCustomError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+      showCustomError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
     } finally {
       setIsSaving(false);
     }
@@ -296,7 +302,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
   const handleRestoreOriginal = async () => {
     if (!isPro) return;
     setIsSaving(true);
-    setCustomError('');
+    showCustomError('');
     setCustomSuccess('');
 
     try {
@@ -328,11 +334,11 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
           navigate(`/link/${restoredCode}`, { replace: true });
         }
       } else {
-        setCustomError(payload?.error || 'Bağlantı geri alınamadı.');
+        showCustomError(payload?.error || 'Bağlantı geri alınamadı.');
       }
     } catch (err) {
       console.error('Restore request error:', err);
-      setCustomError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+      showCustomError('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
     } finally {
       setIsSaving(false);
     }
@@ -505,7 +511,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
                     value={customCode}
                     onChange={(e) => {
                       setCustomCode(e.target.value);
-                      setCustomError('');
+                      showCustomError('');
                     }}
                     onKeyDown={handleCustomizeKeyDown}
                     maxLength={30}
@@ -515,9 +521,6 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal,
                     autoComplete="off"
                   />
                 </div>
-                {customError && (
-                  <p className="customizeError" role="alert">{customError}</p>
-                )}
                 <div className="customizeActions">
                   <button
                     type="button"

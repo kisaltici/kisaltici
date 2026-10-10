@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { API_BASE_URL } from '../config/api';
 import { isPublicPath } from '../i18n/siteLang';
+import { useToast } from '../components/Toast';
 
 /**
  * Firebase (~150 KB) is loaded on demand instead of with the first bundle so public pages paint sooner:
@@ -97,7 +98,16 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(() => !startsAsGuest());
   const [authTransitioning, setAuthTransitioning] = useState(false);
-  const [authError, setAuthError] = useState(null);
+  const toast = useToast();
+  const [authError, setAuthErrorState] = useState(null);
+  // Any auth error is also shown as a toast (the dialogs and the header no longer draw their own error boxes)
+  const setAuthError = useCallback(
+    (message) => {
+      setAuthErrorState(message);
+      if (message) toast.error(message);
+    },
+    [toast]
+  );
 
   const [userProfile, setUserProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(false);

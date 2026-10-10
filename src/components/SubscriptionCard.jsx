@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
 import { formatPrice, getPlanCopy } from '../config/plans';
 import './SubscriptionCard.css';
+import { useToast } from './Toast';
 
 const TEXT = {
   tr: {
@@ -52,6 +53,11 @@ function SubscriptionCard() {
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const toast = useToast();
+  const showError = (message) => {
+    setError(message);
+    if (message) toast.error(message);
+  };
 
   const sub = userProfile?.subscription;
   if (!sub || !['trialing', 'active', 'canceled', 'past_due'].includes(sub.status)) return null;
@@ -64,7 +70,7 @@ function SubscriptionCard() {
 
   const call = async (action) => {
     setBusy(true);
-    setError('');
+    showError('');
     try {
       const token = await getIdToken();
       const res = await fetch(`${API_BASE_URL}/api/billing/${action}`, {
@@ -76,7 +82,7 @@ function SubscriptionCard() {
       setConfirming(false);
       if (refetchProfile) await refetchProfile();
     } catch {
-      setError(text.failed);
+      showError(text.failed);
     } finally {
       setBusy(false);
     }
@@ -94,11 +100,6 @@ function SubscriptionCard() {
       <p className="subCardText">{message}</p>
       {sub.status === 'trialing' && sub.autoRenew && (
         <p className="subCardMuted">{text.thenCharge(formatPrice(sub.plan, sub.period || 'monthly', sub.currency || 'TRY'), date)}</p>
-      )}
-      {error && (
-        <p className="subCardError" role="alert">
-          {error}
-        </p>
       )}
 
       {sub.autoRenew &&

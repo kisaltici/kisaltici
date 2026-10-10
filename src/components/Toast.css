@@ -1,0 +1,97 @@
+.kToastStack {
+  position: fixed;
+  top: max(1rem, calc(env(safe-area-inset-top) + 0.75rem));
+  left: 50%;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(92vw, 440px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.kToast {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: 100%;
+  padding: 0.7rem 1rem 0.7rem 0.85rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--surface-bg, #181818);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7), 0 4px 14px -6px rgba(0, 0, 0, 0.5);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.26s ease, transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.kToast.isIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kToast.isOut {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.kToastIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.kToastText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.kToast--error {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: color-mix(in srgb, #7f1d1d 28%, var(--surface-bg, #181818));
+}
+
+.kToast--error .kToastIcon {
+  color: #f87171;
+}
+
+.kToast--info .kToastIcon {
+  color: var(--text-secondary);
+}
+
+.kToast--success {
+  border-color: color-mix(in srgb, var(--accent-color) 45%, var(--surface-border));
+}
+
+.kToast--success .kToastIcon {
+  color: var(--accent-color);
+}
+
+.kToastAction {
+  flex-shrink: 0;
+  margin-left: 0.25rem;
+  padding: 0.35rem 0.7rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-color);
+  color: var(--action-btn-text, #000);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kToast {
+    transform: none;
+    transition: opacity 0.2s ease;
+  }
+}

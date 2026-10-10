@@ -8,6 +8,7 @@ import {
   getContrastRatio,
 } from '../utils/qrRenderer';
 import { downloadQrPng, downloadQrSvg } from '../utils/qrExport';
+import { useToast } from './Toast';
 
 const FG_PRESETS = ['#000000', '#1e293b', '#1e3a8a', '#065f46', '#881337', '#DEFF36'];
 const BG_PRESETS = ['#ffffff', '#cfe8ff', '#ffd6e0', '#172033', '#183a2a', '#4a1824', 'transparent'];
@@ -227,6 +228,11 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
   const [centerImage, setCenterImage] = useState(initial.centerImage || null);
   const [saveStatus, setSaveStatus] = useState('');
   const [imageError, setImageError] = useState('');
+  const toast = useToast();
+  const showImageError = (message) => {
+    setImageError(message);
+    if (message) toast.error(message);
+  };
   const [isDragOver, setIsDragOver] = useState(false);
 
   const saveTimeoutRef = useRef(null);
@@ -332,14 +338,14 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
   const processFile = (file) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setImageError(t('errorInvalidImage'));
+      showImageError(t('errorInvalidImage'));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setImageError(t('qrUploadSubtitle'));
+      showImageError(t('qrUploadSubtitle'));
       return;
     }
-    setImageError('');
+    showImageError('');
     const reader = new FileReader();
     reader.onload = (event) => {
       setCenterImage({
@@ -480,7 +486,6 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
                 <span className="qrxDropSub">{t('qrUploadSubtitle')}</span>
               </button>
             )}
-            {imageError && <p className="qrxError" role="alert">{imageError}</p>}
             <input
               ref={fileInputRef}
               type="file"

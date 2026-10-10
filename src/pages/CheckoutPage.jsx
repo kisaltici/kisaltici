@@ -21,6 +21,7 @@ import BillingToggle from '../components/BillingToggle';
 import LegalLinks from '../components/LegalLinks';
 import { legalPath } from '../content/legalSlugs';
 import './CheckoutPage.css';
+import { useToast } from '../components/Toast';
 
 const formatDate = (value, lang) =>
   new Date(value).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', {
@@ -195,6 +196,11 @@ function CheckoutForm({ theme }) {
   const [isLoading, setIsLoading] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState('');
+  const toast = useToast();
+  const showError = (message) => {
+    setError(message);
+    if (message) toast.error(message);
+  };
   const [payment, setPayment] = useState(null); // { iframeUrl, testMode }
 
   // Keep the address bar in sync with the selection (shareable / survives refresh)
@@ -217,7 +223,7 @@ function CheckoutForm({ theme }) {
   const changeSelection = useCallback((apply) => {
     // Changing plan or period discards an open PayTR session; the payment page is created again
     setPayment(null);
-    setError('');
+    showError('');
     apply();
   }, []);
 
@@ -225,14 +231,14 @@ function CheckoutForm({ theme }) {
     event.preventDefault();
     if (isLoading) return;
     if (!fullName.trim() || !phone.trim() || !address.trim()) {
-      setError(text.errors.required);
+      showError(text.errors.required);
       return;
     }
     if (!accepted) {
-      setError(text.termsRequired);
+      showError(text.termsRequired);
       return;
     }
-    setError('');
+    showError('');
     setIsLoading(true);
     try {
       const token = await getIdToken();
@@ -243,12 +249,12 @@ function CheckoutForm({ theme }) {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.success) {
-        setError(data?.error || text.errors.generic);
+        showError(data?.error || text.errors.generic);
         return;
       }
       setPayment({ iframeUrl: data.iframeUrl, testMode: data.testMode });
     } catch {
-      setError(text.errors.generic);
+      showError(text.errors.generic);
     } finally {
       setIsLoading(false);
     }
@@ -388,7 +394,6 @@ function CheckoutForm({ theme }) {
                 </label>
 
                 {billing.testMode && <p className="cxTest">{text.testMode}</p>}
-                {error && <p className="cxError" role="alert">{error}</p>}
 
                 <button type="submit" className="cxBtn isPrimary isWide" disabled={isLoading || billing.loading}>
                   {isLoading ? text.preparing : isTrial ? text.trialPayButton : `${text.payButton} · ${total}`}

@@ -3,6 +3,7 @@ import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { getAccountProviderLabel } from '../utils/authHelpers';
 import './ProfileModal.css';
+import { useToast } from './Toast';
 
 // Preset avatar options for instant selection
 const PRESET_AVATARS = [
@@ -33,6 +34,11 @@ function ProfileModal({ isOpen, onClose }) {
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const toast = useToast();
+  const showError = (message) => {
+    setErrorMessage(message);
+    if (message) toast.error(message);
+  };
   const [avatarError, setAvatarError] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -47,7 +53,7 @@ function ProfileModal({ isOpen, onClose }) {
       setUsername(currentUsername);
       setInitialUsername(currentUsername);
       setPhotoURL(profilePhotoURL || '');
-      setErrorMessage('');
+      showError('');
       setShowAvatarPicker(false);
       setAvatarError(false);
       setIsSaving(false);
@@ -119,12 +125,12 @@ function ProfileModal({ isOpen, onClose }) {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      setErrorMessage(t('errorInvalidImage') || 'Lütfen geçerli bir resim dosyası seçin.');
+      showError(t('errorInvalidImage') || 'Lütfen geçerli bir resim dosyası seçin.');
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setErrorMessage(t('errorImageTooLarge') || 'Profil fotoğrafı en fazla 2 MB olabilir.');
+      showError(t('errorImageTooLarge') || 'Profil fotoğrafı en fazla 2 MB olabilir.');
       return;
     }
 
@@ -143,11 +149,11 @@ function ProfileModal({ isOpen, onClose }) {
 
     // Validate username if filled
     if (username.trim().length > 0 && !USERNAME_REGEX.test(username.trim().toLowerCase())) {
-      setErrorMessage(t('usernameInvalid') || 'Kullanıcı adı geçersiz.');
+      showError(t('usernameInvalid') || 'Kullanıcı adı geçersiz.');
       return;
     }
 
-    setErrorMessage('');
+    showError('');
     setIsSaving(true);
 
     const savedUsername = username.trim().toLowerCase();
@@ -164,7 +170,7 @@ function ProfileModal({ isOpen, onClose }) {
       setInitialUsername(savedUsername);
       onClose();
     } else {
-      setErrorMessage(result.error || t('errorGeneric'));
+      showError(result.error || t('errorGeneric'));
     }
   };
 
@@ -201,16 +207,6 @@ function ProfileModal({ isOpen, onClose }) {
 
         {/* Modal Form Content */}
         <form onSubmit={handleSubmit} className="profileModalBody">
-          {errorMessage && (
-            <div className="profileErrorCard">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <span>{errorMessage}</span>
-            </div>
-          )}
 
           {/* Profile Photo Section */}
           <div className="profileAvatarSection">

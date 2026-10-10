@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react';
 import QrModal from './QrModal';
 import { API_BASE_URL } from '../config/api';
 import './ResultSection.css';
+import { useToast } from './Toast';
 
 function ResultSection({ result }) {
   const [isCopied, setIsCopied] = useState(false);
   const [copyError, setCopyError] = useState('');
+  const toast = useToast();
+  const showCopyError = (message) => {
+    setCopyError(message);
+    if (message) toast.error(message);
+  };
   const [clickCount, setClickCount] = useState(result?.clickCount || 0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
@@ -14,7 +20,7 @@ function ResultSection({ result }) {
   // Sync state and hide QR code whenever a new short URL result is generated
   useEffect(() => {
     setIsCopied(false);
-    setCopyError('');
+    showCopyError('');
     setClickCount(result?.clickCount || 0);
     setIsQrModalOpen(false);
     setQrSettings(result?.qrSettings || null);
@@ -29,7 +35,7 @@ function ResultSection({ result }) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(result.shortUrl);
         setIsCopied(true);
-        setCopyError('');
+        showCopyError('');
 
         setTimeout(() => {
           setIsCopied(false);
@@ -39,9 +45,9 @@ function ResultSection({ result }) {
       }
     } catch (error) {
       console.error('Failed to copy to clipboard:', error);
-      setCopyError('Unable to copy automatically. Please copy the link manually.');
+      showCopyError('Unable to copy automatically. Please copy the link manually.');
       setTimeout(() => {
-        setCopyError('');
+        showCopyError('');
       }, 3000);
     }
   };
@@ -170,11 +176,6 @@ function ResultSection({ result }) {
         </button>
       </div>
 
-      {copyError && (
-        <div className="copyErrorMessage" role="status">
-          {copyError}
-        </div>
-      )}
     </section>
   );
 }

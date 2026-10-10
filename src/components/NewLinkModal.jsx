@@ -5,6 +5,7 @@ import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
 import { useShortenAllowance } from '../utils/useShortenAllowance';
 import LimitBanner from './LimitBanner';
 import './NewLinkModal.css';
+import { useToast } from './Toast';
 
 function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
   const { t } = useTranslation();
@@ -13,13 +14,18 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
   const blocked = allowance.blocked;
   const [inputUrl, setInputUrl] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const toast = useToast();
+  const showError = (message) => {
+    setErrorMessage(message);
+    if (message) toast.error(message);
+  };
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       setInputUrl('');
-      setErrorMessage('');
+      showError('');
       setIsLoading(false);
       setTimeout(() => {
         if (inputRef.current) inputRef.current.focus();
@@ -57,15 +63,15 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
 
     const validationResult = validateUrl(inputUrl);
     if (!validationResult.isValid) {
-      setErrorMessage(validationResult.message);
+      showError(validationResult.message);
       return;
     }
 
-    setErrorMessage('');
+    showError('');
 
     // Guests get one link per day: prompt to sign in instead of calling the API
     if (!user && hasUsedGuestLinkToday()) {
-      setErrorMessage(t('guestLimitReached'));
+      showError(t('guestLimitReached'));
       if (onLimitReached) onLimitReached('guest');
       return;
     }
@@ -77,18 +83,18 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
 
       if (!result.success) {
         if (result.errorCode === 'guest_limit') {
-          setErrorMessage(t('guestLimitReached'));
+          showError(t('guestLimitReached'));
           if (onLimitReached) onLimitReached('guest');
         } else if (result.errorCode === 'no_plan') {
-          setErrorMessage(t('noPlanLimit'));
+          showError(t('noPlanLimit'));
           if (onLimitReached) onLimitReached('daily');
         } else if (result.errorCode === 'daily_limit') {
-          setErrorMessage(t('dailyLinkLimitReached', { limit: result.limit }));
+          showError(t('dailyLinkLimitReached', { limit: result.limit }));
           if (onLimitReached) onLimitReached('daily');
         } else if (result.errorCode === 'db') {
-          setErrorMessage(t('errorDatabaseUnavailable'));
+          showError(t('errorDatabaseUnavailable'));
         } else {
-          setErrorMessage(result.errorMessage || t('errorGeneric'));
+          showError(result.errorMessage || t('errorGeneric'));
         }
         setIsLoading(false);
         return;
@@ -101,7 +107,7 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
       }
     } catch (error) {
       console.error('New link shorten error:', error);
-      setErrorMessage(t('errorBackendOffline'));
+      showError(t('errorBackendOffline'));
       setIsLoading(false);
     }
   };
@@ -122,7 +128,7 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
               value={inputUrl}
               onChange={(e) => {
                 setInputUrl(e.target.value);
-                if (errorMessage) setErrorMessage('');
+                if (errorMessage) showError('');
               }}
               disabled={isLoading || blocked}
               aria-label={t('pasteLinkPlaceholder')}
@@ -189,11 +195,6 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
             </div>
           )}
 
-          {errorMessage && (
-            <div className="modalErrorMessage" role="alert">
-              <span>{errorMessage}</span>
-            </div>
-          )}
         </form>
       </div>
     </div>

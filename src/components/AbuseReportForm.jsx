@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { API_BASE_URL } from '../config/api';
 import './AbuseReportForm.css';
+import { useToast } from './Toast';
 
 const TEXT = {
   tr: {
@@ -53,10 +54,15 @@ function AbuseReportForm({ lang = 'tr' }) {
   const [website, setWebsite] = useState('');
   const [status, setStatus] = useState('idle'); // idle | sending | done
   const [error, setError] = useState('');
+  const toast = useToast();
+  const showError = (message) => {
+    setError(message);
+    if (message) toast.error(message);
+  };
 
   const submit = async (event) => {
     event.preventDefault();
-    setError('');
+    showError('');
     setStatus('sending');
     try {
       const res = await fetch(`${API_BASE_URL}/api/report`, {
@@ -66,13 +72,14 @@ function AbuseReportForm({ lang = 'tr' }) {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.success) {
-        setError(data?.error || text.error);
+        showError(data?.error || text.error);
         setStatus('idle');
         return;
       }
       setStatus('done');
+      toast.success(text.done);
     } catch {
-      setError(text.error);
+      showError(text.error);
       setStatus('idle');
     }
   };
@@ -121,11 +128,6 @@ function AbuseReportForm({ lang = 'tr' }) {
         aria-hidden="true"
         className="abHoney"
       />
-      {error && (
-        <p className="abError" role="alert">
-          {error}
-        </p>
-      )}
       <button type="submit" className="abSubmit" disabled={status === 'sending'}>
         {status === 'sending' ? text.sending : text.submit}
       </button>

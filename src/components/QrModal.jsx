@@ -7,6 +7,7 @@ import { generateQrMatrix, generateQrSvgString } from '../utils/qrRenderer';
 import { downloadQrPng, downloadQrSvg } from '../utils/qrExport';
 import QrStudio from './QrStudio';
 import './QrModal.css';
+import { useToast } from './Toast';
 
 const svgProps = {
   width: 20,
@@ -99,7 +100,14 @@ function QrModal({
 
   const [step, setStep] = useState('choose'); // 'choose' | 'standard' | 'custom'
   const [busy, setBusy] = useState(null);
-  const [notice, setNotice] = useState(null); // { text, action: 'guest' | 'plan' }
+  const toast = useToast();
+  // { text, action: 'guest' | 'plan' } becomes a toast; the button stays available while the toast is visible
+  const setNotice = (notice) => {
+    if (!notice) return;
+    toast.info(notice.text, {
+      action: { label: notice.action === 'guest' ? t('qrSignInCta') : t('qrSeePlans'), onClick: () => goUpgrade(notice.action) },
+    });
+  };
 
   const limits = getClientLimits(user ? membershipPlan : 'free');
   const canCustom = Boolean(limits.customQr);
@@ -240,14 +248,6 @@ function QrModal({
                 </button>
               </div>
 
-              {notice && (
-                <div className="qrxNotice" role="alert">
-                  <span>{notice.text}</span>
-                  <button type="button" className="qrxBtn isPrimary" onClick={() => goUpgrade(notice.action)}>
-                    {notice.action === 'guest' ? t('qrSignInCta') : t('qrSeePlans')}
-                  </button>
-                </div>
-              )}
 
               <p className="qrxNote">
                 <Glyph name="info" />

@@ -26,10 +26,8 @@ function Header({
     profilePhotoURL,
     authLoading,
     authTransitioning,
-    authError,
     signInWithGoogle,
     signOutUser,
-    clearAuthError,
   } = useAuth();
 
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -405,20 +403,6 @@ function Header({
               </div>
           )}
 
-          {/* Auth Error Notification Badge */}
-          {authError && (
-            <div className="headerAuthErrorBadge" role="alert">
-              <span>{authError}</span>
-              <button
-                type="button"
-                className="headerAuthErrorCloseBtn"
-                onClick={clearAuthError}
-                aria-label="Close error"
-              >
-                ✕
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </header>

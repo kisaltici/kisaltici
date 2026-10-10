@@ -16,6 +16,7 @@ import {
   normalizeKey,
 } from '../utils/keyboardDefaults';
 import './SettingsModal.css';
+import { useToast } from './Toast';
 
 // Architecture configuration for storage limits by membership plan
 export const STORAGE_LIMITS = {
@@ -82,7 +83,12 @@ function SettingsModal({
 
   const [editingShortcutId, setEditingShortcutId] = useState(null);
   const [recordedShortcut, setRecordedShortcut] = useState(null);
-  const [shortcutWarning, setShortcutWarning] = useState(null);
+  const toast = useToast();
+  const [shortcutWarning, setShortcutWarningState] = useState(null);
+  const setShortcutWarning = (warning) => {
+    setShortcutWarningState(warning);
+    if (warning) toast.info(typeof warning === 'string' ? warning : String(warning));
+  };
   const [shortcutConflictAction, setShortcutConflictAction] = useState(null);
 
   // Switch default or requested initial tab when modal opens or user auth changes
@@ -921,10 +927,6 @@ function SettingsModal({
                                     <span className="shortcutKeycap empty">...</span>
                                   )}
                                 </div>
-
-                                {shortcutWarning && (
-                                  <div className="shortcutWarningText">{shortcutWarning}</div>
-                                )}
 
                                 <div className="shortcutEditingBtns">
                                   {shortcutConflictAction ? (

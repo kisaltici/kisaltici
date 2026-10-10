@@ -3,6 +3,7 @@ import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth, getAuthErrorMessage } from '../context/AuthContext';
 import { legalPath } from '../content/legalSlugs';
 import './AuthModal.css';
+import { useToast } from './Toast';
 
 function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
   const { t, lang } = useTranslation();
@@ -13,7 +14,12 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState('');
+  const [, setFormError] = useState('');
+  const toast = useToast();
+  const showFormError = (message) => {
+    setFormError(message);
+    if (message) toast.error(message);
+  };
 
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimatingIn, setIsAnimatingIn] = useState(false);
@@ -25,7 +31,7 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      setFormError('');
+      showFormError('');
       setIsSubmitting(false);
       clearAuthError();
     }
@@ -65,7 +71,7 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
 
   const handleSwitchMode = (newMode) => {
     setMode(newMode);
-    setFormError('');
+    showFormError('');
     clearAuthError();
   };
 
@@ -103,11 +109,11 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
 
     const validationError = validateForm();
     if (validationError) {
-      setFormError(validationError);
+      showFormError(validationError);
       return;
     }
 
-    setFormError('');
+    showFormError('');
     setIsSubmitting(true);
 
     try {
@@ -124,11 +130,11 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
         const friendlyMsg = result?.code
           ? getAuthErrorMessage(result.code, lang)
           : (result?.error || t('errorGeneric'));
-        setFormError(friendlyMsg);
+        showFormError(friendlyMsg);
       }
     } catch (err) {
       console.error('Auth submit error:', err);
-      setFormError(getAuthErrorMessage(err, lang));
+      showFormError(getAuthErrorMessage(err, lang));
     } finally {
       setIsSubmitting(false);
     }
@@ -136,7 +142,7 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
 
   const handleGoogleSignIn = async () => {
     if (isSubmitting) return;
-    setFormError('');
+    showFormError('');
     setIsSubmitting(true);
 
     try {
@@ -145,17 +151,16 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
         onClose();
       } else if (result && result.error && result.code !== 'auth/popup-closed-by-user') {
         const friendlyMsg = getAuthErrorMessage(result.code, lang);
-        setFormError(friendlyMsg);
+        showFormError(friendlyMsg);
       }
     } catch (err) {
       console.error('Google Sign-In error:', err);
-      setFormError(getAuthErrorMessage(err, lang));
+      showFormError(getAuthErrorMessage(err, lang));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const activeError = formError || authError;
 
   return (
     <div
@@ -190,17 +195,6 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
 
         {/* Modal Content Form */}
         <form onSubmit={handleSubmit} className="authModalBody">
-          {activeError && (
-            <div className="authErrorCard">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <span>{activeError}</span>
-            </div>
-          )}
-
           {/* Email Field */}
           <div className="authFieldGroup">
             <label htmlFor="auth-email" className="authFieldLabel">
