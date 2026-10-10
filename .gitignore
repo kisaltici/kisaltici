@@ -41,3 +41,8 @@ server/.env.*
 *.njsproj
 *.sln
 *.sw?
+
+# Locally installed agent skills
+.agents/
+.claude/skills/
+skills-lock.json

@@ -35,8 +35,6 @@ export const translations = {
     upgradePlan: 'Upgrade plan',
     personalization: 'Personalization',
     profile: 'Profile',
-    settings: 'Settings',
-    help: 'Help',
     darkMode: 'Dark Mode',
     lightMode: 'Light Mode',
 

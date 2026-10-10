@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { translations } from './translations';
 
 const LanguageContext = createContext();
@@ -38,6 +38,10 @@ export function LanguageProvider({ children }) {
       return detectBrowserLanguage();
     }
   });
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const setLanguageMode = (mode) => {
     setLanguageModeState(mode);

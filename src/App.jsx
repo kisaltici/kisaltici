@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -8,15 +8,15 @@ import {
 } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import SearchModal from './components/SearchModal';
-import NewLinkModal from './components/NewLinkModal';
-import SettingsModal from './components/SettingsModal';
-import ProfileModal from './components/ProfileModal';
-import HelpModal from './components/HelpModal';
-import PricingModal from './components/PricingModal';
-import AuthModal from './components/AuthModal';
+const SearchModal = lazy(() => import('./components/SearchModal'));
+const NewLinkModal = lazy(() => import('./components/NewLinkModal'));
+const SettingsModal = lazy(() => import('./components/SettingsModal'));
+const ProfileModal = lazy(() => import('./components/ProfileModal'));
+const HelpModal = lazy(() => import('./components/HelpModal'));
+const PricingModal = lazy(() => import('./components/PricingModal'));
+const AuthModal = lazy(() => import('./components/AuthModal'));
 import UrlForm from './components/UrlForm';
-import LinkAnalyticsPage from './pages/LinkAnalyticsPage';
+const LinkAnalyticsPage = lazy(() => import('./pages/LinkAnalyticsPage'));
 import { generateTitleFromUrl } from './utils/titleGenerator';
 import { applyColorTheme } from './utils/themePresets';
 import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
@@ -613,6 +613,7 @@ function AppContent() {
         />
 
         <main className="mainContent">
+          <Suspense fallback={null}>
           <Routes>
             <Route
               path="/"
@@ -654,9 +655,11 @@ function AppContent() {
               }
             />
           </Routes>
+          </Suspense>
         </main>
       </div>
 
+      <Suspense fallback={null}>
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
@@ -711,6 +714,7 @@ function AppContent() {
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authModalMode}
       />
+      </Suspense>
     </div>
   );
 }

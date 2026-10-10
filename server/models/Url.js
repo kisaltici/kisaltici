@@ -15,7 +15,6 @@ const urlSchema = new mongoose.Schema({
     required: [true, 'Short code is required'],
     unique: true,
     trim: true,
-    index: true,
   },
   /**
    * The auto-generated short code assigned at creation time.

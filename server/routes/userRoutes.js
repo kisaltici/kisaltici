@@ -9,6 +9,10 @@ const router = express.Router();
  */
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
 
+// The reserved 'admin' username (grants Pro) can only be held by UIDs listed in ADMIN_UIDS (comma-separated)
+const ADMIN_UIDS = (process.env.ADMIN_UIDS || '').split(',').map((v) => v.trim()).filter(Boolean);
+const isAdminUid = (uid) => ADMIN_UIDS.includes(uid);
+
 /**
  * GET /api/user/profile
  * Returns authenticated user profile from MongoDB (creates default record if none exists).
@@ -29,8 +33,7 @@ router.get('/profile', requireAuth, async (req, res, next) => {
       user = await User.create(userData);
     }
 
-    // Temporary test setup: Assign Pro plan if username is 'admin'
-    if (user.username === 'admin' && user.membershipPlan !== 'pro') {
+    if (user.username === 'admin' && isAdminUid(userId) && user.membershipPlan !== 'pro') {
       user.membershipPlan = 'pro';
       await user.save();
     }
@@ -70,11 +73,11 @@ router.put('/profile', requireAuth, async (req, res, next) => {
     };
 
     if (typeof displayName === 'string') {
-      updateOps.$set.displayName = displayName.trim();
+      updateOps.$set.displayName = displayName.trim().slice(0, 100);
     }
 
     if (typeof photoURL === 'string') {
-      updateOps.$set.photoURL = photoURL.trim();
+      updateOps.$set.photoURL = photoURL.trim().slice(0, 2048);
     }
 
     if (typeof username === 'string') {
@@ -85,6 +88,13 @@ router.put('/profile', requireAuth, async (req, res, next) => {
           return res.status(400).json({
             success: false,
             error: 'Kullanıcı adı geçersiz. (3-20 karakter, harf, rakam veya alt çizgi kullanın)',
+          });
+        }
+
+        if (trimmedUsername === 'admin' && !isAdminUid(userId)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Bu kullanıcı adı zaten kullanılıyor.',
           });
         }
 
@@ -103,7 +113,6 @@ router.put('/profile', requireAuth, async (req, res, next) => {
 
         updateOps.$set.username = trimmedUsername;
 
-        // Temporary test setup: Assign Pro plan if username is set to 'admin'
         if (trimmedUsername === 'admin') {
           updateOps.$set.membershipPlan = 'pro';
         }

@@ -54,7 +54,7 @@ const validateBackendUrl = (urlToTest) => {
     }
 
     return { isValid: true, error: '' };
-  } catch (err) {
+  } catch {
     return {
       isValid: false,
       error: 'Please enter a valid URL (e.g., https://example.com).',
@@ -153,7 +153,11 @@ router.get('/urls/mine', requireAuth, async (req, res, next) => {
   try {
     const userId = req.user.uid;
 
-    const userUrls = await Url.find({ userId }).sort({ createdAt: -1 }).select('-__v');
+    // Only the latest click is needed for `lastClick`; avoid shipping full click histories
+    const userUrls = await Url.find({ userId })
+      .sort({ createdAt: -1 })
+      .select({ __v: 0, clicks: { $slice: -1 } })
+      .lean();
 
     const baseUrl = getBaseUrl(req);
 
@@ -430,7 +434,8 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
         .slice(0, 30);
     }
 
-    const isAdminUser = userIdentEarly === 'admin';
+    // Admin status is bound to the stored (guarded) username, never to an email-derived identifier
+    const isAdminUser = userDoc.username === 'admin';
 
     // Allowed characters: A-Z a-z 0-9 - _
     // Length: 1-30 for admin, 3-30 for everyone else
@@ -516,7 +521,14 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
       urlRecord.originalShortCode = urlRecord.shortCode;
     }
     urlRecord.shortCode = compositeCode;
-    await urlRecord.save();
+    try {
+      await urlRecord.save();
+    } catch (saveErr) {
+      if (saveErr.code === 11000) {
+        return res.status(409).json({ success: false, error: 'Bu özel bağlantı zaten kullanılıyor.' });
+      }
+      throw saveErr;
+    }
 
     const baseUrl = getBaseUrl(req);
     return res.status(200).json({
@@ -602,7 +614,14 @@ router.patch('/urls/:shortCode/restore', requireAuth, async (req, res, next) => 
 
     // Restore: set shortCode back to originalShortCode
     urlRecord.shortCode = urlRecord.originalShortCode;
-    await urlRecord.save();
+    try {
+      await urlRecord.save();
+    } catch (saveErr) {
+      if (saveErr.code === 11000) {
+        return res.status(409).json({ success: false, error: 'Bu özel bağlantı zaten kullanılıyor.' });
+      }
+      throw saveErr;
+    }
 
     const baseUrl = getBaseUrl(req);
     return res.status(200).json({
