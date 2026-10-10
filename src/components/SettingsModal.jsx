@@ -20,6 +20,7 @@ import './SettingsModal.css';
 export const STORAGE_LIMITS = {
   free: 100 * 1024, // 100 KB
   pro: 1024 * 1024, // 1 MB (1000 KB)
+  admin: Infinity, // unlimited
 };
 
 export function getStorageLimit(planId) {
@@ -27,6 +28,7 @@ export function getStorageLimit(planId) {
 }
 
 function formatBytes(bytes) {
+  if (bytes === Infinity) return '∞';
   if (!bytes || bytes <= 0) return '0 KB';
   if (bytes < 1024 * 1024) {
     return `${Math.round(bytes / 1024)} KB`;
@@ -1019,7 +1021,9 @@ function SettingsModal({
                         <span className="storageCardTitle">{t('storageUsage')}</span>
                       </div>
                       <span className="storagePlanBadge">
-                        {userPlan === 'pro'
+                        {userPlan === 'admin'
+                          ? t('planAdminName')
+                          : userPlan === 'pro'
                           ? t('planBadgePro')
                           : getPlanDisplayName(userPlan, t) + ' planı'}
                       </span>

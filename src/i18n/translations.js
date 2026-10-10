@@ -179,6 +179,7 @@ export const translations = {
     planFreeF5: 'Free sign-in with Google',
 
     planProName: 'Pro',
+    planAdminName: 'ADMIN',
     planProPrice: '₺149',
     planProDesc: 'Access advanced features and comprehensive link analytics.',
     planProF1: 'Everything in Free plan',
@@ -499,6 +500,7 @@ export const translations = {
     planFreeF5: 'Google ile ücretsiz giriş',
 
     planProName: 'Pro',
+    planAdminName: 'ADMIN',
     planProPrice: '₺149',
     planProDesc: 'Daha gelişmiş özelliklere ve daha kapsamlı istatistiklere erişin.',
     planProF1: 'Ücretsiz plandaki tüm özellikler',

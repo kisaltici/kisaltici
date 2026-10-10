@@ -39,7 +39,7 @@ function PricingModal({ isOpen, onClose, userPlan = 'free' }) {
   if (!isMounted) return null;
 
   const isFreeCurrent = userPlan === 'free';
-  const isProCurrent = userPlan === 'pro';
+  const isProCurrent = userPlan === 'pro' || userPlan === 'admin';
 
   return (
     <div

@@ -4,6 +4,7 @@ import User from '../models/User.js';
 import { generateShortCode } from '../utils/generateShortCode.js';
 import { shortenLimiter } from '../middleware/rateLimiter.js';
 import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
+import { isAdminUid } from '../utils/admin.js';
 
 const router = express.Router();
 
@@ -80,7 +81,7 @@ const getBaseUrl = (req) => {
  * Rate-limited endpoint for shortening URLs.
  * Supports optional authentication (attaches userId if Bearer token is valid).
  */
-router.post('/shorten', shortenLimiter, optionalAuth, async (req, res, next) => {
+router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => {
   try {
     const { originalUrl } = req.body || {};
 
@@ -413,8 +414,8 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
 
     // --- Pro membership check (server-side, from User collection) ---
     // Done before length validation so we know if this is admin
-    const userDoc = await User.findOne({ userId });
-    if (!userDoc || userDoc.membershipPlan !== 'pro') {
+    const userDoc = (await User.findOne({ userId })) || {};
+    if (!isAdminUid(userId) && userDoc.membershipPlan !== 'pro') {
       return res.status(403).json({
         success: false,
         error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
@@ -435,7 +436,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     }
 
     // Admin status is bound to the stored (guarded) username, never to an email-derived identifier
-    const isAdminUser = userDoc.username === 'admin';
+    const isAdminUser = isAdminUid(userId) || userDoc.username === 'admin';
 
     // Allowed characters: A-Z a-z 0-9 - _
     // Length: 1-30 for admin, 3-30 for everyone else
@@ -563,7 +564,7 @@ router.patch('/urls/:shortCode/restore', requireAuth, async (req, res, next) => 
 
     // --- Pro membership check ---
     const userDoc = await User.findOne({ userId });
-    if (!userDoc || userDoc.membershipPlan !== 'pro') {
+    if (!isAdminUid(userId) && (!userDoc || userDoc.membershipPlan !== 'pro')) {
       return res.status(403).json({
         success: false,
         error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',

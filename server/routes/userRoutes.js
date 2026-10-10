@@ -1,6 +1,10 @@
 import express from 'express';
 import User from '../models/User.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { isAdminUid } from '../utils/admin.js';
+
+// Admins are reported as plan 'admin' (derived at read time; the stored plan is untouched)
+const effectivePlan = (userId, storedPlan) => (isAdminUid(userId) ? 'admin' : storedPlan || 'free');
 
 const router = express.Router();
 
@@ -9,9 +13,7 @@ const router = express.Router();
  */
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
 
-// The reserved 'admin' username (grants Pro) can only be held by UIDs listed in ADMIN_UIDS (comma-separated)
-const ADMIN_UIDS = (process.env.ADMIN_UIDS || '').split(',').map((v) => v.trim()).filter(Boolean);
-const isAdminUid = (uid) => ADMIN_UIDS.includes(uid);
+// The reserved 'admin' username can only be held by UIDs listed in ADMIN_UIDS
 
 /**
  * GET /api/user/profile
@@ -46,7 +48,7 @@ router.get('/profile', requireAuth, async (req, res, next) => {
         username: user.username || '',
         photoURL: user.photoURL || '',
         email: user.email || '',
-        membershipPlan: user.membershipPlan || 'free',
+        membershipPlan: effectivePlan(user.userId, user.membershipPlan),
       },
     });
   } catch (error) {
@@ -140,7 +142,7 @@ router.put('/profile', requireAuth, async (req, res, next) => {
         username: updatedUser.username || '',
         photoURL: updatedUser.photoURL || '',
         email: updatedUser.email || '',
-        membershipPlan: updatedUser.membershipPlan || 'free',
+        membershipPlan: effectivePlan(updatedUser.userId, updatedUser.membershipPlan),
       },
     });
   } catch (error) {

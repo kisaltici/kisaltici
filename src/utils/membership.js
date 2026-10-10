@@ -7,6 +7,10 @@ export const MEMBERSHIP_PLANS = {
     id: 'pro',
     nameKey: 'planProName',
   },
+  admin: {
+    id: 'admin',
+    nameKey: 'planAdminName',
+  },
 };
 
 export function getPlanDisplayName(planId, t) {
