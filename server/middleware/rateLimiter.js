@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit';
-import { isAdminUid } from '../utils/admin.js';
+import { isAdminUser } from '../utils/admin.js';
 
 const windowMinutes = parseInt(process.env.RATE_LIMIT_WINDOW_MINUTES, 10) || 15;
 const maxRequests = parseInt(process.env.RATE_LIMIT_MAX, 10) || 20;
@@ -11,7 +11,7 @@ const maxRequests = parseInt(process.env.RATE_LIMIT_MAX, 10) || 20;
 export const shortenLimiter = rateLimit({
   windowMs: windowMinutes * 60 * 1000,
   max: maxRequests,
-  skip: (req) => isAdminUid(req.user?.uid), // admins are unlimited (requires optionalAuth to run first)
+  skip: (req) => isAdminUser(req.user), // admins are unlimited (requires optionalAuth to run first)
   standardHeaders: true,
   legacyHeaders: false,
   message: {

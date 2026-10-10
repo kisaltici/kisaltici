@@ -1,10 +1,10 @@
 import express from 'express';
 import User from '../models/User.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
-import { isAdminUid } from '../utils/admin.js';
+import { isAdminUser } from '../utils/admin.js';
 
 // Admins are reported as plan 'admin' (derived at read time; the stored plan is untouched)
-const effectivePlan = (userId, storedPlan) => (isAdminUid(userId) ? 'admin' : storedPlan || 'free');
+const effectivePlan = (authUser, storedPlan) => (isAdminUser(authUser) ? 'admin' : storedPlan || 'free');
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ router.get('/profile', requireAuth, async (req, res, next) => {
       user = await User.create(userData);
     }
 
-    if (user.username === 'admin' && isAdminUid(userId) && user.membershipPlan !== 'pro') {
+    if (user.username === 'admin' && isAdminUser(req.user) && user.membershipPlan !== 'pro') {
       user.membershipPlan = 'pro';
       await user.save();
     }
@@ -48,7 +48,7 @@ router.get('/profile', requireAuth, async (req, res, next) => {
         username: user.username || '',
         photoURL: user.photoURL || '',
         email: user.email || '',
-        membershipPlan: effectivePlan(user.userId, user.membershipPlan),
+        membershipPlan: effectivePlan(req.user, user.membershipPlan),
       },
     });
   } catch (error) {
@@ -93,7 +93,7 @@ router.put('/profile', requireAuth, async (req, res, next) => {
           });
         }
 
-        if (trimmedUsername === 'admin' && !isAdminUid(userId)) {
+        if (trimmedUsername === 'admin' && !isAdminUser(req.user)) {
           return res.status(400).json({
             success: false,
             error: 'Bu kullanıcı adı zaten kullanılıyor.',
@@ -142,7 +142,7 @@ router.put('/profile', requireAuth, async (req, res, next) => {
         username: updatedUser.username || '',
         photoURL: updatedUser.photoURL || '',
         email: updatedUser.email || '',
-        membershipPlan: effectivePlan(updatedUser.userId, updatedUser.membershipPlan),
+        membershipPlan: effectivePlan(req.user, updatedUser.membershipPlan),
       },
     });
   } catch (error) {

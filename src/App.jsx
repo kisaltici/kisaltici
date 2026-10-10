@@ -157,7 +157,7 @@ function AppContent() {
           shortCode: item.shortCode,
           shortUrl: item.shortUrl,
           originalUrl: item.originalUrl,
-          title: generateTitleFromUrl(item.originalUrl),
+          title: item.title || generateTitleFromUrl(item.originalUrl),
           createdAt: item.createdAt,
           clickCount: item.clickCount,
         }));
@@ -526,12 +526,36 @@ function AppContent() {
     navigate(`/link/${shortCode}`);
   };
 
-  const handleRenameLink = (shortCode, newTitle) => {
-    setHistoryList((prev) =>
-      prev.map((item) =>
-        item.shortCode === shortCode ? { ...item, title: newTitle } : item
-      )
-    );
+  const handleRenameLink = async (shortCode, newTitle) => {
+    const previousTitle = historyList.find((item) => item.shortCode === shortCode)?.title;
+    const applyTitle = (title) =>
+      setHistoryList((prev) =>
+        prev.map((item) => (item.shortCode === shortCode ? { ...item, title } : item))
+      );
+
+    // Optimistic update, persisted server-side so it survives a page refresh
+    applyTitle(newTitle);
+
+    try {
+      const token = await getIdToken();
+      if (!token) throw new Error('Not authenticated');
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/urls/${encodeURIComponent(shortCode)}/title`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ title: newTitle }),
+        }
+      );
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    } catch (err) {
+      console.error('Failed to save link title:', err);
+      if (previousTitle !== undefined) applyTitle(previousTitle);
+    }
   };
 
   const handleDeleteLink = async (shortCode) => {

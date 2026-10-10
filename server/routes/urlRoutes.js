@@ -4,7 +4,7 @@ import User from '../models/User.js';
 import { generateShortCode } from '../utils/generateShortCode.js';
 import { shortenLimiter } from '../middleware/rateLimiter.js';
 import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
-import { isAdminUid } from '../utils/admin.js';
+import { isAdminUser } from '../utils/admin.js';
 
 const router = express.Router();
 
@@ -174,6 +174,7 @@ router.get('/urls/mine', requireAuth, async (req, res, next) => {
         lastClick: lastClick,
         qrSettings: item.qrSettings || null,
         originalShortCode: item.originalShortCode || null,
+        title: item.title || null,
       };
     });
 
@@ -233,6 +234,38 @@ router.get('/urls/:shortCode', async (req, res, next) => {
         originalShortCode: urlRecord.originalShortCode || null,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PATCH /api/urls/:shortCode/title
+ * Persists a user-defined display title for a link (owner only). An empty title resets to the default.
+ */
+router.patch('/urls/:shortCode/title', requireAuth, async (req, res, next) => {
+  try {
+    const { shortCode } = req.params;
+    const { title } = req.body || {};
+
+    if (typeof title !== 'string') {
+      return res.status(400).json({ success: false, error: 'Geçersiz başlık.' });
+    }
+
+    const trimmedTitle = title.trim().slice(0, 120);
+    const urlRecord = await Url.findOne({ shortCode: shortCode.trim() });
+
+    if (!urlRecord) {
+      return res.status(404).json({ success: false, error: 'Bağlantı bulunamadı.' });
+    }
+    if (urlRecord.userId !== req.user.uid) {
+      return res.status(403).json({ success: false, error: 'Bu bağlantıyı değiştirme yetkiniz yok.' });
+    }
+
+    urlRecord.title = trimmedTitle || null;
+    await urlRecord.save();
+
+    return res.status(200).json({ success: true, data: { title: urlRecord.title } });
   } catch (error) {
     next(error);
   }
@@ -415,7 +448,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     // --- Pro membership check (server-side, from User collection) ---
     // Done before length validation so we know if this is admin
     const userDoc = (await User.findOne({ userId })) || {};
-    if (!isAdminUid(userId) && userDoc.membershipPlan !== 'pro') {
+    if (!isAdminUser(req.user) && userDoc.membershipPlan !== 'pro') {
       return res.status(403).json({
         success: false,
         error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
@@ -436,7 +469,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     }
 
     // Admin status is bound to the stored (guarded) username, never to an email-derived identifier
-    const isAdminUser = isAdminUid(userId) || userDoc.username === 'admin';
+    const isAdminUser = isAdminUser(req.user) || userDoc.username === 'admin';
 
     // Allowed characters: A-Z a-z 0-9 - _
     // Length: 1-30 for admin, 3-30 for everyone else
@@ -564,7 +597,7 @@ router.patch('/urls/:shortCode/restore', requireAuth, async (req, res, next) => 
 
     // --- Pro membership check ---
     const userDoc = await User.findOne({ userId });
-    if (!isAdminUid(userId) && (!userDoc || userDoc.membershipPlan !== 'pro')) {
+    if (!isAdminUser(req.user) && (!userDoc || userDoc.membershipPlan !== 'pro')) {
       return res.status(403).json({
         success: false,
         error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',

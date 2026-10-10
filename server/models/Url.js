@@ -25,6 +25,13 @@ const urlSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  /** Optional user-defined display title (sidebar). Falls back to a URL-derived title client-side. */
+  title: {
+    type: String,
+    default: null,
+    trim: true,
+    maxlength: 120,
+  },
   userId: {
     type: String,
     index: true,
