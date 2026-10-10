@@ -1110,7 +1110,8 @@
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  animation: lpPlanSpin 6s linear infinite;
+  /* Plays once when the card scrolls into view, then rests on the static border */
+  animation: none;
 }
 
 .lpPlan.isFeatured::after {
@@ -1123,7 +1124,7 @@
   background-size: 250% 100%;
   background-position: 120% 0;
   pointer-events: none;
-  animation: lpPlanSheen 5.5s var(--lp-ease) infinite;
+  animation: none;
 }
 
 .lpPlan.isFeatured .lpBadge {
@@ -1134,18 +1135,28 @@
   font-size: clamp(2.6rem, 4.2vw, 3.3rem);
 }
 
+.lp.lpReady .lpPlan.isFeatured.isIn::before {
+  animation: lpPlanSpin 2.4s cubic-bezier(0.22, 0.8, 0.2, 1) 0.35s 1 backwards;
+}
+
+.lp.lpReady .lpPlan.isFeatured.isIn::after {
+  animation: lpPlanSheen 1.8s var(--lp-ease) 0.9s 1 backwards;
+}
+
 @keyframes lpPlanSpin {
+  from {
+    --lp-angle: -300deg;
+  }
   to {
-    --lp-angle: 360deg;
+    --lp-angle: 0deg;
   }
 }
 
 @keyframes lpPlanSheen {
-  0%,
-  45% {
+  from {
     background-position: 120% 0;
   }
-  100% {
+  to {
     background-position: -120% 0;
   }
 }

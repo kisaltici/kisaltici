@@ -1,12 +1,320 @@
 /**
- * Blog posts (Turkish). Add a new post by appending an object here: it appears on the landing page, /blog,
- * the sitemap and gets its own prerendered HTML on the next build.
+ * Blog posts (Turkish). Add a new post by adding an object to the TOP of BLOG_POSTS: it appears on the landing page,
+ * /blog, the sitemap and gets its own prerendered HTML on the next build.
  *
- * Section shape: { h: heading, p: [paragraphs], list: [bullets] }. Keep claims about the product accurate:
- * link shortening, QR codes (standard / custom designer on paid plans), click counts with last click and trend.
+ * Fields: slug, title, description (also the SEO description, ~150 chars), date (real publish date, YYYY-MM-DD),
+ * readMinutes, category, highlights (3 short takeaways shown in the "Kısaca" box), sections.
+ * Section shape: { h: heading, p: [paragraphs], list: [bullets] }. Headings become the table of contents.
+ * Keep claims about the product accurate: link shortening, QR codes (standard / custom designer on paid plans),
+ * click counts with last click and trend, custom links (@ad/metin) on Professional and Business.
  * Newest first.
  */
 export const BLOG_POSTS = [
+  {
+    slug: 'kampanya-link-planlama-kontrol-listesi',
+    title: 'Kısa Link Kampanyası Planlama Kontrol Listesi: E-posta, Sosyal Medya ve Baskı',
+    description:
+      'Bir kampanyada her kanal için ayrı kısa bağlantı kullanmak neden önemli? Hedef belirlemeden raporlamaya kadar uygulanabilir bir kontrol listesi.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Pazarlama',
+    highlights: [
+      'Her kanal için ayrı kısa bağlantı oluştur, hangisinin işe yaradığını net gör.',
+      'Yayına almadan önce her bağlantıyı mobilde test et.',
+      'Sonuçları kampanya bitince değil, ilk haftanın sonunda karşılaştır.',
+    ],
+    sections: [
+      {
+        p: [
+          'Kampanyanın başarısı çoğu zaman paylaşımdan önce yapılan hazırlıkla belirlenir. Hangi bağlantıyı nerede kullandığını bilmiyorsan sonuçları da yorumlayamazsın. Bu kontrol listesi e-posta, sosyal medya ve basılı materyal için ortak bir düzen kurmana yardım eder.',
+        ],
+      },
+      {
+        h: '1. Hedefi ve başarı ölçüsünü yaz',
+        p: [
+          'Kampanya ne için yapılıyor: kayıt, satış, etkinliğe katılım, ziyaret? Hedefi bir cümleyle yaz ve tıklamanın bu hedefe ne kadar yakın olduğunu düşün. Tıklama ilgiyi gösterir, sonuç değildir; sonucu hedef sayfadaki dönüşümle birlikte değerlendirmelisin.',
+        ],
+      },
+      {
+        h: '2. Her kanal için ayrı bağlantı oluştur',
+        p: [
+          'Aynı sayfaya giden ama farklı kanallarda kullanılan bağlantıları ayır: bülten, Instagram, WhatsApp, afiş QR kodu. Her biri için ayrı kısa bağlantı oluşturunca tıklama sayıları kendiliğinden kanal karşılaştırmasına dönüşür.',
+        ],
+      },
+      {
+        h: '3. Hedef sayfayı hazırla',
+        list: [
+          'Sayfa mobilde hızlı açılıyor ve düzgün görünüyor mu?',
+          'Tek bir net eylem çağrısı var mı?',
+          'Kampanya bitince sayfa ne gösterecek? Kaldırmak yerine yönlendirme düşün.',
+        ],
+      },
+      {
+        h: '4. Yayından önce test et',
+        list: [
+          'Her kısa bağlantıyı farklı telefon ve tarayıcıyla aç.',
+          'QR kodları yazdırmadan önce gerçek boyutta tara.',
+          'E-posta ve mesajlarda bağlantının tıklanabilir olduğundan emin ol.',
+        ],
+      },
+      {
+        h: '5. Takip et ve karşılaştır',
+        p: [
+          'İlk günlerde sayıları izle; bir kanal beklenenin çok altında kalıyorsa mesajı veya zamanlamayı değiştirmek için henüz geç değil. Kampanya sonunda en çok tıklanan kanalı ve en az tıklanan kanalı not et; bir sonraki kampanya için en değerli bilgi budur.',
+        ],
+      },
+      {
+        h: '6. Arşivle',
+        p: [
+          'Bağlantıları, kullanıldıkları kanalları ve sonuçları bir tabloda sakla. Kısaltıcı’da oluşturduğun bağlantılar sen silmediğin sürece çalıştığı için basılı materyaldeki eski kodlar da boşa gitmez.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'sosyal-medya-biyografi-link-ipuclari',
+    title: 'Sosyal Medya Biyografisine Link Ekleme: Daha Fazla Tıklama İçin 6 İpucu',
+    description:
+      'Biyografideki tek bağlantıyı daha etkili kullanmanın yolları: kısa ve okunur adres, net çağrı ve platform bazlı ölçüm.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Pazarlama',
+    highlights: [
+      'Kısa ve okunur bir adres güven verir ve tıklamayı artırır.',
+      'Her platform için ayrı bağlantı kullanırsan hangisinin işe yaradığını görürsün.',
+      'Bağlantının yanında ne bulunacağını söyleyen kısa bir çağrı yaz.',
+    ],
+    sections: [
+      {
+        p: [
+          'Çoğu sosyal medya profilinde tek bir bağlantı koyabilirsin. Bu küçük alan; web siten, mağazan ya da en yeni içeriğin için en değerli yer olabilir. Aşağıdaki ipuçları bu alanı daha verimli kullanmana yardım eder.',
+        ],
+      },
+      {
+        h: 'Kısa ve okunur bağlantı kullan',
+        p: [
+          'Uzun, parametrelerle dolu adresler hem dağınık görünür hem de güven vermez. Kısa bir bağlantı biyografide düzenli durur ve insanlar nereye gideceklerini daha net anlar.',
+        ],
+      },
+      {
+        h: 'Bağlantının ne olduğunu söyle',
+        p: [
+          'Bağlantının yanına kısa bir yönlendirme koy: "Yeni rehber", "Randevu al", "Menü". İnsanlar bir şey yapmaya yönlendirildiğinde daha çok tıklar.',
+        ],
+      },
+      {
+        h: 'Her platform için ayrı bağlantı oluştur',
+        p: [
+          'Aynı sayfaya giden ama farklı platformlarda kullanılan bağlantıları ayır. Kısaltıcı’da her bağlantının kendi tıklama sayısı olduğu için hangi platformun trafik getirdiğini kolayca karşılaştırırsın.',
+        ],
+      },
+      {
+        h: 'Bağlantıyı güncel tut',
+        list: [
+          'Kampanya bittiğinde hedef sayfayı yönlendirme ile güncelle.',
+          'Kırık veya eski bir sayfaya giden bağlantı güveni zedeler.',
+          'Her ay biyografideki bağlantıyı gözden geçir.',
+        ],
+      },
+      {
+        h: 'Mobil deneyimi öncelikle',
+        p: [
+          'Sosyal medya trafiğinin büyük kısmı telefondan gelir. Hedef sayfanın mobilde hızlı açıldığından ve düğmelerin kolay basıldığından emin ol.',
+        ],
+      },
+      {
+        h: 'Sonuçlara bak',
+        p: [
+          'Bir ay boyunca tıklama sayısını izle. Hangi içeriğin ardından tıklama arttığını fark edersen aynı türde içerik üretmeye devam edebilirsin.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'kartvizit-afis-menu-qr-kod-ipuclari',
+    title: 'Kartvizit, Afiş ve Menüde QR Kod: Boyut, Konum ve Tasarım İpuçları',
+    description:
+      'Basılı materyalde QR kod kullanırken en az ne kadar büyük olmalı, nereye konmalı ve nasıl tasarlanmalı? Pratik ölçüler ve sık yapılan hatalar.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Rehber',
+    highlights: [
+      'Kartvizitte en az 2 x 2 cm, afişte tarama mesafesine göre çok daha büyük tut.',
+      'QR kodun yanına ne işe yaradığını anlatan kısa bir yazı ekle.',
+      'Baskıya göndermeden önce gerçek boyutta ve farklı telefonlarla test et.',
+    ],
+    sections: [
+      {
+        p: [
+          'Basılı materyaldeki QR kod, ekranda gördüğünden farklı davranır: ışık, kağıt yüzeyi, mesafe ve baskı kalitesi taramayı etkiler. Bu yüzden ekranda çalışan bir kod baskıda sorun çıkarabilir. İşte baskıdan önce bilmen gerekenler.',
+        ],
+      },
+      {
+        h: 'Doğru boyutu seç',
+        list: [
+          'Kartvizit ve broşür: en az 2 x 2 cm.',
+          'Menü ve masa kartı: 3 x 3 cm veya daha büyük.',
+          'Afiş ve vitrin: tarama mesafesinin yaklaşık onda biri kadar bir kenar uzunluğu hedefle.',
+        ],
+      },
+      {
+        h: 'Kontrastı koru',
+        p: [
+          'Koyu desen ve açık zemin en güvenilir kombinasyondur. Renkli tasarım yaparken desenin zeminden belirgin biçimde koyu olduğundan emin ol. Parlak, yansıtıcı kağıtlarda ışık yansıması taramayı zorlaştırabilir; mat yüzeyleri tercih et.',
+        ],
+      },
+      {
+        h: 'Sessiz bölgeyi bırak',
+        p: [
+          'Kodun etrafındaki boş çerçeve taramanın yapılabilmesi için gereklidir. Yazı, çizgi veya görsel bu alana taşmamalıdır.',
+        ],
+      },
+      {
+        h: 'Yerleşim ve çağrı',
+        list: [
+          'QR kodu göz hizasında ve kolay erişilen bir yere koy.',
+          'Yanına kısa bir çağrı yaz: "Menüyü görmek için tara".',
+          'Katlanan veya kıvrılan yüzeylere yerleştirme.',
+        ],
+      },
+      {
+        h: 'Kısa bağlantı kullan',
+        p: [
+          'Kısaltılmış bir adresten üretilen QR kodun deseni daha sadedir; bu da küçük baskılarda bile taranabilirliği artırır. Ayrıca hedef sayfayı sonradan değiştirebilirsin, basılı kodu yenilemeye gerek kalmaz.',
+        ],
+      },
+      {
+        h: 'Test etmeden bastırma',
+        p: [
+          'Deneme baskısı al, farklı telefonlarla ve farklı ışıklarda tara. Küçük bir test, binlerce baskıyı çöpe atmaktan çok daha ucuzdur.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'sahte-qr-kod-quishing-korunma',
+    title: 'Sahte QR Kodlardan (Quishing) Nasıl Korunursun?',
+    description:
+      'QR kod ile yapılan kimlik avı saldırıları nasıl çalışır, nasıl fark edilir? Hem kullanıcılar hem QR kod paylaşanlar için güvenlik önerileri.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Güvenlik',
+    highlights: [
+      'QR kodu taramadan önce kaynağına güven, üzerine yapıştırılmış etiket var mı bak.',
+      'Telefon bağlantıyı gösterdiğinde adresi kontrol etmeden açma.',
+      'Kendi QR kodlarını paylaşırken kısa ve tanıdık bir adres kullan.',
+    ],
+    sections: [
+      {
+        p: [
+          'QR kodlar kolay ve hızlı olduğu için saldırganların da ilgisini çekiyor. "Quishing" denen yöntemde sahte bir QR kod, kullanıcıyı kimlik avı sayfasına veya zararlı bir siteye götürür. İyi haber şu ki birkaç alışkanlıkla bu riski büyük ölçüde azaltabilirsin.',
+        ],
+      },
+      {
+        h: 'Saldırı nasıl çalışır?',
+        p: [
+          'Saldırgan, meşru bir QR kodun üzerine kendi kodunu yapıştırır ya da e-posta ve mesajla sahte bir kod gönderir. Kodu tarayan kişi, bankasına veya bilindik bir hizmete benzeyen sahte bir sayfaya yönlenir ve oraya bilgilerini girer.',
+        ],
+      },
+      {
+        h: 'Taramadan önce kontrol listesi',
+        list: [
+          'Kod, güvenilir bir yerde mi duruyor? Üzerine yapıştırılmış bir etiket veya kaymış bir katman var mı?',
+          'Tanımadığın bir kaynaktan gelen e-posta ya da mesajdaki kodlara şüpheyle yaklaş.',
+          'Aciliyet baskısı yapan mesajlara ("hesabın kapanacak") güvenme.',
+        ],
+      },
+      {
+        h: 'Taradıktan sonra',
+        list: [
+          'Telefon adresi gösterdiğinde tamamını oku, tanıdık bir alan adı mı?',
+          'Giriş bilgisi, kart numarası veya doğrulama kodu isteyen sayfalarda daha da dikkatli ol.',
+          'Şüphe varsa sayfayı kapat ve ilgili kuruma bilinen kanallardan ulaş.',
+        ],
+      },
+      {
+        h: 'QR kod paylaşanlar için öneriler',
+        list: [
+          'Kodlarını güvenli, kontrol edebildiğin yerlerde göster.',
+          'Kısa ve tanıdık bir adres kullan; uzun, karmaşık adresler şüphe uyandırır.',
+          'Kodun yanına kimin yayınladığını ve ne işe yaradığını yaz.',
+          'Basılı kodları belirli aralıklarla kontrol et; üzerine bir şey yapışmış mı bak.',
+        ],
+      },
+      {
+        h: 'Kısaltıcı’da güvenlik',
+        p: [
+          'Kısaltıcı kimlik avı, zararlı yazılım ve aldatıcı içeriğe yönlendirmeyi kullanım koşullarında yasaklar; bu tür bağlantılar devre dışı bırakılabilir. Tanımadığın bir kısa bağlantıya tıklamadan önce kimden geldiğini mutlaka düşün.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'ozel-kisa-link-marka-baglantisi',
+    title: 'Özel Kısa Link Nedir? Markana Özel Bağlantı Oluşturmanın 5 Faydası',
+    description:
+      'Rastgele kodlar yerine okunur, akılda kalan özel bir kısa bağlantı kullanmak güveni ve hatırlanabilirliği nasıl artırır? Faydalar ve ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Marka',
+    highlights: [
+      'Özel bağlantı, okunur ve akılda kalan bir adres demektir.',
+      'Marka tutarlılığı ve güven için tek biçimde isimlendir.',
+      'Kısaltıcı’da Profesyonel ve Kurumsal planlarda özel bağlantı oluşturabilirsin.',
+    ],
+    sections: [
+      {
+        p: [
+          'Bir kısa bağlantının sonu genellikle rastgele karakterlerden oluşur: aB3xYz gibi. İşe yarar ama akılda kalmaz. Özel kısa bağlantıda adresin sonunu kendin belirlersin; "portfolyo", "menu" ya da "kampanya" gibi.',
+        ],
+      },
+      {
+        h: '1. Akılda kalır',
+        p: [
+          'Anlamlı bir kelime, rastgele bir koddan çok daha kolay hatırlanır. Sözlü olarak paylaşılan bağlantılar (radyo, sunum, telefon görüşmesi) için bu büyük fark yaratır.',
+        ],
+      },
+      {
+        h: '2. Güven verir',
+        p: [
+          'İnsanlar neye tıkladıklarını bilmek ister. İçeriği anlatan bir adres, rastgele karakterlerden daha güvenilir görünür.',
+        ],
+      },
+      {
+        h: '3. Marka tutarlılığı sağlar',
+        p: [
+          'Tüm kanallarda aynı kalıbı kullanmak profesyonel bir görünüm kazandırır. Örneğin kisaltici.com/@ad/portfolyo biçiminde adına bağlı bir adres hem sahibini hem içeriği belli eder.',
+        ],
+      },
+      {
+        h: '4. Paylaşımı kolaylaştırır',
+        p: [
+          'Kısa ve okunur bir adres kartvizitte, sunumda veya videoda elle yazılabilir. Kopyalama hatalarını azaltır.',
+        ],
+      },
+      {
+        h: '5. Ölçümü anlamlı kılar',
+        p: [
+          'Her kampanyaya anlamlı bir isim verdiğinde raporlarda hangi bağlantının ne getirdiğini hemen anlarsın.',
+        ],
+      },
+      {
+        h: 'İpuçları',
+        list: [
+          'Kısa tut ve gereksiz kelimelerden kaçın.',
+          'Küçük harf ve tutarlı bir isimlendirme kullan.',
+          'Kampanya bağlantılarında yıl veya dönem ekleyerek çakışmaları önle.',
+          'Yanlış yazımı kolay olan karakterlerden kaçın.',
+        ],
+      },
+      {
+        h: 'Kısaltıcı’da özel bağlantı',
+        p: [
+          'Profesyonel ve Kurumsal planlarda adresin sonunu kendin yazabilirsin. İstediğinde tek tıkla otomatik koda dönebilirsin.',
+        ],
+      },
+    ],
+  },
   {
     slug: 'qr-kod-nasil-olusturulur',
     title: 'QR Kod Nasıl Oluşturulur? Adım Adım Rehber',
@@ -15,6 +323,11 @@ export const BLOG_POSTS = [
     date: '2026-10-10',
     readMinutes: 5,
     category: 'Rehber',
+    highlights: [
+      'Uzun bir adresi önce kısalt, QR kodun deseni sadeleşir ve daha kolay taranır.',
+      'Yüksek kontrast, yeterli boşluk ve makul boyut taranabilirliği belirler.',
+      'Baskıya göndermeden önce farklı telefonlarla test et.',
+    ],
     sections: [
       {
         p: [
@@ -75,9 +388,14 @@ export const BLOG_POSTS = [
     title: 'Link Kısaltma Nedir? Faydaları ve Nasıl Kullanılır',
     description:
       'Link kısaltma nasıl çalışır, ne işe yarar ve hangi durumlarda işine yarar? Kısa bağlantıların faydalarını ve güvenlik ipuçlarını öğren.',
-    date: '2026-10-08',
+    date: '2026-10-10',
     readMinutes: 4,
     category: 'Temel Bilgi',
+    highlights: [
+      'Kısa bağlantı, uzun adresi paylaşması ve okuması kolay bir adrese çevirir.',
+      'Tıklama sayısını görmek kampanyalarını ölçmeni sağlar.',
+      'Tanımadığın kaynaklardan gelen kısa bağlantılara dikkat et.',
+    ],
     sections: [
       {
         p: [
@@ -129,9 +447,14 @@ export const BLOG_POSTS = [
     title: 'Kısa Link Tıklamaları Nasıl Takip Edilir? UTM ile Doğru Ölçüm',
     description:
       'Paylaştığın bağlantının kaç kez tıklandığını nasıl görürsün? Tıklama takibinin temelleri ve UTM etiketleriyle kampanya ölçümü rehberi.',
-    date: '2026-10-05',
+    date: '2026-10-10',
     readMinutes: 5,
     category: 'Rehber',
+    highlights: [
+      'Toplam tıklama, son tıklama ve zaman içindeki dağılım ilgiyi gösterir.',
+      'UTM etiketleri trafiğin kaynağını analiz araçlarında ayırmanı sağlar.',
+      'Her kanal için ayrı kısa bağlantı oluşturmak karşılaştırmayı kolaylaştırır.',
+    ],
     sections: [
       {
         p: [
@@ -186,8 +509,29 @@ export const BLOG_POSTS = [
 
 export const getBlogPost = (slug) => BLOG_POSTS.find((post) => post.slug === slug) || null;
 
-/** Other posts for the "recommended" block under an article (newest first, current one excluded). */
-export const getRelatedPosts = (slug, count = 2) => BLOG_POSTS.filter((post) => post.slug !== slug).slice(0, count);
+/** Other posts for the "recommended" block under an article: same category first, then newest. */
+export const getRelatedPosts = (slug, count = 3) => {
+  const current = getBlogPost(slug);
+  const others = BLOG_POSTS.filter((post) => post.slug !== slug);
+  const sameCategory = others.filter((post) => current && post.category === current.category);
+  const rest = others.filter((post) => !sameCategory.includes(post));
+  return [...sameCategory, ...rest].slice(0, count);
+};
+
+export const BLOG_CATEGORIES = [...new Set(BLOG_POSTS.map((post) => post.category))];
+
+/** URL-safe id for a heading (table of contents anchors). */
+export const headingId = (text = '') =>
+  text
+    .toLocaleLowerCase('tr-TR')
+    .replace(/ç/g, 'c')
+    .replace(/ğ/g, 'g')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ş/g, 's')
+    .replace(/ü/g, 'u')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
 export const formatPostDate = (iso) =>
   new Date(`${iso}T00:00:00`).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });

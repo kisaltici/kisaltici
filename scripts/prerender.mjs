@@ -32,7 +32,7 @@ try {
   const plansCfg = await vite.ssrLoadModule('/src/config/plans.js');
   const { LEGAL_DOCS } = await vite.ssrLoadModule('/src/pages/legalDocs.js');
   const { SELLER, LEGAL_UPDATED } = await vite.ssrLoadModule('/src/config/legal.js');
-  const { BLOG_POSTS, getRelatedPosts, formatPostDate } = await vite.ssrLoadModule('/src/content/blogPosts.js');
+  const { BLOG_POSTS, getRelatedPosts, formatPostDate, headingId } = await vite.ssrLoadModule('/src/content/blogPosts.js');
 
   const tr = LANDING_COPY.tr;
   const planCopy = plansCfg.getPlanCopy('tr');
@@ -228,7 +228,7 @@ try {
     const body = post.sections
       .map(
         (s) =>
-          `<section>${s.h ? `<h2>${esc(s.h)}</h2>` : ''}${(s.p || []).map((t) => `<p>${esc(t)}</p>`).join('')}${
+          `<section>${s.h ? `<h2 id="${headingId(s.h)}">${esc(s.h)}</h2>` : ''}${(s.p || []).map((t) => `<p>${esc(t)}</p>`).join('')}${
             s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
           }</section>`
       )
@@ -252,7 +252,7 @@ try {
     writePage(
       `blog/${post.slug}`,
       setHead(
-        shell(`<article><p>${esc(post.category)} · ${esc(formatPostDate(post.date))}</p><h1>${esc(post.title)}</h1><p>${esc(post.description)}</p>${body}</article><h2>Önerilen yazılar</h2><ul>${related}</ul>${blogNav}`),
+        shell(`<article><p>${esc(post.category)} · ${esc(formatPostDate(post.date))}</p><h1>${esc(post.title)}</h1><p>${esc(post.description)}</p>${post.highlights ? `<aside><strong>Kısaca</strong><ul>${post.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></aside>` : ''}${body}</article><h2>Önerilen yazılar</h2><ul>${related}</ul>${blogNav}`),
         {
           title: `${post.title} | ${NAME}`,
           description: post.description,

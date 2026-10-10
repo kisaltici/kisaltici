@@ -495,7 +495,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <li><a href="#ozellikler">{nav.features}</a></li>
             <li><a href="#planlar">{nav.plans}</a></li>
             <li><a href="#sss">{nav.faq}</a></li>
-            <li><a href="/blog">Blog</a></li>
+            <li><a href="#blog">Blog</a></li>
           </ul>
 
           <div className="lpNavActions">
@@ -927,6 +927,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <li><a href="#ozellikler">{nav.features}</a></li>
             <li><a href="#planlar">{nav.plans}</a></li>
             <li><a href="#sss">{nav.faq}</a></li>
+            <li><a href="#blog">Blog</a></li>
           </ul>
           <span className="lpFooterRights">{footer.rights}</span>
           <LegalLinks className="lpFooterLegal" />
