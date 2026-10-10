@@ -173,6 +173,8 @@ function QrModal({
 
     if (gate.errorCode === 'guest_limit') {
       setNotice({ text: t('guestQrLimitReached'), action: 'guest' });
+    } else if (gate.errorCode === 'no_plan') {
+      setNotice({ text: t('noPlanQr'), action: 'plan' });
     } else if (gate.errorCode === 'plan_required') {
       setNotice({ text: t('qrCustomNeedsPlan'), action: user ? 'plan' : 'guest' });
     } else {

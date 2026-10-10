@@ -43,8 +43,12 @@ export const fetchBillingConfig = () => {
   if (!configPromise) {
     configPromise = fetch(`${API_BASE_URL}/api/billing/config`)
       .then((res) => res.json())
-      .then((data) => ({ enabled: Boolean(data?.enabled), testMode: Boolean(data?.testMode) }))
-      .catch(() => ({ enabled: false, testMode: false }));
+      .then((data) => ({
+        enabled: Boolean(data?.enabled),
+        testMode: Boolean(data?.testMode),
+        trial: Boolean(data?.trial),
+      }))
+      .catch(() => ({ enabled: false, testMode: false, trial: false }));
   }
   return configPromise;
 };

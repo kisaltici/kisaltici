@@ -937,3 +937,22 @@
 .historyRetryBtn:hover {
   border-color: var(--accent-color);
 }
+
+.usageNoPlan {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.usageNoPlanBtn {
+  min-height: 36px;
+  padding: 0 0.9rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent-color);
+  color: var(--action-btn-text);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}

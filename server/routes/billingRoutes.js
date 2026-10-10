@@ -297,7 +297,7 @@ router.post('/paytr/callback', async (req, res) => {
 router.get('/order/:orderId', requireAuth, async (req, res, next) => {
   try {
     const order = await Order.findOne({ orderId: req.params.orderId, userId: req.user.uid })
-      .select({ status: 1, plan: 1, period: 1, activatedUntil: 1, failedReasonMsg: 1, testMode: 1 })
+      .select({ status: 1, plan: 1, period: 1, kind: 1, activatedUntil: 1, failedReasonMsg: 1, testMode: 1 })
       .lean();
     if (!order) {
       return res.status(404).json({ success: false, error: 'Sipariş bulunamadı.' });
@@ -310,6 +310,7 @@ router.get('/order/:orderId', requireAuth, async (req, res, next) => {
       expiresAt: order.activatedUntil || null,
       failedReason: order.status === 'failed' ? order.failedReasonMsg || null : null,
       testMode: Boolean(order.testMode),
+      trial: order.kind === 'trial',
     });
   } catch (error) {
     next(error);

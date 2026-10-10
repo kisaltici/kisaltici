@@ -6,6 +6,7 @@ import { CHECKOUT_COPY } from '../i18n/checkoutCopy';
 import { API_BASE_URL } from '../config/api';
 import {
   PAID_PLANS,
+  TRIAL_DAYS,
   DEFAULT_PERIOD,
   buildPlanRows,
   formatPrice,
@@ -137,9 +138,12 @@ function ResultView({ kind, theme }) {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </span>
-            <h1 className="cxResultTitle">{text.success.title}</h1>
+            <h1 className="cxResultTitle">{order.trial ? text.success.trialTitle : text.success.title}</h1>
             <p className="cxResultText">
-              {text.success.text(planCopy.names[order.plan] || order.plan, order.expiresAt ? formatDate(order.expiresAt, lang) : '')}
+              {(order.trial ? text.success.trialText : text.success.text)(
+                planCopy.names[order.plan] || order.plan,
+                order.expiresAt ? formatDate(order.expiresAt, lang) : ''
+              )}
             </p>
             <div className="cxResultActions">
               <button type="button" className="cxBtn isPrimary" onClick={() => navigate('/')}>{text.success.goDashboard}</button>
@@ -250,6 +254,8 @@ function CheckoutForm({ theme }) {
   };
 
   const total = formatPrice(plan, period);
+  const isTrial = Boolean(billing.trial);
+  const chargeDate = formatDate(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000, lang);
   const rows = buildPlanRows(plan, lang);
 
   return (
@@ -257,7 +263,7 @@ function CheckoutForm({ theme }) {
       <TopBar theme={theme} onBack={() => navigate('/')} text={text} />
 
       <main className="cxMain">
-        <h1 className="cxTitle">{text.title}</h1>
+        <h1 className="cxTitle">{isTrial ? text.trialTitle(TRIAL_DAYS) : text.title}</h1>
 
         <div className="cxGrid">
           {/* Left: plan selection */}
@@ -298,11 +304,30 @@ function CheckoutForm({ theme }) {
               ))}
             </ul>
 
-            <div className="cxSummary">
-              <span>{planCopy.names[plan]} · {period === 'yearly' ? text.forPeriodYearly : text.forPeriodMonthly}</span>
-              <strong>{total}</strong>
-            </div>
-            <p className="cxNote">{text.renewNote}</p>
+            {isTrial ? (
+              <div className="cxTrial">
+                <div className="cxTrialRow">
+                  <span>{text.trialToday}</span>
+                  <strong>{text.trialTodayValue}</strong>
+                </div>
+                <div className="cxTrialRow isMuted">
+                  <span>{text.trialThen(chargeDate)}</span>
+                  <strong>
+                    {total}
+                    <em>{period === 'yearly' ? planCopy.periodYear : planCopy.period}</em>
+                  </strong>
+                </div>
+                <p className="cxNote">{text.trialCancel}</p>
+              </div>
+            ) : (
+              <>
+                <div className="cxSummary">
+                  <span>{planCopy.names[plan]} · {period === 'yearly' ? text.forPeriodYearly : text.forPeriodMonthly}</span>
+                  <strong>{total}</strong>
+                </div>
+                <p className="cxNote">{text.renewNote}</p>
+              </>
+            )}
           </section>
 
           {/* Right: details + PayTR iframe */}
@@ -357,7 +382,7 @@ function CheckoutForm({ theme }) {
                     <a href="/yasal/on-bilgilendirme-formu" target="_blank" rel="noopener noreferrer">{text.termsForm}</a>
                     {text.termsAnd}
                     <a href="/yasal/mesafeli-satis-sozlesmesi" target="_blank" rel="noopener noreferrer">{text.termsContract}</a>
-                    {text.termsTail}
+                    {isTrial ? text.trialTermsTail : text.termsTail}
                   </span>
                 </label>
 
@@ -365,9 +390,9 @@ function CheckoutForm({ theme }) {
                 {error && <p className="cxError" role="alert">{error}</p>}
 
                 <button type="submit" className="cxBtn isPrimary isWide" disabled={isLoading || billing.loading}>
-                  {isLoading ? text.preparing : `${text.payButton} · ${total}`}
+                  {isLoading ? text.preparing : isTrial ? text.trialPayButton : `${text.payButton} · ${total}`}
                 </button>
-                <p className="cxNote">{text.cardNote}</p>
+                <p className="cxNote">{isTrial ? text.trialNote : text.cardNote}</p>
               </form>
             )}
           </section>

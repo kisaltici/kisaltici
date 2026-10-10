@@ -19,6 +19,7 @@ import {
   getPlanCopy,
 } from '../config/plans';
 import BillingToggle from '../components/BillingToggle';
+import { useBillingConfig } from '../utils/useBillingConfig';
 import LegalLinks from '../components/LegalLinks';
 import './LandingPage.css';
 
@@ -122,6 +123,9 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const [period, setPeriod] = useState(DEFAULT_PERIOD);
+  // Trial wording is only shown while it is true: before payments open, or when the server has trials enabled
+  const billing = useBillingConfig();
+  const showTrial = billing.loading || !billing.enabled || billing.trial;
   // Guests get one link a day; once used, the form is replaced by a sign-in prompt
   const guestBlocked = hasUsedGuestLinkToday();
 
@@ -768,7 +772,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
                         <span className="lpPriceAmount">{formatPrice(planId, period)}</span>
                         <span className="lpPricePeriod">{period === 'yearly' ? planCopy.periodYear : planCopy.period}</span>
                       </div>
-                      <span className="lpPriceTag">{planCopy.launchPrice} · {planCopy.trialBadge(TRIAL_DAYS)}</span>
+                      <span className="lpPriceTag">{showTrial ? `${planCopy.launchPrice} · ${planCopy.trialBadge(TRIAL_DAYS)}` : planCopy.launchPrice}</span>
                     </div>
                   </header>
 
@@ -788,14 +792,14 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
                     className={`lpBtn ${featured ? 'lpBtnPrimary' : 'lpBtnGhost'} lpPlanBtn`}
                     onClick={() => (onStartCheckout ? onStartCheckout(planId, period) : onOpenAuthModal('login'))}
                   >
-                    {planCopy.trialCta(TRIAL_DAYS)}
+                    {showTrial ? planCopy.trialCta(TRIAL_DAYS) : planCopy.selectPlan(planCopy.names[planId])}
                   </button>
                 </article>
               );
             })}
           </div>
 
-          <p className="lpTrialNote" data-reveal>{planCopy.trialNote(TRIAL_DAYS)}</p>
+          {showTrial && <p className="lpTrialNote" data-reveal>{planCopy.trialNote(TRIAL_DAYS)}</p>}
           <p className="lpGuestNote" data-reveal>{plans.guestNote}</p>
         </section>
 

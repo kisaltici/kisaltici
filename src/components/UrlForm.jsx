@@ -126,6 +126,9 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
         if (result.errorCode === 'guest_limit') {
           pushToast(t('guestLimitReached'), 'info', 4200);
           if (onLimitReached) onLimitReached('guest');
+        } else if (result.errorCode === 'no_plan') {
+          pushToast(t('noPlanLimit'), 'info', 4600);
+          if (onLimitReached) onLimitReached('daily');
         } else if (result.errorCode === 'daily_limit') {
           pushToast(t('dailyLinkLimitReached', { limit: result.limit }), 'info', 4600);
           if (onLimitReached) onLimitReached('daily');

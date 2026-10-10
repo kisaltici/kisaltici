@@ -26,7 +26,8 @@ export const LIST_PRICES = { starter: 79, pro: 229, business: 599 };
 export const PLAN_PRICES = { free: 0, starter: 49, pro: 149, business: 399 };
 
 export const PLAN_LIMITS = {
-  free: { dailyLinks: 5, dailyQr: 3, statsDays: 30, customLinks: false, customQr: false, themes: 5 },
+  // 'free' = account without an active subscription: existing links keep working, nothing new can be created
+  free: { dailyLinks: 0, dailyQr: 0, statsDays: 30, customLinks: false, customQr: false, themes: 5 },
   starter: { dailyLinks: 30, dailyQr: 20, statsDays: 90, customLinks: false, customQr: true, themes: 15 },
   pro: { dailyLinks: 100, dailyQr: 100, statsDays: 365, customLinks: true, customQr: true, themes: 15 },
   business: { dailyLinks: 500, dailyQr: 500, statsDays: null, customLinks: true, customQr: true, themes: 15 },

@@ -28,7 +28,7 @@ export const markGuestLinkUsed = () => {
 /**
  * Shared shorten API call.
  * Returns { success, data } or { success: false, errorCode?, errorMessage?, limit? }.
- * errorCode: 'db' | 'guest_limit' | 'daily_limit'
+ * errorCode: 'db' | 'guest_limit' | 'daily_limit' | 'no_plan'
  */
 export async function shortenUrl(inputUrl, getIdToken) {
   const headers = { 'Content-Type': 'application/json' };
@@ -50,6 +50,9 @@ export async function shortenUrl(inputUrl, getIdToken) {
     if (response.status === 429 && data?.code === 'GUEST_LIMIT') {
       markGuestLinkUsed();
       return { success: false, errorCode: 'guest_limit', limit: data.limit };
+    }
+    if (response.status === 429 && data?.code === 'NO_PLAN') {
+      return { success: false, errorCode: 'no_plan' };
     }
     if (response.status === 429 && data?.code === 'DAILY_LINK_LIMIT') {
       return { success: false, errorCode: 'daily_limit', limit: data.limit };
@@ -96,7 +99,8 @@ export async function consumeQr(shortCode, getIdToken, mode = 'standard') {
       const data = await response.json().catch(() => null);
       return {
         allowed: false,
-        errorCode: data?.code === 'GUEST_LIMIT' ? 'guest_limit' : 'daily_limit',
+        errorCode:
+          data?.code === 'GUEST_LIMIT' ? 'guest_limit' : data?.code === 'NO_PLAN' ? 'no_plan' : 'daily_limit',
         limit: data?.limit,
       };
     }

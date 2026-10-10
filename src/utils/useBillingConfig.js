@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { fetchBillingConfig } from './checkout';
 
-/** { enabled, testMode, loading } from GET /api/billing/config. */
+/** { enabled, testMode, trial, loading } from GET /api/billing/config. */
 export function useBillingConfig() {
-  const [state, setState] = useState({ enabled: false, testMode: false, loading: true });
+  const [state, setState] = useState({ enabled: false, testMode: false, trial: false, loading: true });
   useEffect(() => {
     let active = true;
     fetchBillingConfig().then((config) => {

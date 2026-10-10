@@ -463,6 +463,14 @@ function Sidebar({
                   <span className="usageTitle">{t('usageTitle')}</span>
                   <span className="usageUnlimitedValue">∞ {t('usageUnlimited')}</span>
                 </div>
+              ) : limits.dailyLinks === 0 ? (
+                <div className="usageNoPlan">
+                  <span className="usageTitle">{t('noPlanTitle')}</span>
+                  <p className="usageHint">{t('noPlanHint')}</p>
+                  <button type="button" className="usageNoPlanBtn" onClick={() => onOpenPricing && onOpenPricing()}>
+                    {t('noPlanBtn')}
+                  </button>
+                </div>
               ) : (
                 <>
                   <div className="usageHead" title={t('usageResets')}>

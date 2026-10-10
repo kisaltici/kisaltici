@@ -232,7 +232,7 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
                         disabled={!billing.enabled}
                         onClick={() => onSelectPlan && onSelectPlan(planId, period)}
                       >
-                        {billing.enabled ? copy.trialCta(TRIAL_DAYS) : copy.soon}
+                        {billing.enabled ? (billing.trial ? copy.trialCta(TRIAL_DAYS) : copy.selectPlan(copy.names[planId])) : copy.soon}
                       </button>
                     )}
                   </div>

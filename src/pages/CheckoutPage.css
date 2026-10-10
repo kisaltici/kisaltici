@@ -569,3 +569,44 @@
   padding-top: 1.25rem;
   border-top: 1px solid var(--surface-border);
 }
+
+.cxTrial {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 45%, var(--surface-border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent-color) 7%, transparent);
+}
+
+.cxTrialRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+}
+
+.cxTrialRow strong {
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cxTrialRow strong em {
+  margin-left: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.cxTrialRow.isMuted {
+  color: var(--text-secondary);
+}
+
+.cxTrialRow.isMuted strong {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}

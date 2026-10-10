@@ -79,6 +79,9 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
         if (result.errorCode === 'guest_limit') {
           setErrorMessage(t('guestLimitReached'));
           if (onLimitReached) onLimitReached('guest');
+        } else if (result.errorCode === 'no_plan') {
+          setErrorMessage(t('noPlanLimit'));
+          if (onLimitReached) onLimitReached('daily');
         } else if (result.errorCode === 'daily_limit') {
           setErrorMessage(t('dailyLinkLimitReached', { limit: result.limit }));
           if (onLimitReached) onLimitReached('daily');
