@@ -56,7 +56,8 @@ export const LEGAL_DOCS = [
       {
         h: 'Madde 3. Hizmetin niteliği ve bedeli',
         p: [
-          `Hizmet; Başlangıç, Profesyonel veya Kurumsal plan olarak sunulan, günlük bağlantı ve QR kod hakları, istatistik geçmişi ve plana bağlı ek özellikler içeren, aylık veya yıllık süreli bir dijital abonelik hizmetidir. Planların kapsamı ve güncel fiyatları ödeme sayfasında ve sitedeki plan listesinde gösterilir.`,
+          `Hizmet; Başlangıç, Profesyonel veya Kurumsal plan olarak sunulan, günlük bağlantı ve QR kod hakları, istatistik geçmişi ve plana bağlı ek özellikler içeren, aylık veya yıllık dönemlerle yenilenen bir dijital abonelik hizmetidir. Planların kapsamı ve güncel fiyatları ödeme sayfasında ve sitedeki plan listesinde gösterilir.`,
+          `İlk abonelikte, hesap başına bir defa olmak üzere ${S.trialDays} günlük ücretsiz deneme uygulanır. Deneme süresince seçilen planın tüm özellikleri kullanılabilir. Deneme başlangıcında ALICI'dan ödeme kartı bilgisi alınır.`,
           `Satış bedeli, ALICI'nın seçtiği plan ve dönem için ödeme sayfasında gösterilen toplam tutardır ve Türk lirası olarak tahsil edilir. Yıllık dönem seçildiğinde 12 aylık hizmet, 10 aylık bedel üzerinden sunulur. ALICI, siparişi onaylamadan önce toplam bedeli ödeme sayfasında görür.`,
         ],
       },
@@ -64,19 +65,20 @@ export const LEGAL_DOCS = [
         h: 'Madde 4. Ödeme',
         p: [
           `Ödeme, kredi veya banka kartı ile PayTR ödeme altyapısı üzerinden yapılır. Kart bilgileri PayTR'nin güvenli ödeme sayfasında girilir; SATICI kart bilgilerini görmez ve saklamaz. Siparişin ödemesi, PayTR'nin onay bildirimi SATICI'ya ulaştığında tamamlanmış sayılır.`,
+          `ALICI, ücretsiz deneme süresinin bitiminde seçtiği planın dönem ücretinin, deneme başlangıcında tanımladığı karttan otomatik olarak tahsil edileceğini ve abonelik iptal edilmediği sürece her dönem sonunda aynı şekilde yenileneceğini kabul eder. Tahsilat için kart saklama ve tekrarlayan ödeme, PayTR altyapısı üzerinden gerçekleştirilir. Tahsilat başarısız olursa abonelik sona erer ve hesap ücretsiz plana (yeni bağlantı oluşturma kapalı) döner.`,
         ],
       },
       {
         h: 'Madde 5. İfa ve süre',
         p: [
-          `Hizmet elektronik ortamda sunulur, fiziksel teslimat yoktur. Ödeme onaylandığında satın alınan plan ALICI'nın hesabına anında tanımlanır ve seçilen dönem (bir ay veya bir yıl) bu andan itibaren işlemeye başlar. ALICI aynı planı süresi dolmadan yeniden satın alırsa yeni dönem mevcut bitiş tarihine eklenir; farklı bir plan satın alırsa yeni plan hemen başlar ve önceki planın kalan süresi yeni plana aktarılmaz.`,
-          `Abonelik otomatik yenilenmez. SATICI, ALICI'nın kartından süre sonunda ek bir tahsilat yapmaz. Dönem sona erdiğinde hesap ücretsiz plana döner; ALICI'nın oluşturduğu bağlantılar ve verileri silinmez, bağlantılar çalışmaya devam eder, yalnızca ücretsiz planın limitleri geçerli olur.`,
+          `Hizmet elektronik ortamda sunulur, fiziksel teslimat yoktur. Ödeme onaylandığında satın alınan plan ALICI'nın hesabına anında tanımlanır ve seçilen dönem (bir ay veya bir yıl) bu andan itibaren işlemeye başlar. Ücretsiz deneme, ödeme kartının tanımlanmasıyla birlikte başlar ve ${S.trialDays} gün sürer; deneme sonunda ücretli dönem başlar.`,
+          `ALICI aboneliğini deneme süresi veya dönem bitmeden hesap ayarlarından dilediği an iptal edebilir. Deneme süresi içinde yapılan iptalde hiçbir ücret alınmaz. Dönem içinde yapılan iptalde otomatik yenileme durur, ALICI ödediği dönemin sonuna kadar hizmeti kullanmaya devam eder ve sonrasında ücret alınmaz. Abonelik sona erdiğinde ALICI'nın oluşturduğu bağlantılar ve verileri silinmez, mevcut bağlantılar çalışmaya devam eder; ancak yeni bağlantı veya QR kod oluşturmak için aktif bir plan gerekir.`,
         ],
       },
       {
         h: 'Madde 6. Cayma hakkı',
         p: [
-          `Mesafeli Sözleşmeler Yönetmeliği'nin 15. maddesinin birinci fıkrasının (ğ) bendi uyarınca, elektronik ortamda anında ifa edilen hizmetlere ilişkin sözleşmelerde cayma hakkı kullanılamaz. Bu sözleşme konusu abonelik, ödemenin onaylanmasıyla birlikte anında ifa edildiğinden ALICI cayma hakkının bulunmadığını, sipariş öncesinde bilgilendirildiğini ve bunu kabul ettiğini beyan eder. İade ve iptal koşulları ayrıca "İade ve İptal Koşulları" sayfasında açıklanmıştır.`,
+          `Mesafeli Sözleşmeler Yönetmeliği'nin 15. maddesinin birinci fıkrasının (ğ) bendi uyarınca, elektronik ortamda anında ifa edilen hizmetlere ilişkin sözleşmelerde cayma hakkı kullanılamaz. Bu sözleşme konusu abonelik, hizmet ALICI'nın onayıyla anında ifaya başladığından (deneme dahil) ALICI cayma hakkının bulunmadığını, sipariş öncesinde bilgilendirildiğini ve bunu kabul ettiğini beyan eder. İade ve iptal koşulları ayrıca "İade ve İptal Koşulları" sayfasında açıklanmıştır.`,
         ],
       },
       {
@@ -130,25 +132,25 @@ export const LEGAL_DOCS = [
       {
         h: 'Hizmetin ana nitelikleri',
         p: [
-          `Başlangıç, Profesyonel veya Kurumsal plan; aylık ya da yıllık süreli dijital abonelik. Plana göre değişen günlük bağlantı ve QR kod hakkı, istatistik geçmişi süresi, özel bağlantı ve özel QR tasarımı gibi özellikler ödeme sayfasında listelenir.`,
+          `Başlangıç, Profesyonel veya Kurumsal plan; aylık ya da yıllık süreli dijital abonelik. Plana göre değişen günlük bağlantı ve QR kod hakkı, istatistik geçmişi süresi, özel bağlantı ve özel QR tasarımı gibi özellikler ödeme sayfasında listelenir. İlk abonelikte hesap başına bir kez ${S.trialDays} günlük ücretsiz deneme uygulanır.`,
         ],
       },
       {
         h: 'Toplam bedel ve ödeme',
         p: [
-          `Seçilen plan ve dönem için toplam bedel, siparişi onaylamadan önce ödeme sayfasında Türk lirası olarak gösterilir. Ödeme kredi veya banka kartıyla, PayTR güvenli ödeme sayfası üzerinden tek çekim olarak yapılır. Kart bilgileri satıcıda saklanmaz.`,
+          `Seçilen plan ve dönem için toplam bedel, siparişi onaylamadan önce ödeme sayfasında Türk lirası olarak gösterilir. Kart bilgileri PayTR güvenli ödeme sayfasında alınır ve satıcıda saklanmaz. Deneme süresi bitiminde plan ücreti, tanımlanan karttan otomatik olarak tek çekim tahsil edilir ve abonelik iptal edilmedikçe her dönem aynı şekilde yenilenir. Ödeme sayfasında deneme sonrası çekilecek tutar ve tarih önceden gösterilir.`,
         ],
       },
       {
         h: 'İfa ve süre',
         p: [
-          `Ödeme onaylandığında plan hesabına anında tanımlanır ve seçilen süre (bir ay veya bir yıl) bu andan itibaren işler. Abonelik otomatik yenilenmez, ek tahsilat yapılmaz. Süre sonunda hesap ücretsiz plana döner, bağlantıların çalışmaya devam eder.`,
+          `Kart tanımlandığında plan hesabına anında tanımlanır ve deneme başlar. Deneme sonunda seçilen dönem (bir ay veya bir yıl) başlar ve otomatik yenilenir. Aboneliği deneme veya dönem bitmeden hesap ayarlarından iptal edebilirsin; deneme içinde iptalde ücret alınmaz, dönem içinde iptalde dönem sonuna kadar kullanırsın. Abonelik sona erdiğinde bağlantıların çalışmaya devam eder, yeni bağlantı oluşturmak için aktif plan gerekir.`,
         ],
       },
       {
         h: 'Cayma hakkı',
         p: [
-          `Elektronik ortamda anında ifa edilen hizmetlerde cayma hakkı bulunmamaktadır (Mesafeli Sözleşmeler Yönetmeliği m.15/1-ğ). Satın aldığın abonelik ödeme onayıyla anında ifa edildiği için cayma hakkın yoktur. Mükerrer veya hatalı tahsilatlar ile hizmetin sunulamaması hallerinde iade koşulları "İade ve İptal Koşulları" sayfasındadır.`,
+          `Elektronik ortamda anında ifa edilen hizmetlerde cayma hakkı bulunmamaktadır (Mesafeli Sözleşmeler Yönetmeliği m.15/1-ğ). Satın aldığın abonelik (deneme dahil) onayınla anında ifaya başladığı için cayma hakkın yoktur. Mükerrer veya hatalı tahsilatlar ile hizmetin sunulamaması hallerinde iade koşulları "İade ve İptal Koşulları" sayfasındadır.`,
         ],
       },
       {
@@ -192,7 +194,7 @@ export const LEGAL_DOCS = [
       {
         h: 'İptal ve abonelik sonu',
         p: [
-          `Abonelik otomatik yenilenmediği için ayrıca iptal etmen gerekmez. Dönem sonunda hesabın ücretsiz plana döner, bağlantıların ve verilerin silinmez. İstersen planını dilediğin zaman ödeme sayfasından yeniden satın alabilir veya süreni uzatabilirsin.`,
+          `Aboneliğin otomatik yenilendiği için istemiyorsan iptal etmelisin. Hesap ayarları > Hesap bölümündeki "Aboneliği iptal et" ile deneme veya dönem bitmeden iptal edebilirsin. Deneme içinde iptal edersen hiçbir ücret alınmaz. Dönem içinde iptal edersen ödediğin dönemin sonuna kadar kullanmaya devam edersin ve sonrasında ücret alınmaz. İptal sonrası bağlantıların ve verilerin silinmez, yalnızca yeni bağlantı oluşturma için aktif plan gerekir. İstersen dilediğin zaman yeniden abone olabilirsin (ücretsiz deneme hesap başına bir kez uygulanır).`,
         ],
       },
       {
@@ -222,7 +224,7 @@ export const LEGAL_DOCS = [
           'Hizmet verileri: oluşturduğun kısa bağlantılar, hedef adresler, QR kod ayarları, bağlantı başlıkları ve kullanıcı adın',
           'Tıklama verileri: kısa bağlantılarının tıklanma zamanları ve toplam sayıları',
           'Kullanım sayaçları: günlük bağlantı ve QR kullanımın. Giriş yapmayan ziyaretçilerde günlük hak, IP adresinin geri döndürülemez şekilde özetlenmiş (hash) hâli ile takip edilir; ham IP adresi saklanmaz',
-          'Sipariş bilgileri: ödeme yaptığında ad soyad, telefon, fatura adresi, plan, tutar ve ödeme sonucu. Kart bilgileri PayTR tarafından işlenir, bizde saklanmaz',
+          'Sipariş bilgileri: ödeme yaptığında ad soyad, telefon, fatura adresi, plan, tutar ve ödeme sonucu. Kart bilgileri PayTR tarafından işlenir ve saklanır, bizde yalnızca tekrarlayan ödeme için ödeme kuruluşunun verdiği kart jetonu tutulur',
         ],
       },
       {
@@ -265,7 +267,7 @@ export const LEGAL_DOCS = [
           'Hesap: Firebase kullanıcı kimliği, profil fotoğrafı, kullanıcı adı, üyelik planı ve süresi',
           'Hizmet kullanımı: oluşturulan bağlantılar, tıklama zamanları, günlük kullanım sayaçları, QR ayarları',
           'İşlem güvenliği: IP adresi (misafir kullanımda özetlenmiş hâliyle), oturum ve tarayıcı bilgileri',
-          'Finans: sipariş tutarı, plan ve ödeme sonucu (kart bilgileri PayTR tarafından işlenir, tarafımızca saklanmaz)',
+          'Finans: sipariş tutarı, plan, abonelik durumu ve ödeme sonucu (kart bilgileri PayTR tarafından işlenir ve saklanır; bizde yalnızca tekrarlayan ödeme için ödeme kuruluşunun verdiği kart jetonu bulunur, kart numarası bulunmaz)',
         ],
       },
       {
@@ -363,7 +365,7 @@ export const LEGAL_DOCS = [
       {
         h: '3. Planlar ve limitler',
         p: [
-          `Ücretsiz ve ücretli planların günlük bağlantı ve QR kod hakları ile özellikleri plan listesinde belirtilir. Ücretli planlar süreli satın alınır ve otomatik yenilenmez. Süre sonunda hesap ücretsiz plana döner. Bağlantılar silinmedikçe çalışmaya devam eder.`,
+          `Planların günlük bağlantı ve QR kod hakları ile özellikleri plan listesinde belirtilir. İlk abonelikte hesap başına bir kez ${S.trialDays} günlük ücretsiz deneme uygulanır; deneme sonunda plan ücreti kayıtlı karttan otomatik tahsil edilir ve abonelik iptal edilmedikçe dönemler halinde yenilenir. Abonelik hesap ayarlarından dilediğin an iptal edilebilir. Abonelik sona erdiğinde yeni bağlantı oluşturma kapanır, mevcut bağlantılar silinmedikçe çalışmaya devam eder.`,
         ],
       },
       {

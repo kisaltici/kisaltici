@@ -4,7 +4,7 @@
  * the amount charged is always computed here.
  */
 // Version of the legal texts the buyer accepts at checkout (keep in sync with LEGAL_VERSION in src/config/legal.js)
-export const TERMS_VERSION = '1.0';
+export const TERMS_VERSION = '1.1';
 
 // Free trial before the first charge (card required). Keep in sync with TRIAL_DAYS in src/config/plans.js.
 export const TRIAL_DAYS = 7;

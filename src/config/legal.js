@@ -13,8 +13,9 @@ export const SELLER = {
   email: 'kisaltici@gmail.com',
   kep: 'emrecan.yerlikaya@hs02.kep.tr',
   supportHours: 'Hafta içi 09:00 – 18:00',
+  trialDays: 7, // keep in sync with TRIAL_DAYS (src/config/plans.js, server/config/billing.js)
 };
 
 // Bump when a legal text changes materially; stored with each order as the accepted version.
-export const LEGAL_VERSION = '1.0';
-export const LEGAL_UPDATED = '10 Ekim 2026';
+export const LEGAL_VERSION = '1.1';
+export const LEGAL_UPDATED = '11 Ekim 2026';
