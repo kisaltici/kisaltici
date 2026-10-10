@@ -12,6 +12,7 @@ import {
 } from '../content/blogPosts';
 import LegalLinks from '../components/LegalLinks';
 import BlogCard from '../components/BlogCard';
+import { buildLinkedSections } from '../content/autoLink';
 import { applySeo } from '../utils/seo';
 import { homePath, langFromPath } from '../i18n/siteLang';
 import { alternatePath } from '../i18n/alternatePath';
@@ -80,6 +81,19 @@ function BlogIndex({ lang, ui }) {
   );
 }
 
+/** Text with automatic internal links (segments from buildLinkedSections). */
+function LinkedText({ parts }) {
+  return parts.map((part, index) =>
+    part.href ? (
+      <Link key={index} to={part.href} className="blInline">
+        {part.text}
+      </Link>
+    ) : (
+      <span key={index}>{part.text}</span>
+    )
+  );
+}
+
 /* ---------------- article ---------------- */
 function BlogArticle({ post, lang, ui }) {
   const [progress, setProgress] = useState(0);
@@ -88,6 +102,7 @@ function BlogArticle({ post, lang, ui }) {
   const articleRef = useRef(null);
 
   const toc = post.sections.filter((section) => section.h).map((section) => ({ id: headingId(section.h), text: section.h }));
+  const linked = useMemo(() => buildLinkedSections(post, lang), [post, lang]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -172,14 +187,20 @@ function BlogArticle({ post, lang, ui }) {
             </aside>
           )}
 
-          {post.sections.map((section, index) => (
+          {linked.map((section, index) => (
             <section key={index} className="blSection">
               {section.h && <h2 id={headingId(section.h)}>{section.h}</h2>}
-              {section.p && section.p.map((text, i) => <p key={i}>{text}</p>)}
+              {section.p.map((parts, i) => (
+                <p key={i}>
+                  <LinkedText parts={parts} />
+                </p>
+              ))}
               {section.list && (
                 <ul>
-                  {section.list.map((item, i) => (
-                    <li key={i}>{item}</li>
+                  {section.list.map((parts, i) => (
+                    <li key={i}>
+                      <LinkedText parts={parts} />
+                    </li>
                   ))}
                 </ul>
               )}

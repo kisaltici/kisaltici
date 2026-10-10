@@ -10,6 +10,251 @@
  */
 export const POSTS_TR = [
   {
+    slug: 'instagram-biyografi-link-ekleme',
+    seoTitle: 'Instagram Biyografisine Link Ekleme',
+    title: 'Instagram Biyografisine Link Nasıl Eklenir? Adım Adım ve Sık Yapılan Hatalar',
+    description:
+      'Instagram profiline bağlantı ekleme adımları, tek bağlantıyı daha verimli kullanma yolları ve sık yapılan hatalar. Kısa bağlantıyla ölçüm ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Rehber',
+    highlights: [
+      'Bağlantıyı profil düzenleme ekranındaki bağlantı alanına eklersin; arayüz zamanla değişebilir.',
+      'Kısa ve okunur bir adres kullan, çağrı metnini biyografiye yaz.',
+      'Her platform ve kampanya için ayrı kısa bağlantı oluşturup tıklamaları karşılaştır.',
+    ],
+    sections: [
+      {
+        p: [
+          'Instagram’da gönderilerin altına tıklanabilir bağlantı koyamazsın; bu yüzden profildeki bağlantı alanı en değerli yerlerden biridir. Doğru kullanıldığında takipçini web siteni, mağazanı veya en yeni içeriğine yönlendirir.',
+        ],
+      },
+      {
+        h: 'Bağlantı nasıl eklenir?',
+        list: [
+          'Instagram uygulamasında profiline gir ve "Profili düzenle" düğmesine dokun.',
+          'Bağlantılar (veya Web sitesi) alanını bul ve bağlantını ekle.',
+          'Adresin https:// ile başladığından ve doğru yazıldığından emin ol.',
+          'Kaydet ve profilini başka bir hesaptan açıp bağlantıyı test et.',
+        ],
+        p: [
+          'Menü adları ve adımlar uygulama güncellendikçe değişebilir; aradığın alan genellikle profil düzenleme ekranında yer alır.',
+        ],
+      },
+      {
+        h: 'Neden kısa bağlantı kullanmalısın?',
+        p: [
+          'Uzun ve parametreli adresler profilde dağınık görünür ve güven vermez. Kısa bir bağlantı hem temiz durur hem de tıklama sayısını ölçmeni sağlar. Her kampanya için ayrı bir kısa bağlantı oluşturduğunda hangi içeriğin tıklama getirdiğini görürsün.',
+        ],
+      },
+      {
+        h: 'Biyografide bağlantıyı destekle',
+        list: [
+          'Biyografi metnine bağlantıya götüren net bir çağrı yaz: "Yeni rehber aşağıda".',
+          'Bağlantının ne olduğunu belirt: menü, randevu, mağaza.',
+          'Gönderi ve hikayelerinde de profildeki bağlantıya yönlendir.',
+        ],
+      },
+      {
+        h: 'Sık yapılan hatalar',
+        list: [
+          'Kırık veya süresi dolmuş bir sayfaya bağlantı vermek.',
+          'Mobilde yavaş açılan bir sayfaya yönlendirmek.',
+          'Hep aynı bağlantıyı bırakıp kampanyaları güncellememek.',
+          'Bağlantıyı yazarken küçük bir yazım hatası yapmak: kaydettikten sonra mutlaka test et.',
+        ],
+      },
+      {
+        h: 'Sonuçları ölç',
+        p: [
+          'Bir hafta sonra tıklama sayısına bak. Belirli bir gönderiden sonra tıklama arttıysa o tür içeriği çoğalt, artmadıysa çağrı metnini veya bağlantı hedefini değiştir.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'google-yorum-baglantisi-qr-kod',
+    seoTitle: 'Google Yorum Bağlantısı ve QR Kod',
+    title: 'Google Yorum Bağlantısı Nasıl Paylaşılır? Kısa Link ve QR Kodla Daha Fazla Yorum Al',
+    description:
+      'Müşterilerinden daha fazla Google yorumu almak için yorum bağlantısını kısa linke ve QR koda çevirmenin yolları. Yerleşim ve mesaj önerileri.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Pazarlama',
+    highlights: [
+      'Müşteri yorum yazmak için ne kadar az adım atarsa yorum alma olasılığın o kadar artar.',
+      'Yorum bağlantısını kısaltıp QR koda çevir; kasaya, masaya veya faturaya ekle.',
+      'Her yerleşim için ayrı kısa bağlantı kullanarak hangisinin işe yaradığını gör.',
+    ],
+    sections: [
+      {
+        p: [
+          'Yerel işletmeler için Google yorumları, yeni müşteri kazanmanın en güçlü yollarından biri. Ama memnun müşteri bile yorum bırakmak için aramak, kaydırmak ve tıklamak zorunda kalırsa vazgeçebilir. Çözüm: yorum sayfasına tek dokunuşla ulaştıran bir bağlantı ve QR kod.',
+        ],
+      },
+      {
+        h: 'Yorum bağlantısını nereden alırsın?',
+        p: [
+          'İşletme profilini yönettiğin hesapta, profil ekranında yorum isteme veya yorum bağlantısı paylaşma seçeneği bulunur. Buradan işletmenin yorum sayfasına doğrudan giden bir bağlantı kopyalayabilirsin. Arayüz zamanla değişebilir; seçeneği profil yönetim ekranında ara.',
+        ],
+      },
+      {
+        h: 'Bağlantıyı neden kısaltmalısın?',
+        list: [
+          'Uzun yorum adresi mesajda ve baskıda düzgün durmaz; kısa bağlantı temiz görünür.',
+          'Kısa adresten üretilen QR kod daha sade olur ve küçük baskıda bile kolay taranır.',
+          'Her yerleşim için ayrı bağlantı oluşturarak hangi noktanın daha çok yorum getirdiğini görürsün.',
+        ],
+      },
+      {
+        h: 'QR kodu nereye koymalısın?',
+        list: [
+          'Kasanın yanında, ödeme anında müşterinin göz hizasında.',
+          'Masa kartlarında veya menünün arkasında.',
+          'Fatura, fiş veya paket ürün kartlarında.',
+          'Hizmet sonrası gönderdiğin teşekkür mesajında (kısa bağlantı olarak).',
+        ],
+      },
+      {
+        h: 'Etkili bir mesaj nasıl yazılır?',
+        list: [
+          'Kısa ve samimi ol: "Deneyimini bizimle paylaşır mısın?"',
+          'Neye tıklayacağını söyle: "QR kodu tara, 30 saniyeni al."',
+          'Yorumu ödüllendirme veya yönlendirme; platform kuralları yorum karşılığında teşvik vermeyi kısıtlayabilir.',
+        ],
+      },
+      {
+        h: 'Sonuçları takip et',
+        p: [
+          'Her yerleşim için ayrı bir kısa bağlantı kullandığında tıklama sayılarını karşılaştırabilirsin. Örneğin kasadaki kod ile masadaki kod arasında fark varsa, daha iyi çalışan yere daha çok yatırım yaparsın. Küçük bir haftalık kontrol bile hangi yöntemin yorum getirdiğini gösterir.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'qr-menu-nasil-hazirlanir',
+    seoTitle: 'QR Menü Nasıl Hazırlanır?',
+    title: 'QR Menü Nasıl Hazırlanır? Restoran ve Kafeler İçin Adım Adım Rehber',
+    description:
+      'Restoran ve kafeler için QR menü hazırlama rehberi: menü sayfası, kısa bağlantı, QR kod boyutu, yerleşim ve güncelleme ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Rehber',
+    highlights: [
+      'Menüyü mobilde hızlı açılan, tek sayfalık bir adreste yayınla.',
+      'Adresi kısaltıp QR koda çevir; masada en az 3 x 3 cm boyutunda bas.',
+      'Fiyat değiştiğinde sayfayı güncelle; QR kodu yeniden basmana gerek kalmasın.',
+    ],
+    sections: [
+      {
+        p: [
+          'QR menü, kağıt menü maliyetini azaltır, fiyat değişikliklerini kolaylaştırır ve müşteriye temassız bir deneyim sunar. İyi hazırlanmış bir QR menü ise sadece bir kod değildir: hızlı açılan bir menü sayfası, doğru boyutta basılmış bir kod ve düzenli bir güncelleme düzeni birlikte çalışır.',
+        ],
+      },
+      {
+        h: '1. Menüyü mobil uyumlu bir sayfada yayınla',
+        p: [
+          'QR kodu tarayan müşteri telefonuyla bir sayfa görecek. Büyük bir PDF yerine hızlı açılan, parmakla kaydırılabilir ve okunaklı bir menü sayfası tercih et. Kategorileri net ayır, fiyatları açık yaz ve sayfanın zayıf mobil internette de açıldığından emin ol.',
+        ],
+      },
+      {
+        h: '2. Adresi kısalt',
+        p: [
+          'Menü sayfanın adresi uzunsa kısalt. Kısa adresten üretilen QR kodun deseni daha sade olur ve küçük masa kartlarında bile rahat taranır. Ayrıca her tarama bir tıklama olarak sayılır; hangi masa veya şubenin menüyü daha çok açtığını görebilirsin.',
+        ],
+      },
+      {
+        h: '3. QR kodu oluştur ve test et',
+        list: [
+          'Kısa bağlantını QR koda çevir ve yüksek kontrastlı bir tasarım seç.',
+          'Farklı telefonlarla ve farklı ışıklarda tara.',
+          'Kodun etrafında yeterli boşluk bıraktığından emin ol.',
+        ],
+      },
+      {
+        h: '4. Doğru boyut ve yerleşim',
+        list: [
+          'Masa kartı veya standında en az 3 x 3 cm.',
+          'Girişte veya duvarda, uzaktan taranacaksa çok daha büyük.',
+          'Kodun yanına "Menü için tara" gibi kısa bir çağrı yaz.',
+          'Mat yüzeylerde bas; parlak yüzeylerde yansıma taramayı zorlaştırır.',
+        ],
+      },
+      {
+        h: '5. Güncelleme düzeni kur',
+        p: [
+          'Fiyat veya ürün değiştiğinde menü sayfanın içeriğini güncelle. Kısa adres sabit kaldığı için basılı kodları yeniden basmana gerek kalmaz. Hedef adresin kendisini değiştirmen gerekirse yeni bir kısa bağlantı ve yeni kod hazırlaman gerekir; bu yüzden menü sayfasının adresini baştan kalıcı seç.',
+        ],
+      },
+      {
+        h: '6. Müşteri deneyimini unutma',
+        p: [
+          'Telefonu olmayan veya kullanmak istemeyen müşteriler için birkaç basılı menü bulundur. QR menü bir seçenek olmalı, zorunluluk değil.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'whatsapp-link-paylasimi',
+    seoTitle: 'WhatsApp’ta Link Paylaşımı Rehberi',
+    title: 'WhatsApp’ta Link Paylaşımı: Doğrudan Mesaj Bağlantısı, Kısa Link ve QR Kod',
+    description:
+      'WhatsApp’ta müşteriyi sana tek dokunuşla yazdıran doğrudan mesaj bağlantısı nasıl oluşturulur? Kısa link ve QR kodla paylaşım ve ölçüm ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Pazarlama',
+    highlights: [
+      'Telefon numaranla bir doğrudan mesaj bağlantısı oluşturup müşteriyi tek dokunuşla sohbete yönlendirebilirsin.',
+      'Bağlantıyı kısalt ve QR koda çevir; vitrin, kartvizit ve sosyal medyada kullan.',
+      'Her kanal için ayrı kısa bağlantı kullanarak müşteri nereden geldi, gör.',
+    ],
+    sections: [
+      {
+        p: [
+          'Birçok işletme için müşteri iletişimi WhatsApp üzerinden başlıyor. Müşterinin numaranı kaydedip mesaj yazmasını beklemek yerine, tek dokunuşla sohbeti başlatan bir bağlantı paylaşabilirsin. Bu bağlantıyı kısaltıp QR koda çevirdiğinde her yerde kullanabilirsin.',
+        ],
+      },
+      {
+        h: 'Doğrudan mesaj bağlantısı nedir?',
+        p: [
+          'Doğrudan mesaj bağlantısı, tıklayan kişiyi senin numaranla WhatsApp sohbetine götürür. Bağlantı wa.me/ ile başlar ve ardından ülke kodu dahil, artı işareti ve boşluk olmadan yazılmış telefon numaran gelir. Örneğin wa.me/905xxxxxxxxx biçimindedir. İstersen bağlantının sonuna ?text= ekleyerek hazır bir mesaj metni de tanımlayabilirsin.',
+        ],
+      },
+      {
+        h: 'Neden kısaltmalısın?',
+        list: [
+          'Hazır mesaj içeren uzun bağlantılar karışık görünür; kısa bağlantı düzenli durur.',
+          'Kısa adresten üretilen QR kod daha kolay taranır.',
+          'Her kullanım yeri için ayrı bağlantı oluşturarak hangi kanalın daha çok sohbet getirdiğini görürsün.',
+        ],
+      },
+      {
+        h: 'Nerelerde kullanabilirsin?',
+        list: [
+          'Vitrin, kasa ve masa kartlarında QR kod olarak',
+          'Kartvizit ve broşürlerde',
+          'Sosyal medya biyografilerinde ve gönderi açıklamalarında',
+          'E-posta imzasında ve web sitesindeki iletişim düğmelerinde',
+          'Kampanya mesajlarında ve afişlerde',
+        ],
+      },
+      {
+        h: 'İyi bir hazır mesaj nasıl yazılır?',
+        list: [
+          'Kısa tut ve kimden geldiğini belirt: "Merhaba, web sitenizden yazıyorum."',
+          'İşlemi netleştir: "Fiyat almak istiyorum" veya "Randevu almak istiyorum".',
+          'Her kanal için farklı bir hazır mesaj kullan; böylece sohbeti kimin nereden başlattığını görürsün.',
+        ],
+      },
+      {
+        h: 'Ölçüm ve gizlilik',
+        p: [
+          'Kısa bağlantının tıklama sayısı, kaç kişinin sohbeti başlatmaya çalıştığını gösterir; sohbetin gerçekten başlayıp başlamadığını ise WhatsApp tarafında görürsün. Müşteri bilgilerini toplarken kişisel verilerin korunması kurallarına uy ve numaranı paylaşırken hangi amaçla kullanacağını belirt.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'kisa-link-seo-etkisi',
     seoTitle: 'Kısa Linkler SEO’ya Zarar Verir mi?',
     title: 'Kısaltılmış Linkler SEO’ya Zarar Verir mi? Doğru Kullanım Rehberi',

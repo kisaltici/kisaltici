@@ -35,6 +35,7 @@ try {
   const { SELLER, LEGAL_DATES } = await vite.ssrLoadModule('/src/config/legal.js');
   const { getLegalDocs, LEGAL_UI } = await vite.ssrLoadModule('/src/pages/legalDocs.js');
   const blog = await vite.ssrLoadModule('/src/content/blogPosts.js');
+  const { buildLinkedSections } = await vite.ssrLoadModule('/src/content/autoLink.js');
   const { legalPath } = await vite.ssrLoadModule('/src/content/legalSlugs.js');
   const { LANDING_SEO } = await vite.ssrLoadModule('/src/config/seo.js');
 
@@ -286,11 +287,12 @@ try {
         tr: blog.blogPath('tr', blog.getPostById(post.id, 'tr').slug),
         en: blog.blogPath('en', blog.getPostById(post.id, 'en').slug),
       };
-      const body = post.sections
+      const segmentsHtml = (parts) => parts.map((x) => (x.href ? `<a href="${x.href}">${esc(x.text)}</a>` : esc(x.text))).join('');
+      const body = buildLinkedSections(post, lang)
         .map(
           (s) =>
-            `<section>${s.h ? `<h2 id="${blog.headingId(s.h)}">${esc(s.h)}</h2>` : ''}${(s.p || []).map((t) => `<p>${esc(t)}</p>`).join('')}${
-              s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
+            `<section>${s.h ? `<h2 id="${blog.headingId(s.h)}">${esc(s.h)}</h2>` : ''}${s.p.map((t) => `<p>${segmentsHtml(t)}</p>`).join('')}${
+              s.list ? `<ul>${s.list.map((i) => `<li>${segmentsHtml(i)}</li>`).join('')}</ul>` : ''
             }</section>`
         )
         .join('');

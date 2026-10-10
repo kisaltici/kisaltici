@@ -498,3 +498,17 @@
     min-height: 40px;
   }
 }
+
+.blInline {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent-color) 70%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.blInline:hover {
+  color: var(--accent-color);
+  text-decoration-color: var(--accent-color);
+}

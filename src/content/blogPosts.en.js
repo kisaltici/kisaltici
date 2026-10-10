@@ -3,6 +3,243 @@
  * slug (English URL), title, description, highlights and sections in the same shape as the Turkish source.
  */
 export const POSTS_EN = {
+  'instagram-biyografi-link-ekleme': {
+    slug: 'how-to-add-a-link-to-your-instagram-bio',
+    seoTitle: 'Add a Link to Your Instagram Bio',
+    title: 'How to Add a Link to Your Instagram Bio: Step by Step and Common Mistakes',
+    description:
+      'Steps to add a link to your Instagram profile, ways to make better use of the single link and common mistakes. Measurement tips with short links.',
+    highlights: [
+      'You add the link in the link field of the profile edit screen; the interface can change over time.',
+      'Use a short, readable address and write the call to action in your bio.',
+      'Create a separate short link for each platform and campaign and compare clicks.',
+    ],
+    sections: [
+      {
+        p: [
+          'On Instagram you cannot put clickable links under your posts, so the link field on your profile is one of the most valuable spots. Used well, it sends followers to your website, your shop or your newest content.',
+        ],
+      },
+      {
+        h: 'How do you add the link?',
+        list: [
+          'Open your profile in the Instagram app and tap "Edit profile".',
+          'Find the Links (or Website) field and add your link.',
+          'Make sure the address starts with https:// and is typed correctly.',
+          'Save, then open your profile from another account and test the link.',
+        ],
+        p: [
+          'Menu names and steps can change as the app is updated; the field you need is usually on the profile edit screen.',
+        ],
+      },
+      {
+        h: 'Why should you use a short link?',
+        p: [
+          'Long addresses with parameters look messy on a profile and do not inspire trust. A short link looks clean and lets you measure clicks. When you create a separate short link for each campaign, you can see which content brought clicks.',
+        ],
+      },
+      {
+        h: 'Support the link in your bio',
+        list: [
+          'Write a clear call to action in your bio text: "New guide below".',
+          'Say what the link is: menu, booking, shop.',
+          'Point to the profile link in your posts and stories too.',
+        ],
+      },
+      {
+        h: 'Common mistakes',
+        list: [
+          'Linking to a broken or expired page.',
+          'Sending people to a page that loads slowly on mobile.',
+          'Leaving the same link in place and never updating it for campaigns.',
+          'Making a small typo when typing the link: always test after saving.',
+        ],
+      },
+      {
+        h: 'Measure the results',
+        p: [
+          'After a week, look at the click count. If clicks went up after a certain post, do more of that kind of content; if not, change the call to action or the link destination.',
+        ],
+      },
+    ],
+  },
+
+  'google-yorum-baglantisi-qr-kod': {
+    slug: 'google-review-link-and-qr-code',
+    seoTitle: 'Google Review Link and QR Code',
+    title: 'How to Share a Google Review Link: Get More Reviews with a Short Link and QR Code',
+    description:
+      'Ways to turn your review link into a short link and a QR code to get more Google reviews from customers. Placement and message tips.',
+    highlights: [
+      'The fewer steps a customer needs to leave a review, the more likely you are to get one.',
+      'Shorten the review link and turn it into a QR code; add it at the till, on tables or on receipts.',
+      'Use a separate short link for each placement to see which works.',
+    ],
+    sections: [
+      {
+        p: [
+          'For local businesses, Google reviews are one of the strongest ways to win new customers. But even happy customers may give up if they must search, scroll and click to leave a review. The solution: a link and QR code that take them to the review page with one tap.',
+        ],
+      },
+      {
+        h: 'Where do you get the review link?',
+        p: [
+          'In the account where you manage your business profile, the profile screen offers an option to ask for reviews or share a review link. From there you can copy a link that goes straight to your business’s review page. The interface can change over time; look for the option in the profile management screen.',
+        ],
+      },
+      {
+        h: 'Why should you shorten the link?',
+        list: [
+          'A long review address does not sit well in messages and print; a short link looks clean.',
+          'A QR code made from a short address is simpler and scans easily even in small prints.',
+          'With a separate link for each placement, you see which spot brings more reviews.',
+        ],
+      },
+      {
+        h: 'Where should you put the QR code?',
+        list: [
+          'Next to the till, at eye level at the moment of payment.',
+          'On table cards or the back of the menu.',
+          'On receipts, invoices or product cards in packages.',
+          'In the thank-you message you send after service (as a short link).',
+        ],
+      },
+      {
+        h: 'How do you write an effective message?',
+        list: [
+          'Be short and warm: "Would you share your experience with us?"',
+          'Say what to tap: "Scan the code, it takes 30 seconds."',
+          'Do not reward or steer the review; platform rules may restrict offering incentives in exchange for reviews.',
+        ],
+      },
+      {
+        h: 'Track the results',
+        p: [
+          'When each placement has its own short link, you can compare click counts. For example, if the code at the till differs from the one on tables, you put more effort into the one that works better. Even a small weekly check shows which method brings reviews.',
+        ],
+      },
+    ],
+  },
+
+  'qr-menu-nasil-hazirlanir': {
+    slug: 'how-to-make-a-qr-menu',
+    seoTitle: 'How to Make a QR Menu',
+    title: 'How to Make a QR Menu: A Step-by-Step Guide for Restaurants and Cafés',
+    description:
+      'A guide to making a QR menu for restaurants and cafés: the menu page, short link, QR code size, placement and update tips.',
+    highlights: [
+      'Publish the menu on a single page that opens fast on mobile.',
+      'Shorten the address and turn it into a QR code; print it at least 3 x 3 cm on tables.',
+      'When prices change, update the page; you do not need to reprint the QR code.',
+    ],
+    sections: [
+      {
+        p: [
+          'A QR menu reduces paper menu costs, makes price changes easier and offers customers a contactless experience. A well-made QR menu is more than a code: a fast-loading menu page, a code printed at the right size and a regular update routine work together.',
+        ],
+      },
+      {
+        h: '1. Publish the menu on a mobile-friendly page',
+        p: [
+          'The customer who scans the code will see a page on their phone. Prefer a fast-loading, scrollable and readable menu page over a large PDF. Separate the categories clearly, write prices openly and make sure the page opens even on weak mobile internet.',
+        ],
+      },
+      {
+        h: '2. Shorten the address',
+        p: [
+          'If your menu page’s address is long, shorten it. A QR code made from a short address has a simpler pattern and scans comfortably even on small table cards. Each scan also counts as a click; you can see which table or branch opens the menu more.',
+        ],
+      },
+      {
+        h: '3. Create the QR code and test it',
+        list: [
+          'Turn your short link into a QR code and choose a high-contrast design.',
+          'Scan it with different phones and in different lighting.',
+          'Make sure there is enough blank space around the code.',
+        ],
+      },
+      {
+        h: '4. Right size and placement',
+        list: [
+          'At least 3 x 3 cm on a table card or stand.',
+          'Much larger at the entrance or on a wall if it will be scanned from afar.',
+          'Write a short call to action next to the code, such as "Scan for the menu".',
+          'Print on matte surfaces; glare on glossy ones makes scanning harder.',
+        ],
+      },
+      {
+        h: '5. Set up an update routine',
+        p: [
+          'When a price or item changes, update the content of your menu page. Because the short address stays the same, you do not need to reprint the codes. If you need to change the destination address itself, you must prepare a new short link and new code; so choose the menu page’s address as a permanent one from the start.',
+        ],
+      },
+      {
+        h: '6. Do not forget the customer experience',
+        p: [
+          'Keep a few printed menus for customers who do not have or do not want to use a phone. A QR menu should be an option, not a requirement.',
+        ],
+      },
+    ],
+  },
+
+  'whatsapp-link-paylasimi': {
+    slug: 'share-links-on-whatsapp',
+    seoTitle: 'Sharing Links on WhatsApp',
+    title: 'Sharing Links on WhatsApp: Direct Message Link, Short Link and QR Code',
+    description:
+      'How do you create a direct message link that opens a WhatsApp chat with you in one tap? Sharing and measurement tips with a short link and QR code.',
+    highlights: [
+      'With your phone number you can create a direct message link and send customers to a chat in one tap.',
+      'Shorten the link and turn it into a QR code; use it on windows, business cards and social media.',
+      'Use a separate short link for each channel to see where customers came from.',
+    ],
+    sections: [
+      {
+        p: [
+          'For many businesses, customer communication starts on WhatsApp. Instead of waiting for customers to save your number and write a message, you can share a link that starts the chat with one tap. When you shorten that link and turn it into a QR code, you can use it everywhere.',
+        ],
+      },
+      {
+        h: 'What is a direct message link?',
+        p: [
+          'A direct message link takes the person who taps it to a WhatsApp chat with your number. The link starts with wa.me/ followed by your phone number written with the country code, without a plus sign or spaces. For example, it looks like wa.me/905xxxxxxxxx. If you like, you can also add ?text= at the end of the link to define a ready-made message.',
+        ],
+      },
+      {
+        h: 'Why should you shorten it?',
+        list: [
+          'Long links with a ready message look messy; a short link looks tidy.',
+          'A QR code made from a short address is easier to scan.',
+          'With a separate link for each place of use, you see which channel brings more chats.',
+        ],
+      },
+      {
+        h: 'Where can you use it?',
+        list: [
+          'As a QR code on windows, at the till and on table cards',
+          'On business cards and brochures',
+          'In social media bios and post descriptions',
+          'In your email signature and on contact buttons on your website',
+          'In campaign messages and posters',
+        ],
+      },
+      {
+        h: 'How do you write a good ready message?',
+        list: [
+          'Keep it short and say who it is from: "Hello, I am writing from your website."',
+          'Make the request clear: "I would like a price quote" or "I would like to book".',
+          'Use a different ready message for each channel; that way you see who started the chat from where.',
+        ],
+      },
+      {
+        h: 'Measurement and privacy',
+        p: [
+          'The short link’s click count shows how many people tried to start the chat; whether the chat really started you see on the WhatsApp side. When collecting customer information, follow personal data protection rules and state what you will use their data for when you share your number.',
+        ],
+      },
+    ],
+  },
+
   'kisa-link-seo-etkisi': {
     slug: 'do-short-links-hurt-seo',
     seoTitle: 'Do Short Links Hurt SEO?',
