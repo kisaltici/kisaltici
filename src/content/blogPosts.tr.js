@@ -10,6 +10,179 @@
  */
 export const POSTS_TR = [
   {
+    slug: 'etkinlik-daveti-qr-kod',
+    seoTitle: 'Etkinlik Daveti İçin QR Kod',
+    title: 'Etkinlik Daveti İçin QR Kod: Katılımcıyı Tek Taramayla Kayıt ve Konuma Yönlendir',
+    description:
+      'Davetiye, afiş ve sosyal medya görsellerinde QR kod kullanarak katılımcıları kayıt sayfasına ve konuma yönlendir. Tasarım, boyut ve ölçüm ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Pazarlama',
+    highlights: [
+      'Davetiyedeki QR kod tek bir iş yapsın: kayıt, konum veya program.',
+      'Kodu yeterince büyük ve yüksek kontrastla yerleştir, yanına net bir çağrı yaz.',
+      'Her davet kanalı için ayrı kısa bağlantı kullanıp katılım getiren kanalı gör.',
+    ],
+    sections: [
+      {
+        p: [
+          'Düğün, lansman, atölye veya konferans: davetiye ne kadar güzel olursa olsun katılımcının bir sonraki adımı atması kolay olmalı. QR kod, davetliyi kayıt formuna, konuma veya etkinlik programına tek taramayla götürerek bu adımı kolaylaştırır.',
+        ],
+      },
+      {
+        h: 'Davetiyedeki QR kod ne için kullanılmalı?',
+        list: [
+          'Katılım onayı veya kayıt formu',
+          'Konum ve yol tarifi sayfası',
+          'Program ve konuşmacı bilgileri',
+          'Hediye listesi veya bağış sayfası gibi ek bağlantılar',
+        ],
+      },
+      {
+        h: 'Tasarım ve yerleşim',
+        list: [
+          'Basılı davetiyede en az 2 x 2 cm, afişte çok daha büyük kullan.',
+          'Yüksek kontrast: koyu desen, açık zemin.',
+          'Etrafında boşluk bırak; süs ve yazı kodun üstüne taşmasın.',
+          'Yanına "Katılım için tara" gibi kısa bir çağrı yaz.',
+          'Basmadan önce farklı telefonlarla test et.',
+        ],
+      },
+      {
+        h: 'Kısa bağlantı neden işe yarar?',
+        p: [
+          'Kısa adresten üretilen kod daha sade olur ve küçük baskıda bile rahat taranır. Ayrıca her davet kanalı için (basılı davetiye, WhatsApp, sosyal medya) ayrı bir kısa bağlantı oluşturduğunda hangi kanalın katılım getirdiğini görürsün.',
+        ],
+      },
+      {
+        h: 'Dijital davetlerde',
+        p: [
+          'E-posta veya mesajla gönderilen davetlerde QR yerine doğrudan tıklanabilir kısa bağlantı kullan; insanlar telefonlarında zaten tıklayabilir. QR kodu basılı materyal ve ekran gösterimleri için sakla.',
+        ],
+      },
+      {
+        h: 'Etkinlik sonrası',
+        p: [
+          'Etkinlik bittikten sonra bağlantının gideceği sayfanın boş kalmasına izin verme. Teşekkür mesajı, fotoğraflar veya bir sonraki etkinliğin duyurusunu göster.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'kisa-linkler-nasil-calisir',
+    seoTitle: 'Kısa Linkler Nasıl Çalışır?',
+    title: 'Kısa Linkler Nasıl Çalışır? Yönlendirme, Kısa Kod ve Tıklama Sayımı Arka Planda Ne Yapar',
+    description:
+      'Kısa bağlantının arka planında ne olur? Kısa kod, yönlendirme türleri ve tıklama sayımının nasıl çalıştığını sade bir dille öğren.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Temel Bilgi',
+    highlights: [
+      'Kısa bağlantı, kısa bir kodu uzun bir adrese eşleyen bir yönlendirmedir.',
+      'Yönlendirme birkaç milisaniyede olur; tıklama bu sırada kaydedilir.',
+      'Bağlantının güvenilirliği, onu sunan hizmetin bağlantıyı çalışır tutmasına bağlıdır.',
+    ],
+    sections: [
+      {
+        p: [
+          'Kısa bağlantılar basit görünür ama arkasında küçük bir düzen çalışır: bir kod, bir veri tabanı ve bir yönlendirme. Bu yazıda kısa bir linke tıkladığında perde arkasında neler olduğunu adım adım anlatıyoruz.',
+        ],
+      },
+      {
+        h: '1. Kısa kod oluşturulur',
+        p: [
+          'Bir adresi kısalttığında hizmet o adrese ait kısa, benzersiz bir kod üretir (örneğin aB3xYz). Bu kod ile uzun adres bir veri tabanında eşleştirilir. Kodun benzersiz olması önemlidir; iki adres aynı kodu taşıyamaz.',
+        ],
+      },
+      {
+        h: '2. Ziyaretçi kısa adrese gelir',
+        p: [
+          'Biri kısa bağlantıya tıkladığında tarayıcısı kısa alan adına ve koda bir istek gönderir. İstek, bağlantıyı yöneten hizmetin sunucusuna ulaşır.',
+        ],
+      },
+      {
+        h: '3. Sunucu kodu bulur ve yönlendirir',
+        p: [
+          'Sunucu veri tabanında kodu arar, ait olduğu uzun adresi bulur ve tarayıcıya "şu adrese git" der (HTTP yönlendirmesi). Tarayıcı bu yönlendirmeyi otomatik izler ve ziyaretçi asıl sayfaya ulaşır. Bütün bu süreç genellikle saniyenin çok küçük bir bölümünde olur.',
+        ],
+      },
+      {
+        h: '4. Tıklama kaydedilir',
+        p: [
+          'Yönlendirme sırasında hizmet bir tıklama kaydı oluşturur: zaman gibi temel bilgilerle. Böylece bağlantının kaç kez açıldığını ve tıklamaların zaman içindeki dağılımını görebilirsin. Tıklama sayısı, tekil ziyaretçi sayısı demek değildir.',
+        ],
+      },
+      {
+        h: 'Yönlendirme türleri',
+        list: [
+          'Kalıcı yönlendirme (301/308): adres kalıcı olarak taşınmıştır; tarayıcılar ve arama motorları bunu önbelleğe alabilir.',
+          'Geçici yönlendirme (302/307): adres geçici olarak başka yere gider; tıklamayı her seferinde sayabilmek için kısa bağlantı hizmetleri sıkça bunu kullanır.',
+        ],
+      },
+      {
+        h: 'Güvenlik ve süreklilik',
+        p: [
+          'Kısa bağlantı hedefi gizlediği için kötü niyetli kullanılabilir; bu yüzden güvenilir hizmetler kimlik avı ve zararlı içeriğe karşı denetim yapar. Ayrıca bağlantının yıllarca çalışması, hizmetin onu yaşatmasına bağlıdır; basılı materyalde kullanacağın bir bağlantıda bu süreklilik önemlidir.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'qr-kod-ile-yol-tarifi',
+    seoTitle: 'QR Kod ile Yol Tarifi ve Konum Paylaşımı',
+    title: 'QR Kod ile Yol Tarifi ve Konum Paylaşımı: Müşterini Mağazana Tek Taramayla Getir',
+    description:
+      'Harita konum bağlantını kısa linke ve QR koda çevirerek müşterilerinin seni kolay bulmasını sağla. Vitrin, kartvizit ve davetiye için ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Rehber',
+    highlights: [
+      'Harita uygulamasından konum bağlantını kopyala, kısalt ve QR koda çevir.',
+      'Kodu kartvizit, vitrin ve davetiyede kullan; müşteri yol tarifini tek dokunuşla alsın.',
+      'Test et: farklı telefonlarda harita uygulamasının doğru konumu açtığını doğrula.',
+    ],
+    sections: [
+      {
+        p: [
+          'Müşterinin seni bulması, satışın ilk adımıdır. "Nerede olduğumuzu" adres yazarak anlatmak yerine, bir harita bağlantısını QR koda çevirirsen müşteri tek taramayla yol tarifine ulaşır.',
+        ],
+      },
+      {
+        h: 'Harita bağlantısı nasıl alınır?',
+        p: [
+          'Kullandığın harita uygulamasında işletmeni veya konumunu bul ve paylaş seçeneğini kullanarak bağlantıyı kopyala. Arayüz uygulamadan uygulamaya ve zamanla değişebilir; paylaş seçeneğini konum ekranında ara.',
+        ],
+      },
+      {
+        h: 'Neden kısaltıp QR koda çevirmelisin?',
+        list: [
+          'Harita bağlantıları uzun olabilir; kısa adresten üretilen QR kod daha kolay taranır.',
+          'Kısa bağlantının tıklama sayısı, kaç kişinin yol tarifine baktığını gösterir.',
+          'Her yerleşim için ayrı bağlantı oluşturarak hangi noktanın daha çok işe yaradığını görürsün.',
+        ],
+      },
+      {
+        h: 'Nerede kullanabilirsin?',
+        list: [
+          'Kartvizit, broşür ve davetiyelerde',
+          'Mağaza vitrininde ve tabelasında (uzaktan okunacak büyüklükte)',
+          'Web sitenin iletişim sayfasında',
+          'Kargo ve paket kartlarında',
+          'Fuar ve etkinlik stantlarında',
+        ],
+      },
+      {
+        h: 'İyi bir uygulama için ipuçları',
+        list: [
+          'Kodun yanına "Yol tarifi için tara" yaz.',
+          'Birkaç farklı telefonla test et ve doğru konumun açıldığını doğrula.',
+          'Adres veya konum değişirse yeni bir bağlantı ve kod hazırlayıp eskisini güncelle.',
+          'Çalışma saatlerini ve telefon numaranı yanına yaz.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'e-posta-imzasi-link-qr',
     seoTitle: 'E-posta İmzasına Link ve QR Kod Ekleme',
     title: 'E-posta İmzasına Link ve QR Kod Nasıl Eklenir? Her Mesajı Küçük Bir Reklama Çevir',

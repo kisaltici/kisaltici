@@ -1,4 +1,133 @@
+# Search engines and AI assistants may read the public site (landing, blog, legal). Private app routes stay closed.
 User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: MistralAI-User
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Meta-ExternalAgent
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+User-agent: CCBot
 Allow: /
 Disallow: /api/
 Disallow: /link/

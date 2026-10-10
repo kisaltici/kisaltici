@@ -347,6 +347,78 @@ try {
   }
   addToSitemap(blogIndexPaths, '0.7', 'weekly');
 
+  /* ---------- llms.txt / llms-full.txt (for AI search and assistants) ---------- */
+  const planCopyTr = plansCfg.getPlanCopy('tr');
+  const planCopyEn = plansCfg.getPlanCopy('en');
+  const priceLine = (lang) =>
+    plansCfg.SALE_PLANS.map((id) => {
+      const copy = lang === 'en' ? planCopyEn : planCopyTr;
+      const l = plansCfg.PLAN_LIMITS[id];
+      const currency = currencyOf(lang);
+      return lang === 'en'
+        ? `- ${copy.names[id]}: ${plansCfg.formatPrice(id, 'monthly', currency)} per month; ${l.dailyLinks} new links and ${l.dailyQr} QR codes per day; ${l.statsDays === null ? 'unlimited' : l.statsDays + '-day'} click statistics${l.customLinks ? '; custom link addresses' : ''}${l.customQr ? '; custom QR design' : ''}`
+        : `- ${copy.names[id]}: ayda ${plansCfg.formatPrice(id, 'monthly', currency)}; günde ${l.dailyLinks} yeni bağlantı ve ${l.dailyQr} QR kod; ${l.statsDays === null ? 'sınırsız' : l.statsDays + ' günlük'} tıklama istatistiği${l.customLinks ? '; özel bağlantı adresi' : ''}${l.customQr ? '; özel QR tasarımı' : ''}`;
+    }).join('\n');
+  const postLines = (lang) =>
+    blog.getPosts(lang).map((b) => `- [${b.title}](${abs(blog.blogPath(lang, b.slug))}): ${b.description}`).join('\n');
+  const legalLines = (lang) =>
+    getLegalDocs(lang).map((d) => `- [${d.title}](${abs(legalPath(lang, d.id))}): ${d.summary}`).join('\n');
+
+  fs.writeFileSync(
+    path.join(dist, 'llms.txt'),
+    `# Kısaltıcı
+
+> Kısaltıcı (kisaltici.com) is a Turkish URL shortener, QR code generator and link click tracker. It turns long web addresses into short links, creates QR codes (standard and custom-designed) and shows click statistics per link. The site is available in Turkish and English. Operated by ${SELLER.unvan}, a sole proprietorship in Bolu, Türkiye.
+
+Key facts:
+- Short links keep working until the owner deletes them; destinations cannot be changed after creation.
+- Every paid plan starts with a 7-day free trial (a card is required; canceling before the trial ends costs nothing).
+- Prices are shown in Turkish lira (TRY) for customers in Türkiye${intlPricing ? '; customers elsewhere pay in US dollars (USD)' : ''}.
+- Contact: ${SELLER.email}
+
+## Product
+- [Home (English)](${abs('/en')}): overview, how it works, plans and FAQ
+- [Ana sayfa (Türkçe)](${abs('/')}): genel bakış, nasıl çalışır, planlar ve SSS
+
+### Plans (monthly)
+${priceLine('en')}
+
+## Blog (English)
+${postLines('en')}
+
+## Blog (Türkçe)
+${postLines('tr')}
+
+## Legal and trust
+${legalLines('en')}
+
+## Optional
+- [Full text of all blog posts](${abs('/llms-full.txt')})
+- [Sitemap](${abs('/sitemap.xml')})
+- [RSS (English)](${abs('/en/blog/feed.xml')}) · [RSS (Türkçe)](${abs('/blog/feed.xml')})
+`
+  );
+
+  const articleMarkdown = (post, lang) =>
+    `# ${post.title}\n\nURL: ${abs(blog.blogPath(lang, post.slug))}\nPublished: ${post.date}\nCategory: ${post.category}\n\n${post.description}\n\n${
+      post.highlights ? post.highlights.map((h) => '- ' + h).join('\n') + '\n\n' : ''
+    }${post.sections
+      .map(
+        (s) =>
+          `${s.h ? '## ' + s.h + '\n\n' : ''}${(s.p || []).join('\n\n')}${(s.p || []).length ? '\n\n' : ''}${s.list ? s.list.map((i) => '- ' + i).join('\n') + '\n\n' : ''}`
+      )
+      .join('')}`;
+  fs.writeFileSync(
+    path.join(dist, 'llms-full.txt'),
+    `# Kısaltıcı: full blog content\n\nGuides on link shortening, QR codes, UTM tags and click tracking. Source: ${abs('/')}\n\n# English articles\n\n${blog
+      .getPosts('en')
+      .map((post) => articleMarkdown(post, 'en'))
+      .join('\n---\n\n')}\n\n# Türkçe makaleler\n\n${blog
+      .getPosts('tr')
+      .map((post) => articleMarkdown(post, 'tr'))
+      .join('\n---\n\n')}`
+  );
+
   /* ---------- RSS feeds (one per language) ---------- */
   for (const lang of LANGS) {
     const posts = blog.getPosts(lang);

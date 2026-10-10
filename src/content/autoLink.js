@@ -28,6 +28,9 @@ const LINK_TERMS = {
     'e-posta-imzasi-link-qr': ['e-posta imza'],
     'freelancer-portfolyo-linki': ['portfolyo', 'freelancer'],
     'pazaryeri-magaza-baglantisi': ['pazaryeri', 'mağaza bağlantı'],
+    'etkinlik-daveti-qr-kod': ['davetiye', 'davet'],
+    'kisa-linkler-nasil-calisir': ['yönlendirme'],
+    'qr-kod-ile-yol-tarifi': ['yol tarifi', 'konum'],
   },
   en: {
     'qr-kod-nasil-olusturulur': ['create a QR code', 'creating a QR code', 'QR code creation', 'QR code'],
@@ -50,6 +53,9 @@ const LINK_TERMS = {
     'e-posta-imzasi-link-qr': ['email signature'],
     'freelancer-portfolyo-linki': ['portfolio', 'freelancer'],
     'pazaryeri-magaza-baglantisi': ['marketplace', 'store link'],
+    'etkinlik-daveti-qr-kod': ['invitation', 'invitations'],
+    'kisa-linkler-nasil-calisir': ['redirect'],
+    'qr-kod-ile-yol-tarifi': ['directions', 'location'],
   },
 };
 

@@ -3,6 +3,173 @@
  * slug (English URL), title, description, highlights and sections in the same shape as the Turkish source.
  */
 export const POSTS_EN = {
+  'etkinlik-daveti-qr-kod': {
+    slug: 'qr-code-for-event-invitations',
+    seoTitle: 'QR Codes for Event Invitations',
+    title: 'QR Codes for Event Invitations: Send Guests to Registration and the Venue with One Scan',
+    description:
+      'Use QR codes on invitations, posters and social media visuals to send guests to the registration page and the venue. Design, size and measurement tips.',
+    highlights: [
+      'The QR code on an invitation should do one job: registration, location or schedule.',
+      'Place it large enough with high contrast and write a clear call to action next to it.',
+      'Use a separate short link for each invitation channel to see which one brings guests.',
+    ],
+    sections: [
+      {
+        p: [
+          'A wedding, a launch, a workshop or a conference: however beautiful the invitation, the guest’s next step must be easy. A QR code makes that step easier by taking the invitee to the registration form, the location or the event schedule with one scan.',
+        ],
+      },
+      {
+        h: 'What should the QR code on an invitation be for?',
+        list: [
+          'RSVP or a registration form',
+          'A location and directions page',
+          'Schedule and speaker information',
+          'Extra links such as a gift list or donation page',
+        ],
+      },
+      {
+        h: 'Design and placement',
+        list: [
+          'Use at least 2 x 2 cm on a printed invitation and much larger on a poster.',
+          'High contrast: a dark pattern on a light background.',
+          'Leave blank space around it; do not let decoration or text run over the code.',
+          'Write a short call to action next to it, such as "Scan to RSVP".',
+          'Test with different phones before printing.',
+        ],
+      },
+      {
+        h: 'Why does a short link help?',
+        p: [
+          'A code made from a short address is simpler and scans comfortably even in small prints. And when you create a separate short link for each invitation channel (printed invitation, WhatsApp, social media), you can see which channel brings attendance.',
+        ],
+      },
+      {
+        h: 'For digital invitations',
+        p: [
+          'In invitations sent by email or message, use a clickable short link instead of a QR code; people can already tap on their phones. Keep the QR code for printed materials and screen displays.',
+        ],
+      },
+      {
+        h: 'After the event',
+        p: [
+          'Do not let the page the link leads to stay empty once the event is over. Show a thank-you message, photos or the announcement of the next event.',
+        ],
+      },
+    ],
+  },
+
+  'kisa-linkler-nasil-calisir': {
+    slug: 'how-short-links-work',
+    seoTitle: 'How Do Short Links Work?',
+    title: 'How Do Short Links Work? What Redirects, Short Codes and Click Counting Do Behind the Scenes',
+    description:
+      'What happens behind a short link? Learn in plain language how short codes, redirect types and click counting work.',
+    highlights: [
+      'A short link is a redirect that maps a short code to a long address.',
+      'The redirect takes a few milliseconds, and the click is recorded during it.',
+      'How reliable a link is depends on the service keeping it working.',
+    ],
+    sections: [
+      {
+        p: [
+          'Short links look simple, but a small system works behind them: a code, a database and a redirect. In this article we explain step by step what happens behind the scenes when you click a short link.',
+        ],
+      },
+      {
+        h: '1. A short code is created',
+        p: [
+          'When you shorten an address, the service generates a short, unique code for it (for example aB3xYz). The code and the long address are matched in a database. The code must be unique; two addresses cannot carry the same code.',
+        ],
+      },
+      {
+        h: '2. A visitor arrives at the short address',
+        p: [
+          'When someone clicks the short link, their browser sends a request to the short domain and code. The request reaches the server of the service that manages the link.',
+        ],
+      },
+      {
+        h: '3. The server finds the code and redirects',
+        p: [
+          'The server looks the code up in its database, finds the long address it belongs to and tells the browser "go to this address" (an HTTP redirect). The browser follows the redirect automatically and the visitor reaches the real page. The whole process usually takes a tiny fraction of a second.',
+        ],
+      },
+      {
+        h: '4. The click is recorded',
+        p: [
+          'During the redirect, the service creates a click record with basic information such as the time. That is how you can see how many times the link was opened and how clicks are distributed over time. A click count does not mean the number of unique visitors.',
+        ],
+      },
+      {
+        h: 'Redirect types',
+        list: [
+          'Permanent redirect (301/308): the address has moved for good; browsers and search engines may cache it.',
+          'Temporary redirect (302/307): the address goes somewhere else for now; short link services often use it so each click can be counted every time.',
+        ],
+      },
+      {
+        h: 'Safety and continuity',
+        p: [
+          'Because a short link hides its destination, it can be misused; trustworthy services therefore monitor for phishing and harmful content. How long a link keeps working also depends on the service keeping it alive; that continuity matters for a link you will use on printed materials.',
+        ],
+      },
+    ],
+  },
+
+  'qr-kod-ile-yol-tarifi': {
+    slug: 'qr-code-for-directions',
+    seoTitle: 'QR Codes for Directions and Location Sharing',
+    title: 'QR Codes for Directions and Location Sharing: Bring Customers to Your Shop with One Scan',
+    description:
+      'Turn your map location link into a short link and a QR code so customers can find you easily. Tips for windows, business cards and invitations.',
+    highlights: [
+      'Copy your location link from a map app, shorten it and turn it into a QR code.',
+      'Use the code on business cards, windows and invitations so customers get directions with one tap.',
+      'Test it: confirm the map app opens the right location on different phones.',
+    ],
+    sections: [
+      {
+        p: [
+          'Customers finding you is the first step of a sale. Instead of explaining "where we are" by writing out an address, if you turn a map link into a QR code, customers reach directions with one scan.',
+        ],
+      },
+      {
+        h: 'How do you get the map link?',
+        p: [
+          'In the map app you use, find your business or location and copy the link with the share option. The interface changes from app to app and over time; look for the share option on the location screen.',
+        ],
+      },
+      {
+        h: 'Why shorten it and turn it into a QR code?',
+        list: [
+          'Map links can be long; a QR code made from a short address scans more easily.',
+          'The short link’s click count shows how many people looked at directions.',
+          'With a separate link for each placement, you see which spot works best.',
+        ],
+      },
+      {
+        h: 'Where can you use it?',
+        list: [
+          'On business cards, brochures and invitations',
+          'On the shop window and sign (large enough to read from afar)',
+          'On the contact page of your website',
+          'On shipping and package cards',
+          'At fair and event stands',
+        ],
+      },
+      {
+        h: 'Tips for a good result',
+        list: [
+          'Write "Scan for directions" next to the code.',
+          'Test with a few different phones and confirm the right location opens.',
+          'If the address or location changes, prepare a new link and code and update the old materials.',
+          'Add your opening hours and phone number next to it.',
+        ],
+      },
+    ],
+  },
+
   'e-posta-imzasi-link-qr': {
     slug: 'email-signature-link-and-qr-code',
     seoTitle: 'Add a Link and QR Code to Your Email Signature',
