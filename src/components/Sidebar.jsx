@@ -58,6 +58,8 @@ function UsageRow({ label, used, limit }) {
 function Sidebar({
   historyList,
   isHistoryLoading,
+  historyError = false,
+  onRetryHistory,
   activeShortCode,
   onSelectLink,
   onNewLink,
@@ -81,6 +83,7 @@ function Sidebar({
   const {
     user,
     userProfile,
+    profileError,
     profileDisplayName,
     profilePhotoURL,
     authLoading,
@@ -274,7 +277,7 @@ function Sidebar({
             <>
               <div className="historySectionHeader">
                 <span className="historyTitle">{t('recentLinks')}</span>
-                {user && !isHistoryLoading && <span className="historyCount">{historyList.length}</span>}
+                {user && !isHistoryLoading && !historyError && <span className="historyCount">{historyList.length}</span>}
               </div>
 
               {authLoading || authTransitioning ? (
@@ -303,6 +306,13 @@ function Sidebar({
                 </div>
               ) : isHistoryLoading ? (
                 <HistorySkeleton />
+              ) : historyError && historyList.length === 0 ? (
+                <div className="historyErrorCard" role="status">
+                  <span>{t('historyLoadFailed')}</span>
+                  <button type="button" className="historyRetryBtn" onClick={() => onRetryHistory && onRetryHistory()}>
+                    {t('tryAgain')}
+                  </button>
+                </div>
               ) : historyList.length === 0 ? (
                 <div className="emptyHistoryMessage">
                   {t('noRecentLinks')}
@@ -439,7 +449,9 @@ function Sidebar({
         {/* Daily allowance (remaining links / QR codes) */}
         {!isCollapsed && !(authLoading || authTransitioning) && (
           <div className="sidebarUsage">
-            {user && !userProfile ? (
+            {user && profileError ? (
+              <p className="usageHint">{t('usageUnavailable')}</p>
+            ) : user && !userProfile ? (
               <div className="usageSkeleton" aria-hidden="true">
                 <span className="skeletonBar" style={{ width: '45%' }} />
                 <span className="skeletonBar" style={{ width: '100%', height: 6 }} />

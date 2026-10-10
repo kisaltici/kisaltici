@@ -66,6 +66,8 @@ function AppContent() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login');
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+  // True when the last history request failed (server down, error); distinguishes "empty" from "unavailable"
+  const [historyError, setHistoryError] = useState(false);
   const [historyList, setHistoryList] = useState([]);
   const [customShortcuts, setCustomShortcuts] = useState(DEFAULT_SHORTCUTS);
 
@@ -140,6 +142,7 @@ function AppContent() {
 
     historyInFlightUidRef.current = currentUid;
     setIsHistoryLoading(true);
+    setHistoryError(false);
 
     try {
       const token = await getIdToken();
@@ -159,6 +162,7 @@ function AppContent() {
 
       if (response.status === 503 || payload?.code === 'DATABASE_UNAVAILABLE') {
         // Fast fail: DB unavailable, resolve loading state immediately
+        setHistoryError(true);
         setIsHistoryLoading(false);
         historyInFlightUidRef.current = null;
         return;
@@ -175,9 +179,12 @@ function AppContent() {
         }));
         setHistoryList(formatted);
         historyFetchedUidRef.current = currentUid;
+      } else {
+        setHistoryError(true);
       }
     } catch (err) {
       console.error('Failed to fetch user history:', err);
+      setHistoryError(true);
     } finally {
       setIsHistoryLoading(false);
       historyInFlightUidRef.current = null;
@@ -669,6 +676,8 @@ function AppContent() {
         <SidebarWrapper
           historyList={historyList}
           isHistoryLoading={isHistoryLoading}
+          historyError={historyError}
+          onRetryHistory={() => fetchUserHistory(true)}
           onSelectLink={handleSelectLink}
           onNewLink={handleNewLink}
           onRenameLink={handleRenameLink}
