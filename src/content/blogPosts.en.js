@@ -124,6 +124,12 @@ export const POSTS_EN = {
   'qr-menu-nasil-hazirlanir': {
     slug: 'how-to-make-a-qr-menu',
     seoTitle: 'How to Make a QR Menu',
+    callout: {
+      title: 'Looking for a ready-made QR menu solution?',
+      text: 'If you want to set up a QR menu for your restaurant or café, take a look at our service ZuuQRMenu.',
+      label: 'Discover ZuuQRMenu',
+      href: 'https://www.zuuqrmenu.com/',
+    },
     title: 'How to Make a QR Menu: A Step-by-Step Guide for Restaurants and Cafés',
     description:
       'A guide to making a QR menu for restaurants and cafés: the menu page, short link, QR code size, placement and update tips.',

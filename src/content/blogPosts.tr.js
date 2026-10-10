@@ -134,6 +134,12 @@ export const POSTS_TR = [
   {
     slug: 'qr-menu-nasil-hazirlanir',
     seoTitle: 'QR Menü Nasıl Hazırlanır?',
+    callout: {
+      title: 'Hazır bir QR menü çözümü mü arıyorsun?',
+      text: 'Restoran veya kafen için QR menü hazırlamak istiyorsan hizmetimiz ZuuQRMenu’yü inceleyebilirsin.',
+      label: 'ZuuQRMenu’yü incele',
+      href: 'https://www.zuuqrmenu.com/',
+    },
     title: 'QR Menü Nasıl Hazırlanır? Restoran ve Kafeler İçin Adım Adım Rehber',
     description:
       'Restoran ve kafeler için QR menü hazırlama rehberi: menü sayfası, kısa bağlantı, QR kod boyutu, yerleşim ve güncelleme ipuçları.',

@@ -206,6 +206,15 @@ function BlogArticle({ post, lang, ui }) {
               )}
             </section>
           ))}
+          {post.callout && (
+            <aside className="blCallout">
+              <strong>{post.callout.title}</strong>
+              <p>{post.callout.text}</p>
+              <a href={post.callout.href} target="_blank" rel="noopener" className="blBtn">
+                {post.callout.label}
+              </a>
+            </aside>
+          )}
         </article>
 
         <aside className="blSide">

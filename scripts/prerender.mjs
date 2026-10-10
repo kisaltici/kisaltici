@@ -321,7 +321,7 @@ try {
               post.highlights
                 ? `<aside><strong>${esc(ui.summary)}</strong><ul>${post.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></aside>`
                 : ''
-            }${body}</article><h2>${esc(ui.related)}</h2><ul>${related}</ul>${blogNav}`
+            }${body}${post.callout ? `<aside><strong>${esc(post.callout.title)}</strong><p>${esc(post.callout.text)}</p><a href="${post.callout.href}" rel="noopener">${esc(post.callout.label)}</a></aside>` : ''}</article><h2>${esc(ui.related)}</h2><ul>${related}</ul>${blogNav}`
           ),
           {
             lang,

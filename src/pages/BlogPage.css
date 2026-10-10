@@ -512,3 +512,26 @@
   color: var(--accent-color);
   text-decoration-color: var(--accent-color);
 }
+
+.blCallout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 2.5rem;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, var(--surface-border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent-color) 6%, transparent);
+}
+
+.blCallout strong {
+  font-size: 1.125rem;
+}
+
+.blCallout p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}

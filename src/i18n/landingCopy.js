@@ -42,15 +42,15 @@ export const LANDING_COPY = {
     },
     how: {
       title: 'Üç adımda hazır',
-      sub: 'Karmaşık bir kurulum yok. Yapıştır, seç, paylaş.',
+      sub: 'Karmaşık bir kurulum yok. Seç, kısalt, paylaş.',
       steps: [
         {
-          title: 'Bağlantını yapıştır',
-          text: 'Uzun adresi kutuya bırak. Sadece http ve https adresleri kabul edilir.',
+          title: 'Planını seç',
+          text: 'Sana uygun planı seç ve giriş yap. Deneme süresi bitmeden istediğin an iptal edebilirsin.',
         },
         {
-          title: 'Ne yapacağını seç',
-          text: 'Sadece kısalt, QR kod oluştur ya da giriş yaptıysan kendi adresini belirle.',
+          title: 'Bağlantını kısalt',
+          text: 'Uzun adresi yapıştır, kısa bağlantı ya da QR kod oluştur. Profesyonel planda adresin sonunu kendin belirle.',
         },
         {
           title: 'Paylaş ve takip et',
@@ -183,15 +183,15 @@ export const LANDING_COPY = {
     },
     how: {
       title: 'Ready in three steps',
-      sub: 'No complicated setup. Paste, choose, share.',
+      sub: 'No complicated setup. Choose, shorten, share.',
       steps: [
         {
-          title: 'Paste your link',
-          text: 'Drop the long address into the box. Only http and https addresses are accepted.',
+          title: 'Choose your plan',
+          text: 'Pick the plan that suits you and sign in. Cancel any time before the trial ends.',
         },
         {
-          title: 'Choose what to do',
-          text: 'Just shorten it, create a QR code, or set your own address once you sign in.',
+          title: 'Shorten your link',
+          text: 'Paste the long address and create a short link or a QR code. On the Professional plan you write the end of the address yourself.',
         },
         {
           title: 'Share and track',

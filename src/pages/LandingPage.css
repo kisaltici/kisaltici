@@ -705,8 +705,6 @@
   gap: 1.5rem;
   min-height: 34vh;
   padding: 0.5rem 0 3rem;
-  opacity: 0.45;
-  transition: opacity 0.5s ease;
 }
 
 .lpStep:last-child {
@@ -714,14 +712,10 @@
   padding-bottom: 0;
 }
 
-.lpStep.isActive {
-  opacity: 1;
-}
-
 .lpStepNum {
   flex-shrink: 0;
   min-width: 3.6rem;
-  color: var(--text-muted);
+  color: color-mix(in srgb, var(--text-muted) 55%, transparent);
   font: 500 clamp(2.25rem, 4vw, 3.25rem)/1 var(--lp-mono);
   letter-spacing: -0.04em;
   transition: color 0.5s ease;
@@ -736,6 +730,25 @@
   flex-direction: column;
   gap: 0.5rem;
   padding-top: 0.35rem;
+}
+
+/* Inactive steps are quiet; the step in view is bright, with a glowing number */
+.lpStep .lpH3,
+.lpStep .lpCellText {
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+  transition: color 0.5s ease;
+}
+
+.lpStep.isActive .lpH3 {
+  color: var(--text-primary);
+}
+
+.lpStep.isActive .lpCellText {
+  color: var(--text-secondary);
+}
+
+.lpStep.isActive .lpStepNum {
+  text-shadow: 0 0 28px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
 /* ---------- Sticky stack (features) ---------- */
@@ -1533,6 +1546,7 @@
 .lpFooterBrand {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 0.5rem;
 }
 
@@ -1594,14 +1608,10 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Steps own their opacity (active state); reveal only moves them */
-.lp.lpReady .lpStep[data-reveal],
-.lp.lpReady .lpStep[data-reveal].isIn {
-  opacity: 0.45;
-}
-
-.lp.lpReady .lpStep[data-reveal].isIn.isActive {
+/* Steps are always visible (a fast scroll can skip a reveal); the active state is expressed through colour, see .lpStep */
+.lp.lpReady .lpStep[data-reveal] {
   opacity: 1;
+  transform: none;
 }
 
 /* ---------- Signing-in overlay ---------- */
@@ -1833,14 +1843,6 @@
     transition: none;
   }
 
-  .lp.lpReady .lpStep[data-reveal] {
-    opacity: 0.45;
-  }
-
-  .lp.lpReady .lpStep[data-reveal].isActive {
-    opacity: 1;
-  }
-
   .lpProgressFill {
     transform: scaleY(1);
   }
@@ -2019,5 +2021,45 @@
   .lpLangHint button {
     width: 40px;
     height: 40px;
+  }
+}
+
+/* Footer on small screens: brand, links, legal links in two tidy columns, copyright last */
+@media (max-width: 720px) {
+  .lpFooterInner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding-top: 2.25rem;
+  }
+
+  .lpFooterLinks {
+    gap: 0.25rem 1.5rem;
+  }
+
+  .lpFooterLinks a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    font-size: 0.9375rem;
+  }
+
+  .lpFooterLegal {
+    order: 2;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1.25rem;
+    padding-top: 1.25rem;
+  }
+
+  .lpFooterLegal .legalLink {
+    min-height: 38px;
+    font-size: 0.8125rem;
+    line-height: 1.25;
+  }
+
+  .lpFooterRights {
+    order: 3;
+    padding-top: 0.25rem;
   }
 }
