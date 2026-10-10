@@ -3,6 +3,186 @@
  * slug (English URL), title, description, highlights and sections in the same shape as the Turkish source.
  */
 export const POSTS_EN = {
+  'kisa-link-seo-etkisi': {
+    slug: 'do-short-links-hurt-seo',
+    title: 'Do Shortened Links Hurt SEO? A Guide to Using Them Correctly',
+    description:
+      'Do short links affect search rankings? Learn how redirects relate to SEO and where to use a short link and where not to.',
+    highlights: [
+      'A short link alone does not hurt your rankings; using it in the wrong place can cause problems.',
+      'Use short links on social media, in email and on print; use the original address in your own site’s internal links.',
+      'Do not expect a direct ranking benefit from a short link; its value is in measurement and easy sharing.',
+    ],
+    sections: [
+      {
+        p: [
+          'Everyone who uses link shortening asks the same question: do short links hurt SEO? The short answer: not when used in the right place. But knowing what a short link does and does not do keeps you from setting the wrong expectations.',
+        ],
+      },
+      {
+        h: 'How does a short link work for SEO?',
+        p: [
+          'A short link is a redirect: a visitor or a search engine bot arrives at the short address and the service redirects them to the original page. Search engines follow redirects and end up evaluating the original page. So using a short link does not stop the content of the destination page from being indexed.',
+        ],
+      },
+      {
+        h: 'Should you expect a ranking benefit from a short link?',
+        p: [
+          'No. You should not assume that a link pointing at a short link from another site will guarantee a contribution to the destination page’s ranking. The value of a short link is not in SEO but in easy sharing, trust and click measurement. What contributes to rankings is the destination page’s own content and quality links pointing directly to it.',
+        ],
+      },
+      {
+        h: 'Where should you use a short link?',
+        list: [
+          'Social media bios and post descriptions',
+          'Email newsletters and signatures',
+          'SMS and messaging apps',
+          'QR codes on posters, business cards and packaging',
+          'Anywhere you need to measure a campaign',
+        ],
+      },
+      {
+        h: 'Where should you not use a short link?',
+        list: [
+          'In your own site’s internal links: link to your own pages with the original address and do not add an unnecessary redirect.',
+          'In menus, footers and in-content links: the original address is clearer for search engines and users.',
+          'When linking out to other sites: a visible destination gives trust to both the reader and the search engine.',
+        ],
+      },
+      {
+        h: 'Safety and reputation',
+        p: [
+          'Because of links to phishing and malicious sites, some short link domains can gain a bad reputation. So use a trustworthy service, point your links only at pages you trust and do not leave the destination page empty when a campaign ends. This is why Kısaltıcı has abuse reporting.',
+        ],
+      },
+      {
+        h: 'In short: a checklist',
+        list: [
+          'Original address in internal links, short link in external shares.',
+          'See the short link as a measurement and sharing tool, not a ranking tool.',
+          'Keep destination pages fast, mobile friendly and trustworthy.',
+          'Before deleting important campaign links, think about where the redirect should go.',
+        ],
+      },
+    ],
+  },
+
+  'utm-parametreleri-nasil-olusturulur': {
+    slug: 'how-to-create-utm-parameters',
+    title: 'How to Create UTM Parameters: A Step-by-Step Guide with Examples',
+    description:
+      'What are UTM tags, what do the five parameters do and how do you name them consistently? A guide to building UTM links with example addresses.',
+    highlights: [
+      'Three core parameters are enough: utm_source, utm_medium, utm_campaign.',
+      'Use lowercase and hyphens; do not split one source across different spellings.',
+      'Shorten the UTM address: it shares cleanly and shows its click count per link.',
+    ],
+    sections: [
+      {
+        p: [
+          'When a campaign gets hundreds of clicks, the real question is where the traffic came from. UTM parameters are small tags added to the end of the destination address to answer that. Set up correctly, they show clearly which channel, campaign and piece of content worked.',
+        ],
+      },
+      {
+        h: 'What are the UTM parameters?',
+        list: [
+          'utm_source (required): where the traffic came from. Example: instagram, newsletter, google',
+          'utm_medium (required): the channel type. Example: social, email, qr, cpc',
+          'utm_campaign (required): the campaign name. Example: summer-sale-2026',
+          'utm_term (optional): the keyword in paid search',
+          'utm_content (optional): separates different links or visuals in the same campaign. Example: top-button, bottom-text',
+        ],
+      },
+      {
+        h: 'An example UTM address',
+        p: [
+          'Say your destination page is https://example-site.com/campaign. The address you use in a newsletter becomes:',
+          'https://example-site.com/campaign?utm_source=newsletter&utm_medium=email&utm_campaign=summer-sale-2026',
+          'For the same page in your Instagram bio, you use utm_source=instagram and utm_medium=social. That way you see the results of the two channels separately.',
+        ],
+      },
+      {
+        h: 'Rules for consistent naming',
+        list: [
+          'Always use lowercase: Instagram and instagram can become two different sources in analytics tools.',
+          'Use hyphens instead of spaces: summer-sale, not summer sale.',
+          'Avoid special characters: letters like ş, ğ, ı can break in an address.',
+          'Choose short, meaningful names; keep a glossary table and use the same terms across the team.',
+          'Do not add UTM tags to your own site’s internal links: it splits sessions and corrupts source data.',
+        ],
+      },
+      {
+        h: 'Why should you shorten a UTM address?',
+        p: [
+          'UTM addresses look long and messy; they can break in messages and may look untrustworthy. When you prepare the address with its tags and then shorten it, you get a clean link and see each short link’s own click count. UTM shows behavior after visitors arrive on your site, while the short link counter shows the click. The two complement each other.',
+        ],
+      },
+      {
+        h: 'Common mistakes',
+        list: [
+          'Writing the same source differently (newsletter, Newsletter, bulten).',
+          'Forgetting to add tags and dropping the traffic into "direct".',
+          'Adding too many parameters: the three core ones are enough for most jobs.',
+          'Not saving the tagged addresses: keep them in a table.',
+        ],
+      },
+    ],
+  },
+
+  'statik-ve-dinamik-qr-kod-farki': {
+    slug: 'static-vs-dynamic-qr-codes',
+    title: 'Static vs Dynamic QR Codes: What Is the Difference and Which Should You Choose?',
+    description:
+      'The differences between static and dynamic QR codes, their advantages and when to choose which. Where a short link fits in.',
+    highlights: [
+      'A static QR code embeds the content directly in the code; it cannot be changed and scans cannot be counted.',
+      'In a code that points to a short link, scans are counted as clicks.',
+      'Static suits permanent, simple jobs; a short-link code makes sense when you need measurement.',
+    ],
+    sections: [
+      {
+        p: [
+          'When you start creating QR codes, you often hear the words "static" and "dynamic". Both look the same, but the logic behind them differs, and that difference matters for measurement, flexibility and scannability.',
+        ],
+      },
+      {
+        h: 'What is a static QR code?',
+        p: [
+          'A static QR code embeds a text or address directly in the pattern. Once generated, its content does not change, and the person who scans it goes straight to that address. Because no service sits in between, the code works forever, but you cannot know how many people scanned it.',
+        ],
+      },
+      {
+        h: 'What is a dynamic QR code?',
+        p: [
+          'A dynamic QR code carries a short address instead of the destination address directly. The person who scans it first arrives at the short address and is then redirected to the real destination. This way the scan count is recorded. Because the address in the code is short, the pattern stays simple and scans easily even in smaller prints.',
+        ],
+      },
+      {
+        h: 'The differences at a glance',
+        list: [
+          'Content: in a static code the address is inside the pattern; in a dynamic code there is a short address.',
+          'Measurement: a static code has no scan count; a short-address code counts each scan as a click.',
+          'Pattern density: a long address makes a static code complex; a short address simplifies the pattern.',
+          'Dependency: a static code is independent of any service; a short-address code depends on the short link continuing to work.',
+        ],
+      },
+      {
+        h: 'Which should you choose?',
+        list: [
+          'For fixed jobs such as Wi-Fi details, a short text or personal use, a static code is enough.',
+          'For jobs where you want to measure scans, such as campaigns, menus, posters and business cards, a short-link code fits better.',
+          'Shortening a long address first, instead of embedding it in the code, improves scannability.',
+        ],
+      },
+      {
+        h: 'The QR code in Kısaltıcı',
+        p: [
+          'The QR code you create in Kısaltıcı points to your short link, so each scan shows up in the link’s click count. Because the short link keeps working until you delete it, you can use it on printed materials with confidence. Remember: a short link’s destination cannot be changed after it is created; if you need a different destination, create a new link.',
+        ],
+      },
+    ],
+  },
+
   'etkinlik-konferans-qr-kod-kullanimi': {
     slug: 'qr-codes-for-events-and-conferences',
     title: 'QR Codes at Events and Conferences: Registration, Schedule and Feedback',
@@ -283,7 +463,7 @@ export const POSTS_EN = {
       {
         h: 'Use a short link',
         p: [
-          'A QR code made from a shortened address has a simpler pattern, which improves scannability even in small prints. You can also change the destination later without reprinting the code.',
+          'A QR code made from a shortened address has a simpler pattern, which improves scannability even in small prints. Because the short address stays the same, updating the content of the destination page does not require reprinting the code.',
         ],
       },
       {
@@ -460,7 +640,7 @@ export const POSTS_EN = {
       {
         h: 'The advantage of a QR code from a shortened link',
         p: [
-          'A QR code made from a short link has a less dense pattern, so it scans easily even in smaller prints. Each scan also counts as a click, so you can see which campaign attracted interest. If you need to change the destination later, you do not have to reprint the code, because the code points to the short address.',
+          'A QR code made from a short link has a less dense pattern, so it scans easily even in smaller prints. Each scan also counts as a click, so you can see which campaign attracted interest. The short address inside the code stays the same, so updating the content of the destination page does not require reprinting the code.',
         ],
       },
       {

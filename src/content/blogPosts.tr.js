@@ -10,6 +10,192 @@
  */
 export const POSTS_TR = [
   {
+    slug: 'kisa-link-seo-etkisi',
+    title: 'Kısaltılmış Linkler SEO’ya Zarar Verir mi? Doğru Kullanım Rehberi',
+    description:
+      'Kısa bağlantılar arama sıralamasını etkiler mi? Yönlendirmelerin SEO’ya etkisini ve kısa linki nerede kullanıp nerede kullanmaman gerektiğini öğren.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Temel Bilgi',
+    highlights: [
+      'Kısa bağlantı tek başına sıralamana zarar vermez; yanlış yerde kullanmak sorun yaratır.',
+      'Sosyal medya, e-posta ve basılı materyalde kısa link kullan; kendi sitenin iç bağlantılarında asıl adresi kullan.',
+      'Kısa bağlantıdan arama sıralaması için doğrudan fayda bekleme, değeri ölçümde ve paylaşım kolaylığındadır.',
+    ],
+    sections: [
+      {
+        p: [
+          'Link kısaltma kullanan herkesin aklına aynı soru gelir: Kısa bağlantılar SEO’ya zarar verir mi? Kısa cevap: Doğru yerde kullanıldığında hayır. Ama bir kısa bağlantının ne yaptığını ve ne yapmadığını bilmek, yanlış beklentiye girmeni önler.',
+        ],
+      },
+      {
+        h: 'Kısa bağlantı SEO açısından nasıl çalışır?',
+        p: [
+          'Kısa bağlantı bir yönlendirmedir: ziyaretçi veya arama motoru botu kısa adrese gelir ve hizmet onu asıl sayfaya yönlendirir. Arama motorları yönlendirmeleri takip eder ve sonunda asıl sayfayı değerlendirir. Yani kısa bağlantı kullanman, hedef sayfanın içeriğinin indekslenmesini engellemez.',
+        ],
+      },
+      {
+        h: 'Kısa bağlantıdan sıralama faydası beklenir mi?',
+        p: [
+          'Hayır. Bir kısa bağlantıya başka bir siteden verilen bağlantının, hedef sayfanın sıralamasına garanti bir katkı sağlayacağını düşünmemelisin. Kısa bağlantının değeri SEO’da değil, paylaşım kolaylığında, güvende ve tıklama ölçümündedir. Sıralamaya katkı sağlayan şey, hedef sayfanın kendi içeriği ve ona doğrudan verilen kaliteli bağlantılardır.',
+        ],
+      },
+      {
+        h: 'Kısa bağlantıyı nerede kullanmalısın?',
+        list: [
+          'Sosyal medya biyografileri ve gönderi açıklamaları',
+          'E-posta bültenleri ve imzalar',
+          'SMS ve mesajlaşma uygulamaları',
+          'Afiş, kartvizit ve ambalajlardaki QR kodlar',
+          'Kampanya ölçümü gereken her yerde',
+        ],
+      },
+      {
+        h: 'Kısa bağlantıyı nerede kullanmamalısın?',
+        list: [
+          'Kendi sitenin iç bağlantılarında: kendi sayfalarına asıl adresle bağlan, gereksiz bir yönlendirme ekleme.',
+          'Menü, alt bilgi ve içerik içi bağlantılarında: arama motorları ve kullanıcılar için asıl adres daha açıktır.',
+          'Başka sitelere dış bağlantı verirken: hedefin görünür olması hem okuyucuya hem arama motoruna güven verir.',
+        ],
+      },
+      {
+        h: 'Güvenlik ve itibar',
+        p: [
+          'Kimlik avı ve zararlı sitelere giden bağlantılar nedeniyle bazı kısa bağlantı alan adları kötü şöhret kazanabilir. Bu yüzden güvenilir bir hizmet kullan, bağlantıların yalnızca güvendiğin sayfalara gitsin ve kampanya bittiğinde hedef sayfayı boş bırakma. Kısaltıcı’da kötüye kullanım bildirimi bu yüzden vardır.',
+        ],
+      },
+      {
+        h: 'Kısaca: bir kontrol listesi',
+        list: [
+          'İç bağlantılarda asıl adres, dış paylaşımlarda kısa bağlantı.',
+          'Kısa bağlantıyı bir ölçüm ve paylaşım aracı olarak gör, sıralama aracı olarak değil.',
+          'Hedef sayfalar hızlı, mobil uyumlu ve güvenilir olsun.',
+          'Önemli kampanya bağlantılarını silmeden önce yönlendirmenin yerini düşün.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'utm-parametreleri-nasil-olusturulur',
+    title: 'UTM Parametreleri Nasıl Oluşturulur? Örneklerle Adım Adım Rehber',
+    description:
+      'UTM etiketleri nedir, beş parametre ne işe yarar ve tutarlı isimlendirme nasıl yapılır? Örnek adreslerle UTM oluşturma rehberi.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Pazarlama',
+    highlights: [
+      'Üç temel parametre yeterli: utm_source, utm_medium, utm_campaign.',
+      'Küçük harf ve tire kullan; aynı kaynağı farklı yazımlarla parçalama.',
+      'UTM’li adresi kısalt: temiz paylaşılır, tıklama sayısı bağlantı bazında görünür.',
+    ],
+    sections: [
+      {
+        p: [
+          'Bir kampanyaya yüzlerce tıklama geldiğinde asıl soru şu: Bu trafik nereden geldi? UTM parametreleri bu soruyu yanıtlamak için hedef adresin sonuna eklenen küçük etiketlerdir. Doğru kurulduğunda hangi kanalın, hangi kampanyanın ve hangi içeriğin işe yaradığını net görürsün.',
+        ],
+      },
+      {
+        h: 'UTM parametreleri nelerdir?',
+        list: [
+          'utm_source (zorunlu): trafiğin geldiği yer. Örnek: instagram, bulten, google',
+          'utm_medium (zorunlu): kanal türü. Örnek: sosyal, eposta, qr, cpc',
+          'utm_campaign (zorunlu): kampanya adı. Örnek: yaz-indirimi-2026',
+          'utm_term (isteğe bağlı): ücretli aramalarda anahtar kelime',
+          'utm_content (isteğe bağlı): aynı kampanyadaki farklı bağlantı veya görseli ayırır. Örnek: ust-buton, alt-metin',
+        ],
+      },
+      {
+        h: 'Örnek bir UTM’li adres',
+        p: [
+          'Hedef sayfan https://ornek-site.com/kampanya olsun. Bültende kullanacağın adres şöyle olur:',
+          'https://ornek-site.com/kampanya?utm_source=bulten&utm_medium=eposta&utm_campaign=yaz-indirimi-2026',
+          'Aynı sayfa için Instagram biyografisinde utm_source=instagram ve utm_medium=sosyal kullanırsın. Böylece iki kanalın sonucunu ayrı ayrı görürsün.',
+        ],
+      },
+      {
+        h: 'Tutarlı isimlendirme kuralları',
+        list: [
+          'Hep küçük harf kullan: Instagram ve instagram analiz araçlarında iki ayrı kaynak olabilir.',
+          'Boşluk yerine tire kullan: yaz-indirimi, yaz indirimi değil.',
+          'Türkçe karakterlerden kaçın: ş, ğ, ı gibi harfler adreste bozulabilir.',
+          'Kısa ve anlamlı isimler seç; bir sözlük tablosu tutup ekipçe aynısını kullan.',
+          'Kendi sitenin iç bağlantılarına UTM ekleme: oturumları böler ve kaynak verisini bozar.',
+        ],
+      },
+      {
+        h: 'UTM’li adresi neden kısaltmalısın?',
+        p: [
+          'UTM’li adresler uzun ve karışık görünür; mesajlarda kırılabilir, güvensiz algılanabilir. Adresi etiketleriyle hazırlayıp kısalttığında hem temiz bir bağlantın olur hem de her kısa bağlantının kendi tıklama sayısını görürsün. UTM, ziyaretçi sitene geldikten sonraki davranışı; kısa bağlantı sayacı ise tıklamayı gösterir. İkisi birbirini tamamlar.',
+        ],
+      },
+      {
+        h: 'Sık yapılan hatalar',
+        list: [
+          'Aynı kaynağı farklı yazmak (bulten, Bulten, newsletter).',
+          'Etiket eklemeyi unutup trafiği "doğrudan" grubuna düşürmek.',
+          'Çok fazla parametre eklemek: üç temel parametre çoğu iş için yeterlidir.',
+          'Etiketli adresleri kaydetmemek: bir tabloda tut.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'statik-ve-dinamik-qr-kod-farki',
+    title: 'Statik ve Dinamik QR Kod Farkı Nedir? Hangisini Seçmelisin?',
+    description:
+      'Statik QR kod ile dinamik QR kod arasındaki farklar, avantajları ve hangi durumda hangisini seçmen gerektiği. Kısa bağlantıyla QR kodun yeri.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Temel Bilgi',
+    highlights: [
+      'Statik QR kod içeriği doğrudan kodun içine gömer, değiştirilemez ve taramalar sayılamaz.',
+      'Kısa bağlantıya işaret eden kodda taramalar tıklama olarak sayılır.',
+      'Kalıcı ve basit işler için statik, ölçüm gereken işler için kısa bağlantılı kod mantıklıdır.',
+    ],
+    sections: [
+      {
+        p: [
+          'QR kod oluşturmaya başladığında "statik" ve "dinamik" kelimelerini sık duyarsın. İkisi de aynı görünür ama arkasındaki mantık farklıdır ve bu fark ölçüm, esneklik ve taranabilirlik açısından önemlidir.',
+        ],
+      },
+      {
+        h: 'Statik QR kod nedir?',
+        p: [
+          'Statik QR kod, bir metni ya da adresi doğrudan desenin içine gömer. Üretildikten sonra içeriği değişmez ve kodu tarayan kişi doğrudan o adrese gider. Arada bir hizmet bulunmadığı için kod sonsuza kadar çalışır, ama kaç kişinin taradığını bilemezsin.',
+        ],
+      },
+      {
+        h: 'Dinamik QR kod nedir?',
+        p: [
+          'Dinamik QR kod, doğrudan hedef adresi değil, bir kısa adresi taşır. Kodu tarayan kişi önce kısa adrese gelir, oradan asıl hedefe yönlenir. Bu sayede tarama sayısı kaydedilir. Kod içindeki adres kısa olduğu için desen sade kalır ve daha küçük baskıda bile rahat taranır.',
+        ],
+      },
+      {
+        h: 'Farklar bir bakışta',
+        list: [
+          'İçerik: statik kodda adres desenin içindedir; dinamik kodda kısa adres vardır.',
+          'Ölçüm: statik kodda tarama sayısı yoktur; kısa adresli kodda her tarama bir tıklama olarak sayılır.',
+          'Desen yoğunluğu: uzun adres statik kodu karmaşıklaştırır; kısa adres deseni sadeleştirir.',
+          'Bağımlılık: statik kod hizmetten bağımsızdır; kısa adresli kod, kısa bağlantının çalışmaya devam etmesine bağlıdır.',
+        ],
+      },
+      {
+        h: 'Hangisini seçmelisin?',
+        list: [
+          'Wi-Fi bilgisi, kısa bir metin veya kişisel kullanım gibi sabit işler için statik kod yeterlidir.',
+          'Kampanya, menü, afiş ve kartvizit gibi taramaların ölçülmesini istediğin işler için kısa bağlantılı kod daha uygundur.',
+          'Uzun adresleri koda gömmek yerine önce kısaltmak, taranabilirliği artırır.',
+        ],
+      },
+      {
+        h: 'Kısaltıcı’daki QR kod',
+        p: [
+          'Kısaltıcı’da oluşturduğun QR kod, kısa bağlantına işaret eder. Böylece her tarama bağlantının tıklama sayısına yansır. Kısa bağlantı sen silmediğin sürece çalıştığı için basılı materyalde de güvenle kullanabilirsin. Unutma: kısa bağlantının hedef adresi oluşturulduktan sonra değiştirilemez; hedefi değiştirmen gerekirse yeni bir bağlantı oluşturmalısın.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'etkinlik-konferans-qr-kod-kullanimi',
     title: 'Etkinlik ve Konferanslarda QR Kod: Kayıt, Program ve Geri Bildirim',
     description:
@@ -300,7 +486,7 @@ export const POSTS_TR = [
       {
         h: 'Kısa bağlantı kullan',
         p: [
-          'Kısaltılmış bir adresten üretilen QR kodun deseni daha sadedir; bu da küçük baskılarda bile taranabilirliği artırır. Ayrıca hedef sayfayı sonradan değiştirebilirsin, basılı kodu yenilemeye gerek kalmaz.',
+          'Kısaltılmış bir adresten üretilen QR kodun deseni daha sadedir; bu da küçük baskılarda bile taranabilirliği artırır. Ayrıca kısa adres sabit kaldığı için hedef sayfanın içeriğini güncellemek basılı kodu yenilemeyi gerektirmez.',
         ],
       },
       {
@@ -483,7 +669,7 @@ export const POSTS_TR = [
       {
         h: 'Kısaltılmış bağlantıyla QR kodun avantajı',
         p: [
-          'Kısa bağlantıdan üretilen QR kodun deseni daha az yoğundur, bu da daha küçük baskıda bile rahat taranması demektir. Ayrıca her tarama bir tıklama olarak sayılır; hangi kampanyanın ilgi çektiğini görebilirsin. Hedef sayfayı sonradan değiştirmen gerekirse basılı kodu yeniden basmak zorunda kalmazsın, çünkü kod kısa adrese işaret eder.',
+          'Kısa bağlantıdan üretilen QR kodun deseni daha az yoğundur, bu da daha küçük baskıda bile rahat taranması demektir. Ayrıca her tarama bir tıklama olarak sayılır; hangi kampanyanın ilgi çektiğini görebilirsin. Kodun işaret ettiği kısa adres sabit kalır; hedef sayfanın içeriğini güncellemek basılı kodu yeniden basmayı gerektirmez.',
         ],
       },
       {
