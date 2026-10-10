@@ -10,6 +10,187 @@
  */
 export const POSTS_TR = [
   {
+    slug: 'e-posta-imzasi-link-qr',
+    seoTitle: 'E-posta İmzasına Link ve QR Kod Ekleme',
+    title: 'E-posta İmzasına Link ve QR Kod Nasıl Eklenir? Her Mesajı Küçük Bir Reklama Çevir',
+    description:
+      'E-posta imzana kısa bağlantı ve QR kod ekleyerek her mesajı trafiğe çevir. Ne yazmalı, nasıl ölçmeli ve hangi hatalardan kaçınmalı?',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Pazarlama',
+    highlights: [
+      'İmzada tek bir net bağlantı ve çağrı kullan; her satıra link koyma.',
+      'Kısa bağlantı imzayı temiz tutar ve kaç kişinin tıkladığını gösterir.',
+      'Bağlantıyı düzenli güncelle: kampanya bittiğinde imza eski kalmasın.',
+    ],
+    sections: [
+      {
+        p: [
+          'Günde onlarca e-posta gönderiyorsan, her biri imzanın altındaki küçük bir alanı okutuyor demektir. Bu alan çoğu zaman sadece ad, unvan ve telefon numarasıyla dolu kalır. Oysa tek bir doğru bağlantı, sürekli işleyen bir trafik kaynağı olabilir.',
+        ],
+      },
+      {
+        h: 'İmzaya ne eklemelisin?',
+        list: [
+          'Tek bir ana bağlantı: web siten, randevu sayfan, portfolyon veya en önemli kampanyan.',
+          'Kısa bir çağrı: "Hizmetlerimizi inceleyin", "Randevu alın".',
+          'İstersen küçük bir QR kod; masaüstünde okuyan ama telefonla taramak isteyenler için kullanışlıdır.',
+        ],
+      },
+      {
+        h: 'Neden kısa bağlantı?',
+        p: [
+          'Uzun adresler imzada dağınık görünür ve bazı e-posta istemcilerinde satır kırılmasına yol açar. Kısa bağlantı hem şık durur hem de tıklama sayısını görmeni sağlar. İmzandaki bağlantı için ayrı bir kısa adres oluşturursan, bu kanaldan gelen ilgiyi diğer kanallardan ayırabilirsin.',
+        ],
+      },
+      {
+        h: 'İyi bir imza nasıl düzenlenir?',
+        list: [
+          'Kısa tut: ad, unvan, tek iletişim yolu ve tek bağlantı yeterli.',
+          'Metin bağlantısını görselden daha öncelikli yap; bazı istemciler görselleri varsayılan olarak engeller.',
+          'QR kodu yeterince büyük bas veya ekle, ama imzada yer kaplayan görsellerden kaçın.',
+          'Mobilde de test et: imza telefonda taşmamalı.',
+        ],
+      },
+      {
+        h: 'Sık yapılan hatalar',
+        list: [
+          'Birden fazla bağlantı koymak: dikkat dağılır, tıklama düşer.',
+          'Eskiyen kampanya bağlantısını imzada bırakmak.',
+          'Bağlantıyı denemeden yaymak: yazım hatası binlerce mesajda tekrarlanır.',
+          'Çok büyük görsel kullanmak: e-postayı ağırlaştırır ve spam filtresine takılma riskini artırır.',
+        ],
+      },
+      {
+        h: 'Sonuçları ölç',
+        p: [
+          'Bir ay sonra imzandaki bağlantının tıklama sayısına bak. Ekip olarak aynı imzayı kullanıyorsanız, her kişi için ayrı bir kısa bağlantı oluşturup hangi kişinin e-postalarından daha çok tıklama geldiğini de görebilirsin.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'freelancer-portfolyo-linki',
+    seoTitle: 'Freelancer Portfolyo Linki Nasıl Paylaşılır?',
+    title: 'Freelancer Portfolyo Linki Nasıl Paylaşılır? Akılda Kalan ve Ölçülebilir Bir Adres Oluştur',
+    description:
+      'Portfolyo bağlantını müşterilere ve işverenlere daha etkili paylaşmanın yolları: kısa ve akılda kalan adres, QR kod ve görüntülenme ölçümü.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Marka',
+    highlights: [
+      'Portfolyo adresi kısa, okunur ve profesyonel görünmeli.',
+      'Her başvuru veya platform için ayrı kısa bağlantı kullanıp hangisinin işe yaradığını gör.',
+      'Kartvizit, CV ve profillerde aynı bağlantıyı kullanarak tutarlı bir marka kur.',
+    ],
+    sections: [
+      {
+        p: [
+          'Freelancer olarak işin görünürlüğü büyük ölçüde portfolyo bağlantına bağlı. Potansiyel müşteri seni ilk kez gördüğünde birkaç saniyede karar veriyor: Bağlantıya tıklayacak mı, tıklamayacak mı? Uzun, karışık bir adres güvenilirliği düşürürken kısa ve düzenli bir adres profesyonel bir izlenim bırakır.',
+        ],
+      },
+      {
+        h: 'İyi bir portfolyo adresi nasıl olmalı?',
+        list: [
+          'Kısa ve okunur: telefonda söylenebilecek, elle yazılabilecek bir adres.',
+          'Tutarlı: kartvizit, CV, profiller ve e-posta imzasında aynı adres.',
+          'Güvenilir: rastgele karakterler yerine anlamlı bir yapı.',
+        ],
+      },
+      {
+        h: 'Özel bağlantıyla markanı güçlendir',
+        p: [
+          'Kısaltıcı’nın Profesyonel ve Kurumsal planlarında adresin sonunu kendin belirleyebilirsin; örneğin kisaltici.com/@ad/portfolyo. Böyle bir adres hem sahibini hem içeriği belli eder ve akılda kalır.',
+        ],
+      },
+      {
+        h: 'Her kanal için ayrı bağlantı',
+        p: [
+          'Aynı portfolyoya giden ama farklı yerlerde kullanılan bağlantıları ayır: bir iş ilanı başvurusu, bir sosyal medya profili, bir kartvizit. Her birinin tıklama sayısı ayrı görünür; hangi kanalın sana daha çok ilgi getirdiğini anlarsın. İlgili kanala daha çok zaman ayırırsın.',
+        ],
+      },
+      {
+        h: 'QR kodu nerede kullanmalısın?',
+        list: [
+          'Kartvizitin arkasında veya yanında',
+          'Fuar, etkinlik ve buluşma standlarında',
+          'Basılı CV ve sunum dosyalarında',
+          'Sunumunun son slaydında',
+        ],
+      },
+      {
+        h: 'Portfolyo sayfanı hazırla',
+        list: [
+          'Mobilde hızlı açılan ve okunaklı bir sayfa kullan.',
+          'En iyi üç işini en üstte göster.',
+          'İletişim bilgilerini görünür ve kolay bulunur tut.',
+          'Eski, artık temsil etmediğin işleri kaldır.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'pazaryeri-magaza-baglantisi',
+    seoTitle: 'Pazaryeri Mağaza Linkini Paylaşma Rehberi',
+    title: 'Pazaryeri Mağaza Linkini Paylaşma Rehberi: Trendyol, Hepsiburada ve Diğerleri İçin Kısa Link ve QR Kod',
+    description:
+      'Pazaryerindeki mağaza veya ürün bağlantını sosyal medyada, ambalajda ve basılı materyalde daha etkili kullanmak için kısa link ve QR kod ipuçları.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Pazarlama',
+    highlights: [
+      'Mağaza veya ürün bağlantısını kısa linke çevirip her kanal için ayrı oluştur.',
+      'Ambalaj, kargo kartı ve vitrin için QR kod kullan.',
+      'Pazaryerinin kurallarına uy; kampanya ve yönlendirme kurallarını önceden oku.',
+    ],
+    sections: [
+      {
+        p: [
+          'Pazaryerinde satış yapıyorsan, trafiğin büyük kısmı pazaryerinin kendi aramalarından gelir. Ama kendi kanallarından (sosyal medya, e-posta, fiziksel mağaza, ambalaj) ek trafik getirmek de mümkün. Bunun için mağaza veya ürün bağlantını doğru paylaşman gerekir.',
+        ],
+      },
+      {
+        h: 'Neden kısa link?',
+        list: [
+          'Pazaryeri adresleri uzun ve parametreli olabilir; kısa link paylaşımda düzgün durur.',
+          'Her kanal için ayrı kısa bağlantı oluşturup hangi kanalın daha çok ziyaret getirdiğini görebilirsin.',
+          'Kısa adresten üretilen QR kod daha kolay taranır.',
+        ],
+      },
+      {
+        h: 'Nerelerde kullanabilirsin?',
+        list: [
+          'Sosyal medya biyografisi ve gönderi açıklamaları',
+          'Ürün ambalajı ve kargo kartı üzerinde QR kod olarak',
+          'E-posta imzası ve bültenler',
+          'Fiziksel mağaza vitrini ve kasa',
+          'Fuar ve etkinlik standları',
+        ],
+      },
+      {
+        h: 'Ambalajda QR kod',
+        p: [
+          'Ürününü teslim alan müşteri için paket, ikinci bir satış fırsatıdır. Ambalaj veya kargo kartına mağaza bağlantına götüren bir QR kod koyarak müşterini yeni ürünlere veya değerlendirme sayfana yönlendirebilirsin. Kodu yeterli boyutta ve yüksek kontrastla bas, yanına kısa bir çağrı yaz.',
+        ],
+      },
+      {
+        h: 'Kurallara dikkat et',
+        p: [
+          'Pazaryerlerinin kampanya, yönlendirme ve iletişim kuralları farklılık gösterir. Müşteriyi pazaryeri dışına yönlendirme veya yorum isteme konusundaki kuralları önceden oku ve bunlara uyacak şekilde paylaşım yap. Kurallara aykırı bir yönlendirme mağazanı riske atabilir.',
+        ],
+      },
+      {
+        h: 'Ölçüm planı',
+        list: [
+          'Her kanal için ayrı kısa bağlantı oluştur.',
+          'Bağlantıları ve kullanıldıkları yerleri bir tabloda tut.',
+          'Bir hafta sonra tıklama sayılarını karşılaştır.',
+          'En çok ilgi gören kanala daha fazla yatırım yap.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'instagram-biyografi-link-ekleme',
     seoTitle: 'Instagram Biyografisine Link Ekleme',
     title: 'Instagram Biyografisine Link Nasıl Eklenir? Adım Adım ve Sık Yapılan Hatalar',

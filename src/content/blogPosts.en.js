@@ -3,6 +3,181 @@
  * slug (English URL), title, description, highlights and sections in the same shape as the Turkish source.
  */
 export const POSTS_EN = {
+  'e-posta-imzasi-link-qr': {
+    slug: 'email-signature-link-and-qr-code',
+    seoTitle: 'Add a Link and QR Code to Your Email Signature',
+    title: 'How to Add a Link and QR Code to Your Email Signature: Turn Every Message into a Small Ad',
+    description:
+      'Add a short link and QR code to your email signature to turn every message into traffic. What to write, how to measure and which mistakes to avoid.',
+    highlights: [
+      'Use one clear link and call to action in the signature; do not put a link on every line.',
+      'A short link keeps the signature clean and shows how many people clicked.',
+      'Update the link regularly so the signature does not go stale when a campaign ends.',
+    ],
+    sections: [
+      {
+        p: [
+          'If you send dozens of emails a day, each one carries the small space under your signature. That space is often filled only with a name, title and phone number. Yet a single well-chosen link can become a steady source of traffic.',
+        ],
+      },
+      {
+        h: 'What should you add to the signature?',
+        list: [
+          'One main link: your website, booking page, portfolio or most important campaign.',
+          'A short call to action: "See our services", "Book a slot".',
+          'If you like, a small QR code; handy for people who read on a desktop but want to scan with a phone.',
+        ],
+      },
+      {
+        h: 'Why a short link?',
+        p: [
+          'Long addresses look messy in a signature and can break lines in some email clients. A short link looks neat and lets you see the click count. If you create a separate short address for your signature link, you can separate the interest from this channel from others.',
+        ],
+      },
+      {
+        h: 'How do you set up a good signature?',
+        list: [
+          'Keep it short: a name, title, one way to reach you and one link are enough.',
+          'Put the text link ahead of images; some clients block images by default.',
+          'Print or add the QR code large enough, but avoid images that take up space in the signature.',
+          'Test on mobile too: the signature should not overflow on a phone.',
+        ],
+      },
+      {
+        h: 'Common mistakes',
+        list: [
+          'Adding several links: attention is split and clicks drop.',
+          'Leaving an outdated campaign link in the signature.',
+          'Spreading the link without testing it: a typo repeats across thousands of messages.',
+          'Using a very large image: it weighs the email down and increases the risk of hitting a spam filter.',
+        ],
+      },
+      {
+        h: 'Measure the results',
+        p: [
+          'After a month, look at the click count of the link in your signature. If your team uses the same signature, you can create a separate short link for each person and see whose emails bring more clicks.',
+        ],
+      },
+    ],
+  },
+
+  'freelancer-portfolyo-linki': {
+    slug: 'freelancer-portfolio-link',
+    seoTitle: 'How to Share a Freelancer Portfolio Link',
+    title: 'How to Share a Freelancer Portfolio Link: Create a Memorable, Measurable Address',
+    description:
+      'Ways to share your portfolio link with clients and employers more effectively: a short, memorable address, a QR code and view measurement.',
+    highlights: [
+      'A portfolio address should be short, readable and professional.',
+      'Use a separate short link for each application or platform and see which works.',
+      'Use the same link on business cards, your CV and profiles to build a consistent brand.',
+    ],
+    sections: [
+      {
+        p: [
+          'As a freelancer, the visibility of your work depends largely on your portfolio link. When a potential client sees you for the first time, they decide in a few seconds: will they click the link or not? A long, messy address lowers trust, while a short, tidy one leaves a professional impression.',
+        ],
+      },
+      {
+        h: 'What should a good portfolio address look like?',
+        list: [
+          'Short and readable: an address you can say on the phone and type by hand.',
+          'Consistent: the same address on business cards, CV, profiles and email signature.',
+          'Trustworthy: a meaningful structure instead of random characters.',
+        ],
+      },
+      {
+        h: 'Strengthen your brand with a custom link',
+        p: [
+          'On Kısaltıcı’s Professional and Business plans you can write the end of the address yourself, for example kisaltici.com/@name/portfolio. An address like that shows both the owner and the content, and it is memorable.',
+        ],
+      },
+      {
+        h: 'A separate link for each channel',
+        p: [
+          'Separate links that lead to the same portfolio but are used in different places: a job application, a social media profile, a business card. Each one’s click count is shown separately, so you learn which channel brings you more interest and spend more time on it.',
+        ],
+      },
+      {
+        h: 'Where should you use a QR code?',
+        list: [
+          'On the back of or next to your business card',
+          'At fair, event and meetup stands',
+          'On printed CVs and presentation files',
+          'On the last slide of your presentation',
+        ],
+      },
+      {
+        h: 'Prepare your portfolio page',
+        list: [
+          'Use a page that loads fast and reads well on mobile.',
+          'Show your best three works at the top.',
+          'Keep your contact details visible and easy to find.',
+          'Remove old work that no longer represents you.',
+        ],
+      },
+    ],
+  },
+
+  'pazaryeri-magaza-baglantisi': {
+    slug: 'share-your-marketplace-store-link',
+    seoTitle: 'Guide to Sharing Your Marketplace Store Link',
+    title: 'Guide to Sharing Your Marketplace Store Link: Short Links and QR Codes for Trendyol, Hepsiburada and Others',
+    description:
+      'Short link and QR code tips to use your marketplace store or product link more effectively on social media, packaging and print.',
+    highlights: [
+      'Turn the store or product link into a short link and create a separate one for each channel.',
+      'Use QR codes on packaging, shipping cards and shop windows.',
+      'Follow the marketplace’s rules; read its campaign and redirect rules in advance.',
+    ],
+    sections: [
+      {
+        p: [
+          'If you sell on a marketplace, most of your traffic comes from the marketplace’s own search. But you can also bring extra traffic from your own channels (social media, email, a physical shop, packaging). For that you need to share your store or product link correctly.',
+        ],
+      },
+      {
+        h: 'Why a short link?',
+        list: [
+          'Marketplace addresses can be long and full of parameters; a short link looks tidy when shared.',
+          'With a separate short link for each channel, you can see which channel brings more visits.',
+          'A QR code made from a short address is easier to scan.',
+        ],
+      },
+      {
+        h: 'Where can you use it?',
+        list: [
+          'Social media bios and post descriptions',
+          'On product packaging and shipping cards as a QR code',
+          'Email signatures and newsletters',
+          'Physical shop windows and the till',
+          'Fair and event stands',
+        ],
+      },
+      {
+        h: 'A QR code on packaging',
+        p: [
+          'For the customer who receives your product, the package is a second sales opportunity. By putting a QR code that leads to your store link on the packaging or shipping card, you can send your customer to new products or your reviews page. Print the code at an adequate size with high contrast and write a short call to action next to it.',
+        ],
+      },
+      {
+        h: 'Mind the rules',
+        p: [
+          'Marketplaces’ rules on campaigns, redirects and communication differ. Read in advance the rules on directing customers off the marketplace or asking for reviews, and share in a way that complies with them. A redirect that breaks the rules can put your store at risk.',
+        ],
+      },
+      {
+        h: 'A measurement plan',
+        list: [
+          'Create a separate short link for each channel.',
+          'Keep the links and where they are used in a table.',
+          'After a week, compare the click counts.',
+          'Invest more in the channel that gets the most interest.',
+        ],
+      },
+    ],
+  },
+
   'instagram-biyografi-link-ekleme': {
     slug: 'how-to-add-a-link-to-your-instagram-bio',
     seoTitle: 'Add a Link to Your Instagram Bio',

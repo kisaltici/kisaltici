@@ -14,7 +14,7 @@ import {
   formatPrice,
   getPlanCopy,
 } from '../config/plans';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BillingToggle from '../components/BillingToggle';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import LegalLinks from '../components/LegalLinks';
@@ -26,6 +26,10 @@ import './LandingPage.css';
 
 
 const THEME_LIST = Object.values(COLOR_THEMES);
+// A handful of themes is shown; the rest is hinted at (two standard, three premium, all visually distinct)
+const SHOWCASE_IDS = ['default', 'ocean', 'aurora', 'ember', 'arctic'];
+const SHOWCASE = SHOWCASE_IDS.map((id) => THEME_LIST.find((item) => item.id === id)).filter(Boolean);
+const MORE_THEMES = THEME_LIST.filter((item) => !SHOWCASE.includes(item));
 
 function Icon({ name }) {
   const common = {
@@ -153,7 +157,6 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation();
   const [period, setPeriod] = useState(DEFAULT_PERIOD);
   // Trial wording is only shown while it is true: before payments open, or when the server has trials enabled
   const billing = useBillingConfig();
@@ -306,44 +309,6 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
           });
         });
 
-        // Themes: vertical scroll pans the gallery sideways (desktop only)
-        const themes = q('.lpThemes');
-        const track = q('.lpThemesTrack');
-        let unpin = null;
-        if (wide && themes && track) {
-          themes.classList.add('lpPinned');
-          unpin = () => themes.classList.remove('lpPinned');
-          const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
-          gsap.to(track, {
-            x: () => -distance(),
-            ease: 'none',
-            scrollTrigger: {
-              trigger: themes,
-              start: 'top top',
-              end: () => `+=${distance()}`,
-              pin: true,
-              scrub: 0.8,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-            },
-          });
-          gsap.fromTo(
-            '.lpThemesBarFill',
-            { scaleX: 0 },
-            {
-              scaleX: 1,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: themes,
-                start: 'top top',
-                end: () => `+=${distance()}`,
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
-            }
-          );
-        }
-
         // Ticker: the three verbs slide with the scroll position
         gsap.fromTo(
           '.lpTickerTrack',
@@ -355,9 +320,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
           }
         );
 
-        return () => {
-          if (unpin) unpin();
-        };
+        return undefined;
       },
       root
     );
@@ -692,19 +655,21 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
           ))}
         </section>
 
-        {/* THEMES (pinned horizontal pan on desktop, native swipe on mobile) */}
+        {/* THEMES (a short showcase, the rest is hinted at) */}
         <section className="lpThemes" aria-label={themes.title}>
-          <div className="lpThemesTrack">
-            <div className="lpThemesIntro">
-              <h2 className="lpH2">{themes.title}</h2>
-              <p className="lpLead">{themes.text}</p>
-            </div>
+          <div className="lpThemesHead" data-reveal>
+            <h2 className="lpH2">{themes.title}</h2>
+            <p className="lpLead">{themes.text}</p>
+          </div>
 
-            {THEME_LIST.map((item) => (
+          <div className="lpThemesGrid">
+            {SHOWCASE.map((item, index) => (
               <figure
                 key={item.id}
                 className="lpThemeCard"
+                data-reveal
                 style={{
+                  '--i': index,
                   '--t-bg': item.preview.bg,
                   '--t-surface': item.preview.surface,
                   '--t-border': item.preview.border,
@@ -732,9 +697,16 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
                 </figcaption>
               </figure>
             ))}
-          </div>
-          <div className="lpThemesBar" aria-hidden="true">
-            <span className="lpThemesBarFill" />
+
+            <div className="lpThemeMore" data-reveal style={{ '--i': SHOWCASE.length }}>
+              <div className="lpThemeDots" aria-hidden="true">
+                {MORE_THEMES.map((item) => (
+                  <span key={item.id} style={{ background: item.preview.accent }} />
+                ))}
+              </div>
+              <strong>{themes.moreTitle}</strong>
+              <p>{themes.moreText(MORE_THEMES.length)}</p>
+            </div>
           </div>
         </section>
 

@@ -25,6 +25,9 @@ const LINK_TERMS = {
     'google-yorum-baglantisi-qr-kod': ['Google yorum', 'yorum bağlantısı'],
     'qr-menu-nasil-hazirlanir': ['QR menü', 'restoran'],
     'whatsapp-link-paylasimi': ['WhatsApp'],
+    'e-posta-imzasi-link-qr': ['e-posta imza'],
+    'freelancer-portfolyo-linki': ['portfolyo', 'freelancer'],
+    'pazaryeri-magaza-baglantisi': ['pazaryeri', 'mağaza bağlantı'],
   },
   en: {
     'qr-kod-nasil-olusturulur': ['create a QR code', 'creating a QR code', 'QR code creation', 'QR code'],
@@ -44,6 +47,9 @@ const LINK_TERMS = {
     'google-yorum-baglantisi-qr-kod': ['Google review', 'review link'],
     'qr-menu-nasil-hazirlanir': ['QR menu', 'restaurant'],
     'whatsapp-link-paylasimi': ['WhatsApp'],
+    'e-posta-imzasi-link-qr': ['email signature'],
+    'freelancer-portfolyo-linki': ['portfolio', 'freelancer'],
+    'pazaryeri-magaza-baglantisi': ['marketplace', 'store link'],
   },
 };
 

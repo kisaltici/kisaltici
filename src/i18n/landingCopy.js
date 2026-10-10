@@ -96,8 +96,10 @@ export const LANDING_COPY = {
       text: 'Karanlık ve aydınlık mod, beş standart ve on premium tema. Arayüz tek tıkla kendi rengine bürünür.',
       sampleTitle: 'Bağlantılarım',
       sampleLink: 'kisaltici.com/aB3xYz',
-      free: 'Ücretsiz',
+      free: 'Standart',
       pro: 'Premium',
+      moreTitle: 'Ve çok daha fazlası',
+      moreText: (n) => `Uygulamanın içinde ${n} tema daha seni bekliyor. Hepsi tek tıkla değişir.`,
     },
     ticker: ['Kısalt', 'Paylaş', 'Takip et'],
     plans: {
@@ -237,8 +239,10 @@ export const LANDING_COPY = {
       text: 'Dark and light mode, five standard and ten premium themes. The interface takes your color in one click.',
       sampleTitle: 'My links',
       sampleLink: 'kisaltici.com/aB3xYz',
-      free: 'Free',
+      free: 'Standard',
       pro: 'Premium',
+      moreTitle: 'And many more',
+      moreText: (n) => `${n} more themes are waiting inside the app. Each one is a single click away.`,
     },
     ticker: ['Shorten', 'Share', 'Track'],
     plans: {

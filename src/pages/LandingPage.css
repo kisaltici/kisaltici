@@ -978,54 +978,95 @@
   font: 600 0.75rem/1 var(--lp-mono);
 }
 
-/* ---------- Themes (horizontal pan) ---------- */
+/* ---------- Themes (short showcase) ---------- */
 .lpThemes {
-  position: relative;
-  margin-top: clamp(6rem, 12vw, 10rem);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
+  max-width: var(--lp-max);
+  margin: clamp(6rem, 12vw, 10rem) auto 0;
+  padding: 0 var(--lp-gutter);
 }
 
-.lpThemes.lpPinned {
-  height: 100dvh;
-  overflow: hidden;
-  scroll-snap-type: none;
-  display: flex;
-  align-items: center;
-}
-
-.lpThemesTrack {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  width: max-content;
-  padding: 2rem var(--lp-gutter) 2rem max(var(--lp-gutter), calc((100vw - var(--lp-max)) / 2 + var(--lp-gutter)));
-  will-change: transform;
-}
-
-.lpThemesIntro {
+.lpThemesHead {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 0 0 min(480px, 82vw);
-  padding-right: 2rem;
-  white-space: normal;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.lpThemesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.85rem, 1.6vw, 1.25rem);
 }
 
 .lpThemeCard {
   display: flex;
   flex-direction: column;
-  flex: 0 0 clamp(260px, 26vw, 340px);
-  height: 400px;
+  height: 300px;
   margin: 0;
   background: var(--t-bg);
   border: 1px solid var(--t-border);
   border-radius: var(--lp-radius-lg);
   overflow: hidden;
   color: #f3f4f6;
-  scroll-snap-align: start;
+}
+
+.lpThemeMore {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 300px;
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+  border: 1px dashed var(--lp-line);
+  border-radius: var(--lp-radius-lg);
+  background: var(--lp-glass);
+}
+
+.lpThemeMore strong {
+  color: var(--text-primary);
+  font: 650 1.5rem/1.15 var(--lp-font);
+  letter-spacing: -0.03em;
+}
+
+.lpThemeMore p {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.lpThemeDots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 260px;
+}
+
+.lpThemeDots span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-color);
+  box-shadow: 0 0 0 1px var(--lp-line);
+}
+
+@media (max-width: 900px) {
+  .lpThemesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .lpThemeCard,
+  .lpThemeMore {
+    height: auto;
+    min-height: 250px;
+  }
+
+  .lpThemesGrid {
+    gap: 0.75rem;
+  }
 }
 
 .lpThemeBar {
@@ -1122,29 +1163,6 @@
   color: var(--t-accent);
   font: 500 0.75rem/1 var(--lp-mono);
   font-style: normal;
-}
-
-.lpThemesBar {
-  display: none;
-}
-
-.lpThemes.lpPinned .lpThemesBar {
-  display: block;
-  position: absolute;
-  left: var(--lp-gutter);
-  right: var(--lp-gutter);
-  bottom: 7vh;
-  height: 2px;
-  background: var(--lp-line);
-}
-
-.lpThemesBarFill {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--accent-color);
-  transform-origin: left;
-  transform: scaleX(0);
 }
 
 /* ---------- Ticker (single marquee, scroll driven) ---------- */
