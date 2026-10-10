@@ -79,3 +79,9 @@
     max-width: 800px;
   }
 }
+
+/* Placeholder shown while auth state resolves on the landing route */
+.landingSplash {
+  min-height: 100dvh;
+  background-color: var(--bg-color);
+}

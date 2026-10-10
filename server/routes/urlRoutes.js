@@ -5,6 +5,9 @@ import { generateShortCode } from '../utils/generateShortCode.js';
 import { shortenLimiter } from '../middleware/rateLimiter.js';
 import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
 import { isAdminUser } from '../utils/admin.js';
+import { getLimits } from '../config/plans.js';
+import { resolvePlan } from '../utils/plan.js';
+import { subjectFor, reserveLink, releaseLink, reserveQr } from '../utils/usage.js';
 
 const router = express.Router();
 
@@ -96,6 +99,31 @@ router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => 
 
     const trimmedUrl = originalUrl.trim();
 
+    // Daily quota by plan (guests get a single link, tracked by hashed IP)
+    const plan = await resolvePlan(req.user);
+    const limits = getLimits(plan);
+    const subject = subjectFor(req);
+    let reserved = false;
+
+    if (limits.dailyLinks !== null) {
+      const reservation = await reserveLink(subject, limits.dailyLinks);
+      if (!reservation.ok) {
+        const isGuest = plan === 'guest';
+        return res.status(429).json({
+          success: false,
+          code: isGuest ? 'GUEST_LIMIT' : 'DAILY_LINK_LIMIT',
+          plan,
+          limit: limits.dailyLinks,
+          error: isGuest
+            ? 'Misafir hakkını kullandın. Daha fazla bağlantı kısaltmak için giriş yap.'
+            : `Bugünkü ${limits.dailyLinks} bağlantı hakkını kullandın. Limit ertesi gün sıfırlanır, daha fazlası için planını yükseltebilirsin.`,
+        });
+      }
+      reserved = true;
+    }
+
+    let created = false;
+    try {
     // Generate a unique 6-character short code with collision handling
     let shortCode = '';
     let isUnique = false;
@@ -128,6 +156,7 @@ router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => 
       userId: authenticatedUserId,
     });
 
+    created = true;
     const baseUrl = getBaseUrl(req);
     const shortUrl = `${baseUrl}/${newUrlRecord.shortCode}`;
 
@@ -141,6 +170,51 @@ router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => 
       lastClick: null,
       clicks: [],
     });
+    } finally {
+      // Give the quota slot back if the link was not actually created
+      if (reserved && !created) {
+        await releaseLink(subject).catch(() => {});
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/qr/consume
+ * Called right before a QR code is downloaded. Counts distinct QR codes per day against the plan
+ * quota (re-downloading the same link's QR on the same day is free). Guests are tracked by hashed IP.
+ */
+router.post('/qr/consume', optionalAuth, async (req, res, next) => {
+  try {
+    const { shortCode } = req.body || {};
+    if (typeof shortCode !== 'string' || !shortCode.trim() || shortCode.length > 80) {
+      return res.status(400).json({ success: false, error: 'Geçersiz kısa kod.' });
+    }
+
+    const plan = await resolvePlan(req.user);
+    const limits = getLimits(plan);
+
+    if (limits.dailyQr === null) {
+      return res.status(200).json({ success: true });
+    }
+
+    const reservation = await reserveQr(subjectFor(req), shortCode.trim(), limits.dailyQr);
+    if (!reservation.ok) {
+      const isGuest = plan === 'guest';
+      return res.status(429).json({
+        success: false,
+        code: isGuest ? 'GUEST_LIMIT' : 'DAILY_QR_LIMIT',
+        plan,
+        limit: limits.dailyQr,
+        error: isGuest
+          ? 'Misafir QR hakkını kullandın. Daha fazlası için giriş yap.'
+          : `Bugünkü ${limits.dailyQr} QR kod hakkını kullandın. Limit ertesi gün sıfırlanır, daha fazlası için planını yükseltebilirsin.`,
+      });
+    }
+
+    return res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -191,7 +265,7 @@ router.get('/urls/mine', requireAuth, async (req, res, next) => {
  * GET /api/urls/:shortCode
  * Returns public statistics & click history for a shortened URL without incrementing clickCount.
  */
-router.get('/urls/:shortCode', async (req, res, next) => {
+router.get('/urls/:shortCode', optionalAuth, async (req, res, next) => {
   try {
     const { shortCode } = req.params;
 
@@ -217,12 +291,31 @@ router.get('/urls/:shortCode', async (req, res, next) => {
     const baseUrl = getBaseUrl(req);
     const shortUrl = `${baseUrl}/${urlRecord.shortCode}`;
 
-    const clicks = urlRecord.clicks || [];
-    const lastClick = clicks.length > 0 ? clicks[clicks.length - 1].timestamp : null;
+    const allClicks = urlRecord.clicks || [];
+    const lastClick = allClicks.length > 0 ? allClicks[allClicks.length - 1].timestamp : null;
+
+    // Click history is shown within the owner's plan window (data is kept; upgrading reveals more).
+    // Guest links use the guest window; admins viewing a link see everything.
+    let statsDays;
+    if (isAdminUser(req.user)) {
+      statsDays = null;
+    } else if (urlRecord.userId) {
+      const ownerDoc = await User.findOne({ userId: urlRecord.userId }).select('membershipPlan').lean();
+      statsDays = getLimits(ownerDoc?.membershipPlan).statsDays;
+    } else {
+      statsDays = getLimits('guest').statsDays;
+    }
+    const clicks =
+      statsDays === null
+        ? allClicks
+        : allClicks.filter(
+            (click) => new Date(click.timestamp).getTime() >= Date.now() - statsDays * 86400000
+          );
 
     return res.status(200).json({
       success: true,
       data: {
+        statsWindowDays: statsDays,
         originalUrl: urlRecord.originalUrl,
         shortCode: urlRecord.shortCode,
         shortUrl: shortUrl,
@@ -448,7 +541,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     // --- Pro membership check (server-side, from User collection) ---
     // Done before length validation so we know if this is admin
     const userDoc = (await User.findOne({ userId })) || {};
-    if (!isAdminUser(req.user) && userDoc.membershipPlan !== 'pro') {
+    if (!getLimits(await resolvePlan(req.user)).customLinks) {
       return res.status(403).json({
         success: false,
         error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
@@ -596,8 +689,7 @@ router.patch('/urls/:shortCode/restore', requireAuth, async (req, res, next) => 
     }
 
     // --- Pro membership check ---
-    const userDoc = await User.findOne({ userId });
-    if (!isAdminUser(req.user) && (!userDoc || userDoc.membershipPlan !== 'pro')) {
+    if (!getLimits(await resolvePlan(req.user)).customLinks) {
       return res.status(403).json({
         success: false,
         error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',

@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import {
+  PLAN_ORDER,
+  FEATURED_PLAN,
+  PAYMENTS_ENABLED,
+  buildPlanRows,
+  formatPrice,
+  getClientLimits,
+  getPlanCopy,
+} from '../config/plans';
 import './PricingModal.css';
 
-function PricingModal({ isOpen, onClose, userPlan = 'free' }) {
-  const { t } = useTranslation();
+function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
+  const { t, lang } = useTranslation();
+  const { user, userProfile } = useAuth();
+  const copy = getPlanCopy(lang);
 
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimatingIn, setIsAnimatingIn] = useState(false);
@@ -38,8 +50,9 @@ function PricingModal({ isOpen, onClose, userPlan = 'free' }) {
 
   if (!isMounted) return null;
 
-  const isFreeCurrent = userPlan === 'free';
-  const isProCurrent = userPlan === 'pro' || userPlan === 'admin';
+  const isAdmin = userPlan === 'admin';
+  const usage = userProfile?.usage;
+  const currentLimits = getClientLimits(userPlan);
 
   return (
     <div
@@ -87,135 +100,101 @@ function PricingModal({ isOpen, onClose, userPlan = 'free' }) {
 
         {/* Modal Body / Pricing Cards */}
         <div className="pricingModalBody">
+          {isAdmin && <p className="pricingNotice">{copy.adminNote}</p>}
+
           <div className="pricingGrid">
-            {/* 1. FREE PLAN */}
-            <div className={`planCard ${isFreeCurrent ? 'current' : ''}`}>
-              <div className="planCardHeader">
-                <div className="planTitleRow">
-                  <h3 className="planName">{t('planFreeName')}</h3>
+            {PLAN_ORDER.map((planId) => {
+              // Guests are not on any plan yet
+              const isCurrent = Boolean(user) && userPlan === planId;
+              const isFeatured = planId === FEATURED_PLAN;
+              const rows = buildPlanRows(planId, lang);
+              const showUsage =
+                isCurrent &&
+                usage &&
+                currentLimits.dailyLinks !== null &&
+                currentLimits.dailyQr !== null;
+
+              return (
+                <div
+                  key={planId}
+                  className={`planCard ${isFeatured ? 'proCard' : ''} ${isCurrent ? 'current' : ''}`}
+                >
+                  <div className="planCardHeader">
+                    <div className="planTitleRow">
+                      <h3 className="planName">{copy.names[planId]}</h3>
+                      {isFeatured && <span className="recommendedBadge">{copy.recommended}</span>}
+                    </div>
+                    <p className="planDesc">{copy.descs[planId]}</p>
+                    <div className="planPriceRow">
+                      <span className="priceAmount">{formatPrice(planId)}</span>
+                      <span className="pricePeriod">{copy.period}</span>
+                    </div>
+                  </div>
+
+                  <div className="planDivider" />
+
+                  <ul className="planFeatures">
+                    {rows.map((row) => (
+                      <li key={row.key} className={row.included ? '' : 'planFeatureOff'}>
+                        <svg
+                          className={`checkIcon ${isFeatured ? 'proCheck' : ''}`}
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          {row.included ? (
+                            <polyline points="20 6 9 17 4 12" />
+                          ) : (
+                            <line x1="6" y1="12" x2="18" y2="12" />
+                          )}
+                        </svg>
+                        <span>{row.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="planActionArea">
+                    {showUsage && (
+                      <p className="planUsage">
+                        {copy.usageToday(usage.links, usage.qr, currentLimits)}
+                      </p>
+                    )}
+                    {isCurrent ? (
+                      <button type="button" className="planBtn current" disabled>
+                        {copy.currentPlan}
+                      </button>
+                    ) : planId === 'free' ? (
+                      !user && onOpenAuthModal ? (
+                        <button
+                          type="button"
+                          className="planBtn upgrade"
+                          onClick={() => {
+                            onClose();
+                            onOpenAuthModal('register');
+                          }}
+                        >
+                          {copy.startFree}
+                        </button>
+                      ) : null
+                    ) : (
+                      <button
+                        type="button"
+                        className={`planBtn upgrade ${isFeatured ? 'primary' : ''}`}
+                        disabled={!PAYMENTS_ENABLED}
+                      >
+                        {PAYMENTS_ENABLED ? copy.selectPlan(copy.names[planId]) : copy.soon}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <p className="planDesc">{t('planFreeDesc')}</p>
-                <div className="planPriceRow">
-                  <span className="priceAmount">{t('planFreePrice')}</span>
-                  <span className="pricePeriod">{t('planPeriodMo')}</span>
-                </div>
-              </div>
-
-              <div className="planDivider" />
-
-              <ul className="planFeatures">
-                <li>
-                  <svg className="checkIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planFreeF1')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planFreeF2')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planFreeF3')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planFreeF4')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planFreeF5')}</span>
-                </li>
-              </ul>
-
-              <div className="planActionArea">
-                {isFreeCurrent ? (
-                  <button type="button" className="planBtn current" disabled>
-                    {t('currentPlanBtn')}
-                  </button>
-                ) : (
-                  <button type="button" className="planBtn upgrade">
-                    {t('upgradeToPlanBtn', { plan: t('planFreeName') })}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* 2. PRO PLAN */}
-            <div className={`planCard proCard ${isProCurrent ? 'current' : ''}`}>
-              <div className="planCardHeader">
-                <div className="planTitleRow">
-                  <h3 className="planName">{t('planProName')}</h3>
-                  <span className="recommendedBadge">{t('recommendedBadge')}</span>
-                </div>
-                <p className="planDesc">{t('planProDesc')}</p>
-                <div className="planPriceRow">
-                  <span className="priceAmount">{t('planProPrice')}</span>
-                  <span className="pricePeriod">{t('planPeriodMo')}</span>
-                </div>
-              </div>
-
-              <div className="planDivider" />
-
-              <ul className="planFeatures">
-                <li>
-                  <svg className="checkIcon proCheck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planProF1')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon proCheck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planProF2')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon proCheck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planProF3')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon proCheck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planProF4')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon proCheck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planProF5')}</span>
-                </li>
-                <li>
-                  <svg className="checkIcon proCheck" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{t('planProF6')}</span>
-                </li>
-              </ul>
-
-              <div className="planActionArea">
-                {isProCurrent ? (
-                  <button type="button" className="planBtn current" disabled>
-                    {t('currentPlanBtn')}
-                  </button>
-                ) : (
-                  <button type="button" className="planBtn upgrade primary">
-                    {t('upgradeToPlanBtn', { plan: t('planProName') })}
-                  </button>
-                )}
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

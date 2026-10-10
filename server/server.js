@@ -123,7 +123,7 @@ const registerClick = (shortCode) =>
       $inc: { clickCount: 1 },
       $push: { clicks: { timestamp: new Date() } },
     },
-    { new: true, projection: { originalUrl: 1 } }
+    { returnDocument: 'after', projection: { originalUrl: 1 } }
   ).lean();
 
 const handleRedirect = (resolveCode) => async (req, res, next) => {

@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { API_BASE_URL } from '../config/api';
+import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
 import './NewLinkModal.css';
 
-function NewLinkModal({ isOpen, onClose, onUrlShortened }) {
+function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
   const { t } = useTranslation();
-  const { getIdToken } = useAuth();
+  const { user, getIdToken } = useAuth();
   const [inputUrl, setInputUrl] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,28 +58,30 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened }) {
     }
 
     setErrorMessage('');
+
+    // Guests get one link per day: prompt to sign in instead of calling the API
+    if (!user && hasUsedGuestLinkToday()) {
+      setErrorMessage(t('guestLimitReached'));
+      if (onLimitReached) onLimitReached('guest');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const headers = { 'Content-Type': 'application/json' };
-      const token = await getIdToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
+      const result = await shortenUrl(inputUrl, getIdToken);
 
-      const response = await fetch(`${API_BASE_URL}/api/shorten`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ originalUrl: inputUrl.trim() }),
-      });
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok || !data?.success) {
-        if (response.status === 503 || data?.code === 'DATABASE_UNAVAILABLE') {
+      if (!result.success) {
+        if (result.errorCode === 'guest_limit') {
+          setErrorMessage(t('guestLimitReached'));
+          if (onLimitReached) onLimitReached('guest');
+        } else if (result.errorCode === 'daily_limit') {
+          setErrorMessage(t('dailyLinkLimitReached', { limit: result.limit }));
+          if (onLimitReached) onLimitReached('daily');
+        } else if (result.errorCode === 'db') {
           setErrorMessage(t('errorDatabaseUnavailable'));
         } else {
-          setErrorMessage(data?.error || t('errorGeneric'));
+          setErrorMessage(result.errorMessage || t('errorGeneric'));
         }
         setIsLoading(false);
         return;
@@ -88,11 +90,7 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened }) {
       // Close modal and notify parent of shortened URL
       onClose();
       if (onUrlShortened) {
-        onUrlShortened({
-          originalUrl: data.originalUrl,
-          shortCode: data.shortCode,
-          shortUrl: data.shortUrl,
-        });
+        onUrlShortened(result.data);
       }
     } catch (error) {
       console.error('New link shorten error:', error);

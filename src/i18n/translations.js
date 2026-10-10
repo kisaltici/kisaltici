@@ -178,7 +178,9 @@ export const translations = {
     planFreeF4: 'Basic click statistics',
     planFreeF5: 'Free sign-in with Google',
 
+    planStarterName: 'Starter',
     planProName: 'Pro',
+    planBusinessName: 'Business',
     planAdminName: 'ADMIN',
     planProPrice: '₺149',
     planProDesc: 'Access advanced features and comprehensive link analytics.',
@@ -209,6 +211,14 @@ export const translations = {
 
     // Link Analytics Page & Chart
     backToComposer: '← Back to Composer',
+    guestNoticeTitle: 'You are using Kısaltıcı as a guest.',
+    guestNoticeText: 'Sign in to save your link history, customize links and see more statistics.',
+    guestNoticeCta: 'Sign in',
+    guestLimitReached: 'You have used your guest link. Sign in to shorten more links.',
+    dailyLinkLimitReached: 'You have used all {limit} links for today. The limit resets tomorrow, or upgrade your plan for more.',
+    dailyQrLimitReached: 'You have used all {limit} QR codes for today. The limit resets tomorrow, or upgrade your plan for more.',
+    guestQrLimitReached: 'You have used your guest QR code. Sign in to create more.',
+    statsWindowNote: 'Showing the last {days} days of clicks on your plan.',
     backToHome: '← Back to Homepage',
     createNewLink: '+ Create New Link',
     shortUrl: 'Short URL',
@@ -499,7 +509,9 @@ export const translations = {
     planFreeF4: 'Temel tıklama istatistikleri',
     planFreeF5: 'Google ile ücretsiz giriş',
 
+    planStarterName: 'Başlangıç',
     planProName: 'Pro',
+    planBusinessName: 'Business',
     planAdminName: 'ADMIN',
     planProPrice: '₺149',
     planProDesc: 'Daha gelişmiş özelliklere ve daha kapsamlı istatistiklere erişin.',
@@ -530,6 +542,14 @@ export const translations = {
 
     // Link Analytics Page & Chart
     backToComposer: '← Oluşturucuya Dön',
+    guestNoticeTitle: "Kısaltıcı'yı misafir olarak kullanıyorsun.",
+    guestNoticeText: 'Bağlantı geçmişini kaydetmek, bağlantıları özelleştirmek ve daha fazla istatistik görmek için giriş yap.',
+    guestNoticeCta: 'Giriş yap',
+    guestLimitReached: 'Misafir hakkını kullandın. Daha fazla bağlantı kısaltmak için giriş yap.',
+    dailyLinkLimitReached: 'Bugünkü {limit} bağlantı hakkını kullandın. Limit yarın sıfırlanır, daha fazlası için planını yükseltebilirsin.',
+    dailyQrLimitReached: 'Bugünkü {limit} QR kod hakkını kullandın. Limit yarın sıfırlanır, daha fazlası için planını yükseltebilirsin.',
+    guestQrLimitReached: 'Misafir QR hakkını kullandın. Daha fazlası için giriş yap.',
+    statsWindowNote: 'Planında son {days} günün tıklamaları gösteriliyor.',
     backToHome: '← Ana Sayfaya Dön',
     createNewLink: '+ Yeni Bağlantı Oluştur',
     shortUrl: 'Kısa URL',

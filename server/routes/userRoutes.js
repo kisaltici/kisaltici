@@ -2,9 +2,15 @@ import express from 'express';
 import User from '../models/User.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { isAdminUser } from '../utils/admin.js';
+import { PLAN_IDS, getLimits } from '../config/plans.js';
+import { getUsage, subjectFor } from '../utils/usage.js';
 
-// Admins are reported as plan 'admin' (derived at read time; the stored plan is untouched)
-const effectivePlan = (authUser, storedPlan) => (isAdminUser(authUser) ? 'admin' : storedPlan || 'free');
+// Plan info sent with the profile. Admins are reported as plan 'admin' (derived at read time;
+// the stored plan is untouched). limits/usage use null for unlimited.
+const planInfo = async (req, storedPlan) => {
+  const plan = isAdminUser(req.user) ? 'admin' : PLAN_IDS.includes(storedPlan) ? storedPlan : 'free';
+  return { membershipPlan: plan, limits: getLimits(plan), usage: await getUsage(subjectFor(req)) };
+};
 
 const router = express.Router();
 
@@ -48,7 +54,7 @@ router.get('/profile', requireAuth, async (req, res, next) => {
         username: user.username || '',
         photoURL: user.photoURL || '',
         email: user.email || '',
-        membershipPlan: effectivePlan(req.user, user.membershipPlan),
+        ...(await planInfo(req, user.membershipPlan)),
       },
     });
   } catch (error) {
@@ -142,7 +148,7 @@ router.put('/profile', requireAuth, async (req, res, next) => {
         username: updatedUser.username || '',
         photoURL: updatedUser.photoURL || '',
         email: updatedUser.email || '',
-        membershipPlan: effectivePlan(req.user, updatedUser.membershipPlan),
+        ...(await planInfo(req, updatedUser.membershipPlan)),
       },
     });
   } catch (error) {

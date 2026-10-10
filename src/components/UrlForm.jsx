@@ -2,47 +2,13 @@ import { useState, useRef, useCallback } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { isPaidPlan } from '../utils/membership';
-import { API_BASE_URL } from '../config/api';
+import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
 import './UrlForm.css';
 
 /* ── Toast helpers ────────────────────────────────────────────── */
 
 let _toastId = 0;
 const nextId = () => ++_toastId;
-
-/**
- * Shared shorten API call.
- * Returns { success, data, errorCode?, errorMessage? }.
- */
-async function shortenUrl(inputUrl, getIdToken) {
-  const headers = { 'Content-Type': 'application/json' };
-  const token = await getIdToken();
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const response = await fetch(`${API_BASE_URL}/api/shorten`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ originalUrl: inputUrl.trim() }),
-  });
-
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok || !data?.success) {
-    if (response.status === 503 || data?.code === 'DATABASE_UNAVAILABLE') {
-      return { success: false, errorCode: 'db' };
-    }
-    return { success: false, errorMessage: data?.error || null };
-  }
-
-  return {
-    success: true,
-    data: {
-      originalUrl: data.originalUrl,
-      shortCode: data.shortCode,
-      shortUrl: data.shortUrl,
-    },
-  };
-}
 
 /**
  * UrlForm
@@ -53,9 +19,9 @@ async function shortenUrl(inputUrl, getIdToken) {
  *     intent is 'qr' | 'customize'
  *   membershipPlan                             — from parent for Pro gate UI
  */
-function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, membershipPlan }) {
+function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, membershipPlan }) {
   const { t } = useTranslation();
-  const { getIdToken } = useAuth();
+  const { user, getIdToken } = useAuth();
   const [inputUrl, setInputUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeIntent, setActiveIntent] = useState(null);
@@ -139,6 +105,13 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, membershipPlan }) {
       return;
     }
 
+    // Guests get one link per day: skip the request and prompt to sign in
+    if (!user && hasUsedGuestLinkToday()) {
+      pushToast(t('guestLimitReached'), 'info', 4200);
+      if (onLimitReached) onLimitReached('guest');
+      return;
+    }
+
     setIsLoading(true);
     setActiveIntent(intent);
 
@@ -146,7 +119,13 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, membershipPlan }) {
       const result = await shortenUrl(inputUrl, getIdToken);
 
       if (!result.success) {
-        if (result.errorCode === 'db') {
+        if (result.errorCode === 'guest_limit') {
+          pushToast(t('guestLimitReached'), 'info', 4200);
+          if (onLimitReached) onLimitReached('guest');
+        } else if (result.errorCode === 'daily_limit') {
+          pushToast(t('dailyLinkLimitReached', { limit: result.limit }), 'info', 4600);
+          if (onLimitReached) onLimitReached('daily');
+        } else if (result.errorCode === 'db') {
           pushToast(t('errorDatabaseUnavailable'), 'error', 3200);
         } else {
           pushToast(result.errorMessage || t('errorGeneric'), 'error', 3200);

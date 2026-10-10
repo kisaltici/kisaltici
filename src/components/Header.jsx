@@ -81,7 +81,7 @@ function Header({
 
   return (
     <header className="header">
-      <div className="headerContainer">
+      <div className={`headerContainer ${user ? '' : 'isGuest'}`}>
         {/* LEFT GROUP (desktop): [ Logo ] [ Sidebar Toggle ] [ Search ]
             LEFT GROUP (mobile): [ Sidebar Toggle ] [ Search ] */}
         <div className="headerLeft">

@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     membershipPlan: {
       type: String,
-      enum: ['free', 'pro'],
+      enum: ['free', 'starter', 'pro', 'business'],
       default: 'free',
     },
   },

@@ -19,7 +19,9 @@ import './SettingsModal.css';
 // Architecture configuration for storage limits by membership plan
 export const STORAGE_LIMITS = {
   free: 100 * 1024, // 100 KB
+  starter: 512 * 1024, // 512 KB
   pro: 1024 * 1024, // 1 MB (1000 KB)
+  business: 5 * 1024 * 1024, // 5 MB
   admin: Infinity, // unlimited
 };
 

@@ -3,9 +3,17 @@ export const MEMBERSHIP_PLANS = {
     id: 'free',
     nameKey: 'planFreeName',
   },
+  starter: {
+    id: 'starter',
+    nameKey: 'planStarterName',
+  },
   pro: {
     id: 'pro',
     nameKey: 'planProName',
+  },
+  business: {
+    id: 'business',
+    nameKey: 'planBusinessName',
   },
   admin: {
     id: 'admin',

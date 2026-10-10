@@ -3,6 +3,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  useLocation,
   useNavigate,
   useParams,
 } from 'react-router-dom';
@@ -17,6 +18,7 @@ const PricingModal = lazy(() => import('./components/PricingModal'));
 const AuthModal = lazy(() => import('./components/AuthModal'));
 import UrlForm from './components/UrlForm';
 const LinkAnalyticsPage = lazy(() => import('./pages/LinkAnalyticsPage'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 import { generateTitleFromUrl } from './utils/titleGenerator';
 import { applyColorTheme } from './utils/themePresets';
 import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
@@ -25,7 +27,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
 import './App.css';
 
-function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, membershipPlan }) {
+function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, membershipPlan }) {
   const { t } = useTranslation();
   return (
     <section className="heroSection">
@@ -33,6 +35,7 @@ function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, membership
       <UrlForm
         onUrlShortened={onUrlShortened}
         onUrlShortenedWithIntent={onUrlShortenedWithIntent}
+        onLimitReached={onLimitReached}
         membershipPlan={membershipPlan}
       />
     </section>
@@ -41,7 +44,16 @@ function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, membership
 
 function AppContent() {
   const navigate = useNavigate();
-  const { user, getIdToken, authTransitioning, membershipPlan } = useAuth();
+  const location = useLocation();
+  // If Firebase does not answer quickly (blocked network, extensions), fall back to the guest view
+  const [authWaitExpired, setAuthWaitExpired] = useState(false);
+  const { user, getIdToken, authTransitioning, authLoading, membershipPlan, refetchProfile } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading) return undefined;
+    const timer = setTimeout(() => setAuthWaitExpired(true), 3000);
+    return () => clearTimeout(timer);
+  }, [authLoading]);
 
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -491,7 +503,19 @@ function AppContent() {
 
   // Called when a new URL is shortened successfully
   // intent: null (plain), 'qr', or 'customize'
+  // Limit reached: guests are asked to sign in, signed-in users are shown the plans
+  const handleLimitReached = (kind) => {
+    if (kind === 'guest') {
+      handleOpenAuthModal('login');
+    } else {
+      setIsPricingOpen(true);
+    }
+  };
+
   const handleUrlShortened = (newRecord, intent = null) => {
+    // Refresh the plan usage counters shown in the pricing modal
+    if (user && refetchProfile) refetchProfile();
+
     const defaultTitle = generateTitleFromUrl(newRecord.originalUrl);
 
     const historyItem = {
@@ -601,6 +625,28 @@ function AppContent() {
     navigate(`/link/${encodeURIComponent(newCode)}`);
   };
 
+  // Signed-out visitors on the root path see the marketing landing page instead of the app shell
+  if (location.pathname === '/' && !user) {
+    if ((authLoading && !authWaitExpired) || authTransitioning) {
+      return <div className="landingSplash" aria-hidden="true" />;
+    }
+    return (
+      <Suspense fallback={<div className="landingSplash" aria-hidden="true" />}>
+        <LandingPage
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+          onShortened={handleUrlShortened}
+          onOpenAuthModal={handleOpenAuthModal}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          initialMode={authModalMode}
+        />
+      </Suspense>
+    );
+  }
+
   return (
     <div className="appLayout">
       <Header
@@ -645,6 +691,7 @@ function AppContent() {
                 <MainComposerView
                   onUrlShortened={handleUrlShortened}
                   onUrlShortenedWithIntent={handleUrlShortenedWithIntent}
+                  onLimitReached={handleLimitReached}
                   membershipPlan={membershipPlan}
                 />
               }
@@ -655,6 +702,7 @@ function AppContent() {
                 <LinkAnalyticsPage
                   onOpenNewLink={() => setIsNewLinkOpen(true)}
                   onShortCodeChanged={handleShortCodeChanged}
+                  onOpenAuthModal={handleOpenAuthModal}
                 />
               }
             />
@@ -665,6 +713,7 @@ function AppContent() {
                 <LinkAnalyticsPage
                   onOpenNewLink={() => setIsNewLinkOpen(true)}
                   onShortCodeChanged={handleShortCodeChanged}
+                  onOpenAuthModal={handleOpenAuthModal}
                 />
               }
             />
@@ -674,6 +723,7 @@ function AppContent() {
                 <MainComposerView
                   onUrlShortened={handleUrlShortened}
                   onUrlShortenedWithIntent={handleUrlShortenedWithIntent}
+                  onLimitReached={handleLimitReached}
                   membershipPlan={membershipPlan}
                 />
               }
@@ -695,6 +745,7 @@ function AppContent() {
         isOpen={isNewLinkOpen}
         onClose={() => setIsNewLinkOpen(false)}
         onUrlShortened={handleUrlShortened}
+        onLimitReached={handleLimitReached}
       />
 
       <ProfileModal
@@ -731,6 +782,7 @@ function AppContent() {
         isOpen={isPricingOpen}
         onClose={() => setIsPricingOpen(false)}
         userPlan={membershipPlan}
+        onOpenAuthModal={handleOpenAuthModal}
       />
 
       <AuthModal

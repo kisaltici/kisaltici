@@ -8,7 +8,7 @@ import { isPaidPlan } from '../utils/membership';
 import { API_BASE_URL } from '../config/api';
 import './LinkAnalyticsPage.css';
 
-function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
+function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal }) {
   const { t } = useTranslation();
   const params = useParams();
   // shortCode from /link/:shortCode, or splat (*) from /link/* for composite @user/text
@@ -465,6 +465,23 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
         </button>
       </div>
 
+      {/* Guest notice: more features are available after signing in */}
+      {!user && onOpenAuthModal && (
+        <aside className="guestNotice" role="note">
+          <div className="guestNoticeText">
+            <strong>{t('guestNoticeTitle')}</strong>
+            <span>{t('guestNoticeText')}</span>
+          </div>
+          <button
+            type="button"
+            className="guestNoticeBtn"
+            onClick={() => onOpenAuthModal('login')}
+          >
+            {t('guestNoticeCta')}
+          </button>
+        </aside>
+      )}
+
       {/* Link Detail Header Card */}
       <section className="linkHeaderCard">
         <div className="linkHeaderTop">
@@ -711,6 +728,11 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged }) {
       {/* Click Analytics Chart */}
       <section className="chartSection">
         <AnalyticsChart clicks={linkData.clicks || []} />
+        {linkData.statsWindowDays != null && (
+          <p className="statsWindowNote">
+            {t('statsWindowNote', { days: linkData.statsWindowDays })}
+          </p>
+        )}
       </section>
 
       {/* Recent Clicks Activity Table */}

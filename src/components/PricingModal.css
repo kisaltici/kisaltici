@@ -17,8 +17,8 @@
 }
 
 .pricingModalBox {
-  width: min(92%, 720px);
-  max-width: 720px;
+  width: min(96%, 1120px);
+  max-width: 1120px;
   max-height: calc(100vh - 32px);
   max-height: calc(100dvh - 32px);
   background-color: var(--surface-bg);
@@ -96,13 +96,13 @@
 }
 
 .pricingGrid {
-  display: flex;
-  gap: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
   align-items: stretch;
 }
 
 .planCard {
-  flex: 1;
   min-width: 0;
   background-color: var(--input-bg);
   border: 1px solid var(--surface-border);
@@ -158,7 +158,7 @@
   color: var(--text-muted);
   margin: 0 0 0.4rem 0;
   line-height: 1.4;
-  min-height: 2.5em;
+  min-height: 2.8em;
 }
 
 .planPriceRow {
@@ -261,6 +261,12 @@
   transform: translateY(-1px);
 }
 
+@media (max-width: 1023px) {
+  .pricingGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 639px) {
   .pricingModalBox {
     width: 95%;
@@ -272,7 +278,7 @@
     padding: 1rem;
   }
   .pricingGrid {
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
   }
   .planCard {
@@ -284,4 +290,33 @@
   .priceAmount {
     font-size: 1.6rem;
   }
+}
+
+.pricingNotice {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--accent-color);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.planFeatureOff {
+  opacity: 0.45;
+}
+
+.planFeatureOff span {
+  text-decoration: line-through;
+}
+
+.planUsage {
+  margin: 0 0 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.planBtn:disabled {
+  cursor: not-allowed;
 }

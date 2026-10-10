@@ -958,3 +958,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+.qrLimitMessage {
+  margin: 0 0 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--error-border);
+  border-radius: 10px;
+  background: var(--error-bg);
+  color: var(--error-text);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}

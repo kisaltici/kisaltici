@@ -409,6 +409,22 @@
     width: 30px;
     height: 30px;
   }
+
+  /* Guests have two auth buttons on the right: let the logo flow instead of overlapping them */
+  .headerContainer.isGuest .headerLogoMobile {
+    position: static;
+    transform: none;
+    margin-left: 0.5rem;
+  }
+  .headerContainer.isGuest .headerRight {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .headerContainer.isGuest .authGuestBtn.signInBtn {
+    display: none;
+  }
 }
 
 .headerDropdownItem {

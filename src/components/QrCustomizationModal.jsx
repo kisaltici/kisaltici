@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { consumeQr } from '../utils/shortenApi';
 import { API_BASE_URL } from '../config/api';
 import {
   generateQrMatrix,
@@ -83,6 +84,7 @@ function QrCustomizationModal({
   const [quietZone, setQuietZone] = useState(() => getEffectiveSettings().quietZone || 'standard');
   const [centerImage, setCenterImage] = useState(() => getEffectiveSettings().centerImage || null);
   const [saveStatus, setSaveStatus] = useState(''); // 'saving', 'saved', ''
+  const [qrLimitMessage, setQrLimitMessage] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
 
   // References
@@ -290,9 +292,25 @@ function QrCustomizationModal({
     setCenterImage(null);
   };
 
+  // Counts this QR against the daily plan quota before an export; returns false when the limit is reached
+  const ensureQrAllowance = async () => {
+    const gate = await consumeQr(shortCode, getIdToken);
+    if (gate.allowed) {
+      setQrLimitMessage('');
+      return true;
+    }
+    setQrLimitMessage(
+      gate.errorCode === 'guest_limit'
+        ? t('guestQrLimitReached')
+        : t('dailyQrLimitReached', { limit: gate.limit })
+    );
+    return false;
+  };
+
   // Handle PNG Download
-  const handleDownloadPng = () => {
+  const handleDownloadPng = async () => {
     if (!qrData) return;
+    if (!(await ensureQrAllowance())) return;
     try {
       const canvas = exportCanvasRef.current || document.createElement('canvas');
       drawQrToCanvas(
@@ -324,8 +342,9 @@ function QrCustomizationModal({
   };
 
   // Handle SVG Download
-  const handleDownloadSvg = () => {
+  const handleDownloadSvg = async () => {
     if (!svgString) return;
+    if (!(await ensureQrAllowance())) return;
     try {
       const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -1074,6 +1093,11 @@ function QrCustomizationModal({
 
             {/* Direct Export Buttons (Dışa aktar) */}
             <div className="qrExportSection">
+              {qrLimitMessage && (
+                <p className="qrLimitMessage" role="alert">
+                  {qrLimitMessage}
+                </p>
+              )}
               <span className="qrExportSectionLabel">Dışa aktar</span>
               <div className="qrExportButtonGroup">
                 <button
