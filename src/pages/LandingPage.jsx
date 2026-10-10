@@ -1,6 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth, preloadAuth } from '../context/AuthContext';
@@ -26,9 +24,6 @@ import { homePath } from '../i18n/siteLang';
 import { detectBrowserLanguage } from '../i18n/LanguageContext';
 import './LandingPage.css';
 
-gsap.registerPlugin(ScrollTrigger);
-// The mobile URL bar collapsing resizes the viewport; do not rebuild every trigger for that (causes jumps and flicker)
-ScrollTrigger.config({ ignoreMobileResize: true });
 
 const THEME_LIST = Object.values(COLOR_THEMES);
 
@@ -230,12 +225,24 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
     };
   }, []);
 
-  /* Scroll-driven motion (GSAP ScrollTrigger). Writes to the DOM only, never to React state. */
-  useLayoutEffect(() => {
+  /* Scroll-driven motion (GSAP ScrollTrigger). Writes to the DOM only, never to React state.
+     GSAP is loaded after the first paint so the hero does not wait for it. */
+  useEffect(() => {
     const root = rootRef.current;
     if (!root) return undefined;
 
-    const mm = gsap.matchMedia();
+    let mm;
+    let cancelled = false;
+
+    Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([gsapModule, triggerModule]) => {
+    if (cancelled) return;
+    const { gsap } = gsapModule;
+    const { ScrollTrigger } = triggerModule;
+    gsap.registerPlugin(ScrollTrigger);
+    // The mobile URL bar collapsing resizes the viewport; do not rebuild every trigger for that (causes jumps and flicker)
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
+    mm = gsap.matchMedia();
 
     mm.add(
       {
@@ -354,8 +361,12 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
       },
       root
     );
+    });
 
-    return () => mm.revert();
+    return () => {
+      cancelled = true;
+      if (mm) mm.revert();
+    };
   }, []);
 
   const handleGoogle = async () => {
