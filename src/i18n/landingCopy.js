@@ -8,7 +8,7 @@ export const LANDING_COPY = {
       plans: 'Planlar',
       faq: 'SSS',
       signIn: 'Giriş yap',
-      start: 'Ücretsiz başla',
+      start: 'Hemen başla',
       menu: 'Menü',
       themeToggle: 'Temayı değiştir',
       language: 'Dili değiştir',
@@ -84,7 +84,7 @@ export const LANDING_COPY = {
     },
     themes: {
       title: '15 renk teması. Seninkini seç.',
-      text: 'Karanlık ve aydınlık mod, beş ücretsiz ve on premium tema. Arayüz tek tıkla kendi rengine bürünür.',
+      text: 'Karanlık ve aydınlık mod, beş standart ve on premium tema. Arayüz tek tıkla kendi rengine bürünür.',
       sampleTitle: 'Bağlantılarım',
       sampleLink: 'kisaltici.com/aB3xYz',
       free: 'Ücretsiz',
@@ -93,7 +93,7 @@ export const LANDING_COPY = {
     ticker: ['Kısalt', 'Paylaş', 'Takip et'],
     plans: {
       title: 'Sana uygun planı seç',
-      sub: 'Ücretsiz başla, ihtiyacın büyüdükçe yükselt.',
+      sub: 'Planını seç ve ücretsiz dene, ihtiyacın büyüdükçe yükselt.',
       guestNote: 'Giriş yapmadan da dene: misafir olarak 1 bağlantı ve 1 QR kod oluşturabilirsin.',
       freeCta: 'Ücretsiz başla',
       paidCta: 'Giriş yap ve seç',
@@ -141,7 +141,7 @@ export const LANDING_COPY = {
       plans: 'Plans',
       faq: 'FAQ',
       signIn: 'Sign in',
-      start: 'Start free',
+      start: 'Get started',
       menu: 'Menu',
       themeToggle: 'Toggle theme',
       language: 'Change language',
@@ -217,7 +217,7 @@ export const LANDING_COPY = {
     },
     themes: {
       title: '15 color themes. Pick yours.',
-      text: 'Dark and light mode, five free and ten premium themes. The interface takes your color in one click.',
+      text: 'Dark and light mode, five standard and ten premium themes. The interface takes your color in one click.',
       sampleTitle: 'My links',
       sampleLink: 'kisaltici.com/aB3xYz',
       free: 'Free',
@@ -226,7 +226,7 @@ export const LANDING_COPY = {
     ticker: ['Shorten', 'Share', 'Track'],
     plans: {
       title: 'Pick the plan that fits you',
-      sub: 'Start free, upgrade as your needs grow.',
+      sub: 'Pick a plan and try it free, upgrade as your needs grow.',
       guestNote: 'Try it without signing in: as a guest you can create 1 link and 1 QR code.',
       freeCta: 'Start free',
       paidCta: 'Sign in and choose',

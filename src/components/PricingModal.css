@@ -97,7 +97,7 @@
 
 .pricingGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   align-items: stretch;
 }
@@ -323,4 +323,12 @@
 
 .pricingToggleRow {
   margin: 0 0 1.25rem;
+}
+
+.priceWas {
+  align-self: center;
+  margin-right: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  text-decoration: line-through;
 }

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import {
-  PLAN_ORDER,
+  SALE_PLANS,
+  TRIAL_DAYS,
+  formatListPrice,
   FEATURED_PLAN,
   DEFAULT_PERIOD,
   buildPlanRows,
@@ -121,7 +123,7 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
           </div>
 
           <div className="pricingGrid">
-            {PLAN_ORDER.map((planId) => {
+            {SALE_PLANS.map((planId) => {
               // Guests are not on any plan yet
               const isCurrent = Boolean(user) && userPlan === planId;
               const isFeatured = planId === FEATURED_PLAN;
@@ -144,6 +146,9 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
                     </div>
                     <p className="planDesc">{copy.descs[planId]}</p>
                     <div className="planPriceRow">
+                      {formatListPrice(planId, period) && (
+                        <span className="priceWas">{formatListPrice(planId, period)}</span>
+                      )}
                       <span className="priceAmount">{formatPrice(planId, period)}</span>
                       <span className="pricePeriod">{period === 'yearly' ? copy.periodYear : copy.period}</span>
                     </div>
@@ -227,7 +232,7 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
                         disabled={!billing.enabled}
                         onClick={() => onSelectPlan && onSelectPlan(planId, period)}
                       >
-                        {billing.enabled ? copy.selectPlan(copy.names[planId]) : copy.soon}
+                        {billing.enabled ? copy.trialCta(TRIAL_DAYS) : copy.soon}
                       </button>
                     )}
                   </div>

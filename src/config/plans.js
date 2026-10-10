@@ -10,7 +10,18 @@ export const YEARLY_MONTHS_CHARGED = 10;
 export const PAID_PLANS = ['starter', 'pro', 'business'];
 
 export const PLAN_ORDER = ['free', 'starter', 'pro', 'business'];
+// Plans offered for sale (the free plan is internal only: the fallback state of accounts without a subscription).
+// Displayed left to right; the featured plan sits in the middle.
+export const SALE_PLANS = ['starter', 'pro', 'business'];
 export const FEATURED_PLAN = 'pro';
+
+// Free trial before the first charge (card required). Keep in sync with TRIAL_DAYS in server/config/billing.js.
+export const TRIAL_DAYS = 7;
+
+// Struck-through "regular" price shown next to the current price. The strike-through must reflect a real regular
+// price that the plan will cost after the campaign ends. Set SHOW_LIST_PRICE to false to hide it.
+export const SHOW_LIST_PRICE = true;
+export const LIST_PRICES = { starter: 79, pro: 229, business: 599 };
 
 export const PLAN_PRICES = { free: 0, starter: 49, pro: 149, business: 399 };
 
@@ -58,6 +69,11 @@ const COPY = {
     subRenew: 'Süreyi uzat',
     subManual: 'Süresiz',
     recommended: 'Önerilen',
+    launchPrice: 'Lansman fiyatı',
+    trialBadge: (n) => `${n} gün ücretsiz`,
+    trialCta: (n) => `${n} gün ücretsiz dene`,
+    trialNote: (n) =>
+      `Kart bilgisi gerekir. ${n} günlük deneme bitince plan ücreti kartından otomatik çekilir. Denemeyi bitmeden iptal edersen hiçbir ücret alınmaz.`,
     soon: 'Yakında',
     currentPlan: 'Mevcut planın',
     startFree: 'Ücretsiz başla',
@@ -100,6 +116,11 @@ const COPY = {
     subRenew: 'Extend plan',
     subManual: 'No expiry',
     recommended: 'Recommended',
+    launchPrice: 'Launch price',
+    trialBadge: (n) => `${n} days free`,
+    trialCta: (n) => `Try free for ${n} days`,
+    trialNote: (n) =>
+      `A card is required. When the ${n}-day trial ends, the plan price is charged to your card automatically. Cancel before it ends and you pay nothing.`,
     soon: 'Soon',
     currentPlan: 'Your current plan',
     startFree: 'Start free',
@@ -116,6 +137,13 @@ export const getPlanPrice = (planId, period = 'monthly') =>
   period === 'yearly' ? PLAN_PRICES[planId] * YEARLY_MONTHS_CHARGED : PLAN_PRICES[planId];
 
 export const formatPrice = (planId, period = 'monthly') => `₺${getPlanPrice(planId, period)}`;
+
+/** Struck-through regular price for display, or null when it should not be shown. */
+export const formatListPrice = (planId, period = 'monthly') => {
+  if (!SHOW_LIST_PRICE || !LIST_PRICES[planId] || LIST_PRICES[planId] <= PLAN_PRICES[planId]) return null;
+  const months = period === 'yearly' ? YEARLY_MONTHS_CHARGED : 1;
+  return `₺${LIST_PRICES[planId] * months}`;
+};
 
 export const isBillingPeriod = (value) => BILLING_PERIODS.includes(value);
 export const isPaidPlanId = (value) => PAID_PLANS.includes(value);

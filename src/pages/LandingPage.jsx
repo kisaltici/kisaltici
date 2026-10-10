@@ -9,7 +9,9 @@ import { COLOR_THEMES } from '../utils/themePresets';
 import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
 import LimitBanner from '../components/LimitBanner';
 import {
-  PLAN_ORDER,
+  SALE_PLANS,
+  TRIAL_DAYS,
+  formatListPrice,
   FEATURED_PLAN,
   DEFAULT_PERIOD,
   buildPlanRows,
@@ -740,7 +742,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
           </div>
 
           <div className="lpPlans">
-            {PLAN_ORDER.map((planId, index) => {
+            {SALE_PLANS.map((planId, index) => {
               const featured = planId === FEATURED_PLAN;
               const rows = buildPlanRows(planId, lang);
               return (
@@ -757,8 +759,16 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
                     </div>
                     <p className="lpCellText">{planCopy.descs[planId]}</p>
                     <div className="lpPrice">
-                      <span className="lpPriceAmount">{formatPrice(planId, period)}</span>
-                      <span className="lpPricePeriod">{period === 'yearly' ? planCopy.periodYear : planCopy.period}</span>
+                      {formatListPrice(planId, period) && (
+                        <span className="lpPriceWas" aria-label={planCopy.launchPrice}>
+                          {formatListPrice(planId, period)}
+                        </span>
+                      )}
+                      <div className="lpPriceNow">
+                        <span className="lpPriceAmount">{formatPrice(planId, period)}</span>
+                        <span className="lpPricePeriod">{period === 'yearly' ? planCopy.periodYear : planCopy.period}</span>
+                      </div>
+                      <span className="lpPriceTag">{planCopy.launchPrice} · {planCopy.trialBadge(TRIAL_DAYS)}</span>
                     </div>
                   </header>
 
@@ -776,15 +786,16 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
                   <button
                     type="button"
                     className={`lpBtn ${featured ? 'lpBtnPrimary' : 'lpBtnGhost'} lpPlanBtn`}
-                    onClick={planId === 'free' ? handleGoogle : () => (onStartCheckout ? onStartCheckout(planId, period) : onOpenAuthModal('login'))}
+                    onClick={() => (onStartCheckout ? onStartCheckout(planId, period) : onOpenAuthModal('login'))}
                   >
-                    {planId === 'free' ? plans.freeCta : plans.paidCta}
+                    {planCopy.trialCta(TRIAL_DAYS)}
                   </button>
                 </article>
               );
             })}
           </div>
 
+          <p className="lpTrialNote" data-reveal>{planCopy.trialNote(TRIAL_DAYS)}</p>
           <p className="lpGuestNote" data-reveal>{plans.guestNote}</p>
         </section>
 

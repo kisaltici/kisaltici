@@ -1033,11 +1033,19 @@
   background: var(--accent-color);
 }
 
-/* ---------- Plans (4 columns, rows aligned with subgrid) ---------- */
+/* ---------- Plans (3 columns, the middle one larger; rows aligned with subgrid) ---------- */
+@property --lp-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .lpPlans {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.14fr) minmax(0, 1fr);
+  gap: clamp(0.85rem, 1.6vw, 1.25rem);
+  align-items: stretch;
+  padding-block: 0.75rem;
 }
 
 .lpPlan {
@@ -1059,9 +1067,94 @@
   }
 }
 
+.lpPlan {
+  position: relative;
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  background: linear-gradient(160deg, var(--lp-glass-strong), var(--lp-glass));
+  box-shadow: inset 0 1px 0 var(--lp-glass-highlight);
+}
+
+/* Featured plan: larger, lime glass, rotating light along the border, slow sheen, floating glow */
 .lpPlan.isFeatured {
-  border-color: var(--accent-color);
-  background: color-mix(in srgb, var(--accent-color) 6%, var(--surface-bg));
+  margin-block: -0.75rem;
+  padding: clamp(1.5rem, 2.6vw, 2.1rem);
+  row-gap: 1.75rem;
+  border-color: transparent;
+  background:
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--accent-color) 16%, transparent), transparent 70%),
+    linear-gradient(160deg, var(--lp-glass-strong), var(--lp-glass));
+  box-shadow:
+    inset 0 1px 0 var(--lp-glass-highlight),
+    0 40px 80px -40px color-mix(in srgb, var(--accent-color) 45%, transparent),
+    var(--lp-shadow);
+}
+
+.lpPlan.isFeatured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--lp-angle),
+    color-mix(in srgb, var(--accent-color) 10%, transparent) 0deg,
+    var(--accent-color) 70deg,
+    color-mix(in srgb, var(--accent-color) 10%, transparent) 140deg,
+    color-mix(in srgb, var(--accent-color) 10%, transparent) 200deg,
+    #ffffff 250deg,
+    color-mix(in srgb, var(--accent-color) 10%, transparent) 310deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: lpPlanSpin 6s linear infinite;
+}
+
+.lpPlan.isFeatured::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.09) 50%, transparent 65%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  pointer-events: none;
+  animation: lpPlanSheen 5.5s var(--lp-ease) infinite;
+}
+
+.lpPlan.isFeatured .lpBadge {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent-color) 55%, transparent);
+}
+
+.lpPlan.isFeatured .lpPriceAmount {
+  font-size: clamp(2.6rem, 4.2vw, 3.3rem);
+}
+
+@keyframes lpPlanSpin {
+  to {
+    --lp-angle: 360deg;
+  }
+}
+
+@keyframes lpPlanSheen {
+  0%,
+  45% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lpPlan.isFeatured::before,
+  .lpPlan.isFeatured::after {
+    animation: none;
+  }
 }
 
 .lpPlanHead {
@@ -1087,10 +1180,40 @@
 
 .lpPrice {
   display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
+  flex-direction: column;
+  gap: 0.2rem;
   margin-top: auto;
   padding-top: 0.5rem;
+}
+
+.lpPriceNow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.lpPriceWas {
+  align-self: flex-start;
+  color: var(--text-muted);
+  font: 500 1.0625rem/1 var(--lp-font);
+  font-variant-numeric: tabular-nums;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.lpPriceTag {
+  margin-top: 0.35rem;
+  color: var(--accent-color);
+  font: 500 0.75rem/1.3 var(--lp-mono);
+}
+
+.lpTrialNote {
+  max-width: 62ch;
+  margin: 1.5rem auto 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  text-align: center;
 }
 
 .lpPriceAmount {
@@ -1497,7 +1620,15 @@
   }
 
   .lpPlans {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 520px;
+    margin-inline: auto;
+    padding-block: 0;
+  }
+
+  .lpPlan.isFeatured {
+    order: -1;
+    margin-block: 0;
   }
 }
 

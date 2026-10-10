@@ -41,7 +41,7 @@ try {
   }
 
   /* ---------- Landing page ---------- */
-  const planBlocks = plansCfg.PLAN_ORDER.map((id) => {
+  const planBlocks = plansCfg.SALE_PLANS.map((id) => {
     const l = plansCfg.PLAN_LIMITS[id];
     const items = [
       planCopy.links(l.dailyLinks),
@@ -102,7 +102,7 @@ try {
       description:
         'Uzun bağlantıları kısaltan, özelleştirilebilir QR kod üreten ve tıklama istatistiklerini gösteren web uygulaması.',
       inLanguage: 'tr-TR',
-      offers: plansCfg.PLAN_ORDER.map((id) => ({
+      offers: plansCfg.SALE_PLANS.map((id) => ({
         '@type': 'Offer',
         name: planCopy.names[id],
         price: String(plansCfg.PLAN_PRICES[id]),
