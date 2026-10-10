@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import SubscriptionCard from './SubscriptionCard';
 import { getPlanDisplayName, isPaidPlan } from '../utils/membership';
 import { getAccountProviderLabel } from '../utils/authHelpers';
 import {
@@ -731,6 +732,7 @@ function SettingsModal({
                       </span>
                     </div>
                   </div>
+                  <SubscriptionCard />
                 </div>
               </div>
             )}

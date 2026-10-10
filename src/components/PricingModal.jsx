@@ -190,7 +190,7 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
                     )}
                     {isCurrent ? (
                       <>
-                        {planId !== 'free' && subscription?.status === 'active' && subscription.expiresAt && (
+                        {planId !== 'free' && ['active', 'trialing', 'canceled'].includes(subscription?.status) && subscription.expiresAt && (
                           <p className="planUsage">
                             {copy.subActive(subDate(subscription.expiresAt))} · {copy.subDaysLeft(daysLeft(subscription.expiresAt))}
                           </p>
@@ -198,7 +198,7 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onS
                         {planId !== 'free' && subscription?.status === 'manual' && (
                           <p className="planUsage">{copy.subManual}</p>
                         )}
-                        {planId !== 'free' && billing.enabled && subscription?.status === 'active' && onSelectPlan ? (
+                        {planId !== 'free' && billing.enabled && ['active', 'trialing', 'canceled'].includes(subscription?.status) && onSelectPlan ? (
                           <button
                             type="button"
                             className="planBtn upgrade"

@@ -1,0 +1,72 @@
+.subCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--surface-bg);
+}
+
+.subCardTitle {
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.subCardText {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.subCardMuted {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.subCardError {
+  margin: 0;
+  color: #f87171;
+  font-size: 0.8125rem;
+}
+
+.subCardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.subBtn {
+  min-height: 36px;
+  padding: 0 0.9rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.subBtn:hover {
+  border-color: var(--text-muted);
+}
+
+.subBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.subBtn.isDanger {
+  border-color: #f87171;
+  color: #f87171;
+}
