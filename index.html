@@ -35,17 +35,10 @@
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" /></noscript>
 
     <style>
-      /* Static, crawlable copy shown until the app mounts. Hidden for returning signed-in users to avoid a flash. */
-      #seo-static { max-width: 760px; margin: 0 auto; padding: 6rem 1.25rem 3rem; font-family: Geist, system-ui, sans-serif; line-height: 1.6; color: #f2f3f5; }
-      #seo-static h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 1rem; }
-      #seo-static h2 { font-size: 1.35rem; margin: 2rem 0 .5rem; }
-      #seo-static h3 { font-size: 1.05rem; margin: 1rem 0 .25rem; }
-      #seo-static a { color: #deff36; margin-right: .75rem; }
-      html.kslt-returning #seo-static { display: none; }
+      /* Crawlable copy for search engines and no-JS clients. Visually hidden so it never flashes before the app mounts;
+         React replaces it on mount and renders the same content visibly. */
+      #seo-static { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
     </style>
-    <script>
-      try { if (localStorage.getItem('kslt_returning') === '1') document.documentElement.classList.add('kslt-returning'); } catch (e) {}
-    </script>
     <!--SEO_JSONLD-->
   </head>
   <body>

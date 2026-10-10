@@ -85,13 +85,6 @@ export function AuthProvider({ children }) {
         setUser(currentUser);
         setAuthLoading(false);
         setAuthTransitioning(false);
-        // Hint for index.html: hide the static landing copy for returning signed-in users (no flash before the app mounts)
-        try {
-          if (currentUser) localStorage.setItem('kslt_returning', '1');
-          else localStorage.removeItem('kslt_returning');
-        } catch {
-          /* storage unavailable */
-        }
       },
       (error) => {
         console.error('Firebase Auth state change error:', error);
