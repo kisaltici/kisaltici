@@ -32,6 +32,7 @@ try {
   const plansCfg = await vite.ssrLoadModule('/src/config/plans.js');
   const { LEGAL_DOCS } = await vite.ssrLoadModule('/src/pages/legalDocs.js');
   const { SELLER, LEGAL_UPDATED } = await vite.ssrLoadModule('/src/config/legal.js');
+  const { BLOG_POSTS, getRelatedPosts, formatPostDate } = await vite.ssrLoadModule('/src/content/blogPosts.js');
 
   const tr = LANDING_COPY.tr;
   const planCopy = plansCfg.getPlanCopy('tr');
@@ -73,6 +74,8 @@ try {
 <ul>${planBlocks}</ul>
 <h2>${esc(tr.faq.title)}</h2>
 <dl>${tr.faq.items.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl>
+<h2>Blog</h2>
+<ul>${BLOG_POSTS.map((b) => `<li><a href="/blog/${b.slug}">${esc(b.title)}</a> – ${esc(b.description)}</li>`).join('')}</ul>
 <nav aria-label="Yasal">${LEGAL_DOCS.map((d) => `<a href="/yasal/${d.slug}">${esc(d.title)}</a>`).join(' ')}</nav>
 </main></div>`;
 
@@ -206,10 +209,73 @@ try {
     );
   }
 
+  /* ---------- Blog ---------- */
+  const blogNav = `<nav aria-label="Blog">${BLOG_POSTS.map((b) => `<a href="/blog/${b.slug}">${esc(b.title)}</a>`).join(' ')}</nav>`;
+  writePage(
+    'blog',
+    setHead(shell(`<h1>Blog</h1><p>Link kısaltma, QR kod ve tıklama takibi hakkında rehberler ve ipuçları.</p><ul>${BLOG_POSTS.map((b) => `<li><a href="/blog/${b.slug}">${esc(b.title)}</a><p>${esc(b.description)}</p></li>`).join('')}</ul>`), {
+      title: `Blog | ${NAME}`,
+      description: 'Link kısaltma, QR kod ve tıklama takibi hakkında rehberler ve ipuçları.',
+      url: `${SITE}/blog`,
+      ld: breadcrumb([
+        { name: NAME, url: `${SITE}/` },
+        { name: 'Blog', url: `${SITE}/blog` },
+      ]),
+    })
+  );
+
+  for (const post of BLOG_POSTS) {
+    const body = post.sections
+      .map(
+        (s) =>
+          `<section>${s.h ? `<h2>${esc(s.h)}</h2>` : ''}${(s.p || []).map((t) => `<p>${esc(t)}</p>`).join('')}${
+            s.list ? `<ul>${s.list.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''
+          }</section>`
+      )
+      .join('');
+    const related = getRelatedPosts(post.slug)
+      .map((r) => `<li><a href="/blog/${r.slug}">${esc(r.title)}</a></li>`)
+      .join('');
+    const article = jsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.description,
+      datePublished: post.date,
+      dateModified: post.date,
+      inLanguage: 'tr-TR',
+      mainEntityOfPage: `${SITE}/blog/${post.slug}`,
+      image: `${SITE}/og-image.png`,
+      author: { '@type': 'Organization', name: NAME, url: `${SITE}/` },
+      publisher: { '@type': 'Organization', name: NAME, logo: { '@type': 'ImageObject', url: `${SITE}/icon-512.png` } },
+    });
+    writePage(
+      `blog/${post.slug}`,
+      setHead(
+        shell(`<article><p>${esc(post.category)} · ${esc(formatPostDate(post.date))}</p><h1>${esc(post.title)}</h1><p>${esc(post.description)}</p>${body}</article><h2>Önerilen yazılar</h2><ul>${related}</ul>${blogNav}`),
+        {
+          title: `${post.title} | ${NAME}`,
+          description: post.description,
+          url: `${SITE}/blog/${post.slug}`,
+          ld:
+            article +
+            '\n    ' +
+            breadcrumb([
+              { name: NAME, url: `${SITE}/` },
+              { name: 'Blog', url: `${SITE}/blog` },
+              { name: post.title, url: `${SITE}/blog/${post.slug}` },
+            ]),
+        }
+      )
+    );
+  }
+
   /* ---------- Sitemap ---------- */
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     { loc: `${SITE}/`, priority: '1.0', changefreq: 'weekly' },
+    { loc: `${SITE}/blog`, priority: '0.7', changefreq: 'weekly' },
+    ...BLOG_POSTS.map((b) => ({ loc: `${SITE}/blog/${b.slug}`, priority: '0.8', changefreq: 'monthly', lastmod: b.date })),
     { loc: `${SITE}/yasal`, priority: '0.3', changefreq: 'yearly' },
     ...LEGAL_DOCS.map((d) => ({ loc: `${SITE}/yasal/${d.slug}`, priority: '0.3', changefreq: 'yearly' })),
   ];
@@ -218,12 +284,12 @@ try {
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
       .map(
         (u) =>
-          `  <url><loc>${u.loc}</loc><lastmod>${today}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`
+          `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod || today}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`
       )
       .join('\n')}\n</urlset>\n`
   );
 
-  console.log(`prerender: landing + ${LEGAL_DOCS.length + 1} legal pages + sitemap (${urls.length} urls)`);
+  console.log(`prerender: landing + ${LEGAL_DOCS.length + 1} legal + ${BLOG_POSTS.length + 1} blog pages + sitemap (${urls.length} urls)`);
 } finally {
   await vite.close();
 }

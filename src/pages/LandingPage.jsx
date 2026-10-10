@@ -18,9 +18,11 @@ import {
   formatPrice,
   getPlanCopy,
 } from '../config/plans';
+import { useNavigate } from 'react-router-dom';
 import BillingToggle from '../components/BillingToggle';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import LegalLinks from '../components/LegalLinks';
+import { BLOG_POSTS } from '../content/blogPosts';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -122,6 +124,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
+  const navigate = useNavigate();
   const [period, setPeriod] = useState(DEFAULT_PERIOD);
   // Trial wording is only shown while it is true: before payments open, or when the server has trials enabled
   const billing = useBillingConfig();
@@ -492,6 +495,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <li><a href="#ozellikler">{nav.features}</a></li>
             <li><a href="#planlar">{nav.plans}</a></li>
             <li><a href="#sss">{nav.faq}</a></li>
+            <li><a href="/blog">Blog</a></li>
           </ul>
 
           <div className="lpNavActions">
@@ -836,6 +840,47 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
               );
             })}
           </div>
+        </section>
+
+        {/* BLOG */}
+        <section className="lpSection lpBlog" id="blog">
+          <div className="lpSectionHead" data-reveal>
+            <h2 className="lpH2">Blog</h2>
+            <p className="lpLead">Link kısaltma, QR kod ve tıklama takibi hakkında rehberler.</p>
+          </div>
+          <div className="lpBlogGrid">
+            {BLOG_POSTS.slice(0, 3).map((post, index) => (
+              <a
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="lpBlogCard"
+                data-reveal
+                style={{ '--i': index }}
+                onClick={(event) => {
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+                  event.preventDefault();
+                  navigate(`/blog/${post.slug}`);
+                }}
+              >
+                <span className="lpBlogMeta">{post.category} · {post.readMinutes} dk okuma</span>
+                <span className="lpBlogTitle">{post.title}</span>
+                <span className="lpBlogText">{post.description}</span>
+                <span className="lpBlogMore">Devamını oku →</span>
+              </a>
+            ))}
+          </div>
+          <p className="lpBlogAll" data-reveal>
+            <a
+              href="/blog"
+              onClick={(event) => {
+                if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+                event.preventDefault();
+                navigate('/blog');
+              }}
+            >
+              Tüm yazılar →
+            </a>
+          </p>
         </section>
 
         {/* FINAL CTA */}

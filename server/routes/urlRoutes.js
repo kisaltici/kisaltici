@@ -606,7 +606,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
       'api', 'link', 'user', 'health', 'favicon', 'robots',
       'login', 'logout', 'register', 'signup', 'settings', 'stats',
       'admin', 'dashboard', 'profile', 'pricing', 'help', 'search',
-      'qr', 'static', 'assets', 'public', 'undefined', 'null', 'checkout', 'billing', 'odeme', 'yasal',
+      'qr', 'static', 'assets', 'public', 'undefined', 'null', 'checkout', 'billing', 'odeme', 'yasal', 'blog',
     ]);
     if (RESERVED.has(trimmedText.toLowerCase())) {
       return res.status(400).json({

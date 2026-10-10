@@ -21,6 +21,7 @@ const LinkAnalyticsPage = lazy(() => import('./pages/LinkAnalyticsPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const LegalPage = lazy(() => import('./pages/LegalPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
 import { generateTitleFromUrl } from './utils/titleGenerator';
 import { applyColorTheme } from './utils/themePresets';
 import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
@@ -57,7 +58,7 @@ function AppContent() {
   // Keep the document head right for each route (legal pages set their own; app/private routes are noindex)
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith('/yasal')) return;
+    if (path.startsWith('/yasal') || path === '/blog' || path.startsWith('/blog/')) return;
     if (path === '/') {
       applySeo({
         title: 'Kısaltıcı | URL Kısaltma, QR Kod ve Link Takibi',
@@ -702,6 +703,15 @@ function AppContent() {
       window.top.location.replace(window.location.href);
     }
   }, []);
+
+  // Blog pages are public and have their own layout
+  if (location.pathname === '/blog' || location.pathname.startsWith('/blog/')) {
+    return (
+      <Suspense fallback={<div className="landingSplash" aria-hidden="true" />}>
+        <BlogPage theme={theme} />
+      </Suspense>
+    );
+  }
 
   // Legal pages are public and have their own layout
   if (location.pathname.startsWith('/yasal')) {
