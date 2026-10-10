@@ -235,7 +235,7 @@ function QrModal({
 
                 <button
                   type="button"
-                  className={`qrxOption ${canCustom ? '' : 'isLocked'}`}
+                  className={`qrxOption isPremium ${canCustom ? '' : 'isLocked'}`}
                   onClick={() => choose('custom')}
                   disabled={Boolean(busy)}
                 >

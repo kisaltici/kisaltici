@@ -1067,3 +1067,55 @@
 .qrxLevelNote {
   margin: 0;
 }
+
+/* Custom QR option: a soft light travels around the border (premium feel) */
+@property --qx-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.qrxOption.isPremium {
+  position: relative;
+  isolation: isolate;
+  border-color: color-mix(in srgb, var(--accent-color) 22%, var(--surface-border));
+}
+
+.qrxOption.isPremium::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--qx-angle),
+    transparent 0deg,
+    color-mix(in srgb, var(--accent-color) 85%, transparent) 55deg,
+    transparent 120deg,
+    transparent 190deg,
+    color-mix(in srgb, var(--accent-color) 45%, #ffffff) 235deg,
+    transparent 300deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: qxBorderFlow 7s linear infinite;
+  pointer-events: none;
+}
+
+.qrxOption.isPremium .qrxOptionIcon {
+  box-shadow: 0 0 22px color-mix(in srgb, var(--accent-color) 28%, transparent);
+}
+
+@keyframes qxBorderFlow {
+  to {
+    --qx-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qrxOption.isPremium::before {
+    animation: none;
+  }
+}
