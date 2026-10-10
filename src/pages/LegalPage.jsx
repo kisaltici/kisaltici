@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LEGAL_DOCS, getLegalDoc } from './legalDocs';
 import { LEGAL_UPDATED, LEGAL_VERSION } from '../config/legal';
 import LegalLinks from '../components/LegalLinks';
+import { applySeo } from '../utils/seo';
 import './LegalPage.css';
 
 /** Public legal pages: /yasal (index) and /yasal/:slug (one document). Turkish only. */
@@ -16,11 +17,12 @@ function LegalPage({ theme }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const previousTitle = document.title;
-    document.title = doc ? `${doc.title} | Kısaltıcı` : 'Yasal | Kısaltıcı';
-    return () => {
-      document.title = previousTitle;
-    };
+    applySeo({
+      title: doc ? `${doc.title} | Kısaltıcı` : 'Yasal Metinler | Kısaltıcı',
+      description: doc ? doc.summary : 'Kısaltıcı hizmet koşulları, gizlilik politikası, KVKK aydınlatma metni ve mesafeli satış sözleşmesi.',
+      path: slug ? `/yasal/${slug}` : '/yasal',
+      noindex: Boolean(slug && !doc),
+    });
   }, [doc, slug]);
 
   const goBack = () => navigate('/');

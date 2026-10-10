@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /link/
+Disallow: /settings
+Disallow: /stats
+Disallow: /checkout
+
+Sitemap: https://kisaltici.com/sitemap.xml

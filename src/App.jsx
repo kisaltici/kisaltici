@@ -29,6 +29,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
 import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout } from './utils/checkout';
 import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD } from './config/plans';
+import { applySeo } from './utils/seo';
 import './App.css';
 
 function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, membershipPlan }) {
@@ -52,6 +53,22 @@ function AppContent() {
   // If Firebase does not answer quickly (blocked network, extensions), fall back to the guest view
   const [authWaitExpired, setAuthWaitExpired] = useState(false);
   const { user, getIdToken, authTransitioning, authLoading, membershipPlan, refetchProfile } = useAuth();
+
+  // Keep the document head right for each route (legal pages set their own; app/private routes are noindex)
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.startsWith('/yasal')) return;
+    if (path === '/') {
+      applySeo({
+        title: 'Kısaltıcı | Ücretsiz URL Kısaltma, QR Kod ve Link Takibi',
+        description:
+          'Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. Üyeliksiz dene, ücretsiz başla.',
+        path: '/',
+      });
+    } else {
+      applySeo({ title: 'Kısaltıcı', path: '/', noindex: true });
+    }
+  }, [location.pathname]);
 
   // Signing out from anywhere in the app returns to the landing page (only on a signed-in -> signed-out change,
   // so guests who never signed in can keep using /link pages)

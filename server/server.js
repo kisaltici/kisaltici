@@ -134,6 +134,8 @@ const registerClick = (shortCode) =>
 
 const handleRedirect = (resolveCode) => async (req, res, next) => {
   try {
+    // Redirects and their error pages are not content: keep them out of search results
+    res.set('X-Robots-Tag', 'noindex, nofollow');
     const shortCode = resolveCode(req);
 
     if (!shortCode) {

@@ -2,24 +2,54 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/KSLT_FAVICON.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Uzun bağlantıları saniyeler içinde kısaltın, QR kod oluşturun ve tıklama istatistiklerini takip edin." />
+    <title>Kısaltıcı | Ücretsiz URL Kısaltma, QR Kod ve Link Takibi</title>
+    <meta name="description" content="Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. Üyeliksiz dene, ücretsiz başla." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="theme-color" content="#000000" />
     <link rel="canonical" href="https://kisaltici.com/" />
+
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Kısaltıcı" />
-    <meta property="og:title" content="Kısaltıcı - Bağlantı Kısaltma" />
-    <meta property="og:description" content="Uzun bağlantıları kısaltın, QR kod oluşturun ve tıklamaları takip edin." />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:title" content="Kısaltıcı | Ücretsiz URL Kısaltma, QR Kod ve Link Takibi" />
+    <meta property="og:description" content="Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. Üyeliksiz dene, ücretsiz başla." />
     <meta property="og:url" content="https://kisaltici.com/" />
-    <meta property="og:image" content="https://kisaltici.com/KSLT_FAVICON.png" />
+    <meta property="og:image" content="https://kisaltici.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Kısaltıcı: bağlantını kısalt, paylaş ve takip et" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kısaltıcı | Ücretsiz URL Kısaltma, QR Kod ve Link Takibi" />
+    <meta name="twitter:description" content="Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et." />
+    <meta name="twitter:image" content="https://kisaltici.com/og-image.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <title>Kısaltıcı - Bağlantı Kısaltma</title>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" /></noscript>
+
+    <style>
+      /* Static, crawlable copy shown until the app mounts. Hidden for returning signed-in users to avoid a flash. */
+      #seo-static { max-width: 760px; margin: 0 auto; padding: 6rem 1.25rem 3rem; font-family: Geist, system-ui, sans-serif; line-height: 1.6; color: #f2f3f5; }
+      #seo-static h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 1rem; }
+      #seo-static h2 { font-size: 1.35rem; margin: 2rem 0 .5rem; }
+      #seo-static h3 { font-size: 1.05rem; margin: 1rem 0 .25rem; }
+      #seo-static a { color: #deff36; margin-right: .75rem; }
+      html.kslt-returning #seo-static { display: none; }
+    </style>
+    <script>
+      try { if (localStorage.getItem('kslt_returning') === '1') document.documentElement.classList.add('kslt-returning'); } catch (e) {}
+    </script>
+    <!--SEO_JSONLD-->
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--SEO_STATIC--></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
