@@ -11,10 +11,10 @@ export const FEATURED_PLAN = 'pro';
 export const PLAN_PRICES = { free: 0, starter: 49, pro: 149, business: 399 };
 
 export const PLAN_LIMITS = {
-  free: { dailyLinks: 5, dailyQr: 3, statsDays: 30, customLinks: false, themes: 5 },
-  starter: { dailyLinks: 30, dailyQr: 20, statsDays: 90, customLinks: false, themes: 15 },
-  pro: { dailyLinks: 100, dailyQr: 100, statsDays: 365, customLinks: true, themes: 15 },
-  business: { dailyLinks: 500, dailyQr: 500, statsDays: null, customLinks: true, themes: 15 },
+  free: { dailyLinks: 5, dailyQr: 3, statsDays: 30, customLinks: false, customQr: false, themes: 5 },
+  starter: { dailyLinks: 30, dailyQr: 20, statsDays: 90, customLinks: false, customQr: true, themes: 15 },
+  pro: { dailyLinks: 100, dailyQr: 100, statsDays: 365, customLinks: true, customQr: true, themes: 15 },
+  business: { dailyLinks: 500, dailyQr: 500, statsDays: null, customLinks: true, customQr: true, themes: 15 },
 };
 
 export const GUEST_LIMITS = { dailyLinks: 1, dailyQr: 1 };
@@ -36,6 +36,7 @@ const COPY = {
     },
     links: (n) => `Günde ${n} bağlantı`,
     qr: (n) => `Günde ${n} QR kod`,
+    customQr: 'Özel QR tasarımı',
     stats: (d) =>
       d === null ? 'Sınırsız istatistik geçmişi' : d === 365 ? '1 yıllık istatistik geçmişi' : `Son ${d} gün istatistik`,
     lifetime: 'Süresiz aktif bağlantılar',
@@ -68,6 +69,7 @@ const COPY = {
     },
     links: (n) => `${n} links per day`,
     qr: (n) => `${n} QR codes per day`,
+    customQr: 'Custom QR designer',
     stats: (d) =>
       d === null ? 'Unlimited stats history' : d === 365 ? '1 year of stats history' : `Last ${d} days of stats`,
     lifetime: 'Links never expire',
@@ -100,6 +102,7 @@ export const buildPlanRows = (planId, lang) => {
   return [
     { key: 'links', label: copy.links(limits.dailyLinks), included: true },
     { key: 'qr', label: copy.qr(limits.dailyQr), included: true },
+    { key: 'customQr', label: copy.customQr, included: limits.customQr },
     { key: 'stats', label: copy.stats(limits.statsDays), included: true },
     { key: 'lifetime', label: copy.lifetime, included: true },
     { key: 'history', label: copy.history, included: true },
@@ -112,7 +115,7 @@ export const buildPlanRows = (planId, lang) => {
 /** Limits for the current plan, with a safe fallback for unknown or admin plans. */
 export const getClientLimits = (planId) => {
   if (planId === 'admin') {
-    return { dailyLinks: null, dailyQr: null, statsDays: null, customLinks: true, themes: 15 };
+    return { dailyLinks: null, dailyQr: null, statsDays: null, customLinks: true, customQr: true, themes: 15 };
   }
   return PLAN_LIMITS[planId] || PLAN_LIMITS.free;
 };

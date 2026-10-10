@@ -183,18 +183,29 @@ router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => 
 
 /**
  * POST /api/qr/consume
- * Called right before a QR code is downloaded. Counts distinct QR codes per day against the plan
- * quota (re-downloading the same link's QR on the same day is free). Guests are tracked by hashed IP.
+ * Called the moment a user ENTERS a QR screen (standard or custom), not when they download.
+ * Counts distinct QR codes per day against the plan quota (re-entering the same link's QR on the
+ * same day is free). mode "custom" additionally requires a plan with the custom QR designer.
+ * Guests are tracked by hashed IP.
  */
 router.post('/qr/consume', optionalAuth, async (req, res, next) => {
   try {
-    const { shortCode } = req.body || {};
+    const { shortCode, mode } = req.body || {};
     if (typeof shortCode !== 'string' || !shortCode.trim() || shortCode.length > 80) {
       return res.status(400).json({ success: false, error: 'Geçersiz kısa kod.' });
     }
 
     const plan = await resolvePlan(req.user);
     const limits = getLimits(plan);
+
+    if (mode === 'custom' && !limits.customQr) {
+      return res.status(403).json({
+        success: false,
+        code: 'PLAN_REQUIRED',
+        plan,
+        error: 'Özel QR tasarımı Başlangıç ve üzeri planlarda kullanılabilir.',
+      });
+    }
 
     if (limits.dailyQr === null) {
       return res.status(200).json({ success: true });
@@ -372,6 +383,15 @@ router.patch('/urls/:shortCode/title', requireAuth, async (req, res, next) => {
 router.patch('/urls/:shortCode/qr', optionalAuth, async (req, res, next) => {
   try {
     const { shortCode } = req.params;
+
+    // Saving a custom QR design is part of the custom designer (Starter and above)
+    if (!getLimits(await resolvePlan(req.user)).customQr) {
+      return res.status(403).json({
+        success: false,
+        code: 'PLAN_REQUIRED',
+        error: 'Özel QR tasarımı Başlangıç ve üzeri planlarda kullanılabilir.',
+      });
+    }
 
     if (!shortCode || typeof shortCode !== 'string' || !shortCode.trim()) {
       return res.status(400).json({

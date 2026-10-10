@@ -64,5 +64,5 @@ export const reserveQr = async (subject, shortCode, limit) => {
 /** Today's usage for a subject. */
 export const getUsage = async (subject) => {
   const doc = await Usage.findOne({ subject, day: getDayKey() }).lean();
-  return { links: doc?.links || 0, qr: doc?.qrCodes?.length || 0 };
+  return { links: doc?.links || 0, qr: doc?.qrCodes?.length || 0, day: getDayKey() };
 };

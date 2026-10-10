@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import AnalyticsChart from '../components/AnalyticsChart';
-import QrCustomizationModal from '../components/QrCustomizationModal';
+import QrModal from '../components/QrModal';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { isPaidPlan } from '../utils/membership';
 import { API_BASE_URL } from '../config/api';
 import './LinkAnalyticsPage.css';
 
-function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal }) {
+function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal, onOpenPricing }) {
   const { t } = useTranslation();
   const params = useParams();
   // shortCode from /link/:shortCode, or splat (*) from /link/* for composite @user/text
@@ -700,14 +700,15 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal 
         </div>
       </section>
 
-      {/* Modern QR Customization Modal — always uses current linkData.shortUrl */}
-      <QrCustomizationModal
+      {/* QR: chooser (standard / custom). Entering a QR screen counts against the daily QR allowance. */}
+      <QrModal
         isOpen={isQrModalOpen}
         onClose={handleCloseQrModal}
         shortCode={linkData.shortCode}
         shortUrl={linkData.shortUrl}
         initialSettings={linkData.qrSettings}
         onSettingsSaved={handleQrSettingsSaved}
+        onUpgrade={(kind) => (kind === 'guest' ? onOpenAuthModal && onOpenAuthModal('login') : onOpenPricing && onOpenPricing())}
       />
 
       {/* Overview Statistics Cards */}

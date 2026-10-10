@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import QrCustomizationModal from './QrCustomizationModal';
+import QrModal from './QrModal';
 import { API_BASE_URL } from '../config/api';
 import './ResultSection.css';
 
@@ -132,7 +132,7 @@ function ResultSection({ result }) {
         </div>
       </div>
 
-      <QrCustomizationModal
+      <QrModal
         isOpen={isQrModalOpen}
         onClose={handleCloseQr}
         shortCode={result.shortCode}

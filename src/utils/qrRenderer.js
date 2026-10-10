@@ -845,6 +845,8 @@ export function drawQrToCanvas(canvas, {
   }
 
   // Data Modules (skip finder pattern modules)
+  // The background fill above left fillStyle on bgColor: modules must be painted in the foreground color
+  ctx.fillStyle = fgColor;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       if (!matrix[y][x]) continue;

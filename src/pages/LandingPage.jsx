@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { LANDING_COPY } from '../i18n/landingCopy';
 import { COLOR_THEMES } from '../utils/themePresets';
 import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
+import LimitBanner from '../components/LimitBanner';
 import {
   PLAN_ORDER,
   FEATURED_PLAN,
@@ -115,6 +116,8 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
+  // Guests get one link a day; once used, the form is replaced by a sign-in prompt
+  const guestBlocked = hasUsedGuestLinkToday();
 
   /* Smooth anchor scrolling only while the landing page is mounted */
   useEffect(() => {
@@ -325,7 +328,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isLoading) return;
+    if (isLoading || guestBlocked) return;
 
     const validationError = validate(url);
     if (validationError) {
@@ -542,6 +545,10 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
                 ))}
               </div>
 
+              {guestBlocked && (
+                <LimitBanner kind="guest" onAction={() => onOpenAuthModal('login')} />
+              )}
+
               <div className={`lpField ${error ? 'hasError' : ''}`}>
                 <input
                   id="lp-url"
@@ -558,10 +565,11 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
                     if (error) setError('');
                   }}
                   aria-label={hero.inputLabel}
+                  disabled={guestBlocked}
                   aria-invalid={Boolean(error)}
                   aria-describedby={error ? 'lp-url-error' : undefined}
                 />
-                <button type="submit" className="lpBtn lpBtnPrimary lpSubmit" disabled={isLoading}>
+                <button type="submit" className="lpBtn lpBtnPrimary lpSubmit" disabled={isLoading || guestBlocked}>
                   <span>{isLoading ? hero.submitting : hero.submit}</span>
                   {!isLoading && <Icon name="arrow" />}
                 </button>

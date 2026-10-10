@@ -2,11 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
+import { useShortenAllowance } from '../utils/useShortenAllowance';
+import LimitBanner from './LimitBanner';
 import './NewLinkModal.css';
 
 function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
   const { t } = useTranslation();
   const { user, getIdToken } = useAuth();
+  const allowance = useShortenAllowance();
+  const blocked = allowance.blocked;
   const [inputUrl, setInputUrl] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +53,7 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLoading) return;
+    if (isLoading || blocked) return;
 
     const validationResult = validateUrl(inputUrl);
     if (!validationResult.isValid) {
@@ -117,14 +121,14 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
                 setInputUrl(e.target.value);
                 if (errorMessage) setErrorMessage('');
               }}
-              disabled={isLoading}
+              disabled={isLoading || blocked}
               aria-label={t('pasteLinkPlaceholder')}
             />
 
             <button
               type="submit"
               className="newLinkSubmitBtn"
-              disabled={isLoading || !inputUrl.trim()}
+              disabled={isLoading || blocked || !inputUrl.trim()}
               aria-label={t('shorten')}
               title={t('shorten')}
             >
@@ -168,6 +172,19 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
               </svg>
             </button>
           </div>
+
+          {blocked && (
+            <div className="newLinkLimit">
+              <LimitBanner
+                kind={allowance.kind}
+                limit={allowance.limit}
+                onAction={() => {
+                  onClose();
+                  if (onLimitReached) onLimitReached(allowance.kind);
+                }}
+              />
+            </div>
+          )}
 
           {errorMessage && (
             <div className="modalErrorMessage" role="alert">

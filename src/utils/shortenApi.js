@@ -3,7 +3,7 @@ import { API_BASE_URL } from '../config/api';
 const TURKEY_OFFSET_MS = 3 * 60 * 60 * 1000; // Quotas reset at 00:00 Turkey time (UTC+3, no DST)
 const GUEST_FLAG_KEY = 'kslt_guest_link_day';
 
-const todayKey = () => new Date(Date.now() + TURKEY_OFFSET_MS).toISOString().slice(0, 10);
+export const todayKey = () => new Date(Date.now() + TURKEY_OFFSET_MS).toISOString().slice(0, 10);
 
 /**
  * Guests get a single link per day. This client flag only saves a round trip and gives instant
@@ -70,11 +70,12 @@ export async function shortenUrl(inputUrl, getIdToken) {
 }
 
 /**
- * Asks the server for permission to create (download) a QR code for a short code.
- * Returns { allowed: true } or { allowed: false, errorCode: 'guest_limit' | 'daily_limit', limit }.
+ * Asks the server for permission to open a QR screen for a short code (counts against the daily QR quota).
+ * mode: 'standard' | 'custom'. Returns { allowed: true } or
+ * { allowed: false, errorCode: 'guest_limit' | 'daily_limit' | 'plan_required', limit }.
  * Network or server failures fail open so a QR download is never blocked by an outage.
  */
-export async function consumeQr(shortCode, getIdToken) {
+export async function consumeQr(shortCode, getIdToken, mode = 'standard') {
   try {
     const headers = { 'Content-Type': 'application/json' };
     const token = await getIdToken();
@@ -83,8 +84,13 @@ export async function consumeQr(shortCode, getIdToken) {
     const response = await fetch(`${API_BASE_URL}/api/qr/consume`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ shortCode }),
+      body: JSON.stringify({ shortCode, mode }),
     });
+
+    if (response.status === 403) {
+      const data = await response.json().catch(() => null);
+      if (data?.code === 'PLAN_REQUIRED') return { allowed: false, errorCode: 'plan_required' };
+    }
 
     if (response.status === 429) {
       const data = await response.json().catch(() => null);

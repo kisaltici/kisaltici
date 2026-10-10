@@ -717,6 +717,7 @@ function AppContent() {
                   onOpenNewLink={() => setIsNewLinkOpen(true)}
                   onShortCodeChanged={handleShortCodeChanged}
                   onOpenAuthModal={handleOpenAuthModal}
+                  onOpenPricing={() => setIsPricingOpen(true)}
                 />
               }
             />
@@ -728,6 +729,7 @@ function AppContent() {
                   onOpenNewLink={() => setIsNewLinkOpen(true)}
                   onShortCodeChanged={handleShortCodeChanged}
                   onOpenAuthModal={handleOpenAuthModal}
+                  onOpenPricing={() => setIsPricingOpen(true)}
                 />
               }
             />

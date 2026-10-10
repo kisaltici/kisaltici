@@ -3,6 +3,8 @@ import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { isPaidPlan } from '../utils/membership';
 import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
+import { useShortenAllowance } from '../utils/useShortenAllowance';
+import LimitBanner from './LimitBanner';
 import './UrlForm.css';
 
 /* ── Toast helpers ────────────────────────────────────────────── */
@@ -34,6 +36,8 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
   const lastToastTime = useRef(0);
 
   const isPro = isPaidPlan(membershipPlan);
+  const allowance = useShortenAllowance();
+  const blocked = allowance.blocked;
 
   /* ── Toast management ──────────────────────────────────────── */
 
@@ -97,7 +101,7 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
 
   // Core shorten logic shared by all actions
   const performShorten = async (intent) => {
-    if (isLoading) return;
+    if (isLoading || blocked) return;
 
     const validationResult = validateUrl(inputUrl);
     if (!validationResult.isValid) {
@@ -186,6 +190,14 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
         {t('pasteLinkShortenPlaceholder')}
       </label>
 
+      {blocked && (
+        <LimitBanner
+          kind={allowance.kind}
+          limit={allowance.limit}
+          onAction={() => onLimitReached && onLimitReached(allowance.kind)}
+        />
+      )}
+
       <div className="inputGroup">
         <input
           id="urlInput"
@@ -195,13 +207,13 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
           onChange={handleInputChange}
           placeholder={t('pasteLinkShortenPlaceholder')}
           aria-label={t('pasteLinkShortenPlaceholder')}
-          disabled={isLoading}
+          disabled={isLoading || blocked}
         />
 
         <button
           type="submit"
           className="actionIconButton"
-          disabled={isLoading}
+          disabled={isLoading || blocked}
           aria-label={t('shortenBtn')}
           aria-busy={isLoading}
           title={t('shortenBtn')}
@@ -234,7 +246,7 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
           type="button"
           className={`chipBtn${isLoading && activeIntent === 'qr' ? ' chipLoading' : ''}`}
           onClick={handleQrChip}
-          disabled={isLoading}
+          disabled={isLoading || blocked}
           aria-label="QR kod oluştur"
           title="QR kod oluştur"
         >
@@ -266,7 +278,7 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
           type="button"
           className={`chipBtn chipProFeature${!isPro ? ' chipProLocked' : ''}${isLoading && activeIntent === 'customize' ? ' chipLoading' : ''}`}
           onClick={handleCustomizeChip}
-          disabled={isLoading}
+          disabled={isLoading || blocked}
           aria-label="Özel bağlantı oluştur"
           title={isPro ? 'Özel bağlantı oluştur' : 'Pro üyelik gereklidir'}
         >

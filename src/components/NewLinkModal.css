@@ -88,3 +88,7 @@
     transform: rotate(360deg);
   }
 }
+
+.newLinkLimit {
+  padding: 0 1rem 1rem;
+}
