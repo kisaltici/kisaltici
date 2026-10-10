@@ -481,6 +481,10 @@ router.patch('/urls/:shortCode/qr', optionalAuth, async (req, res, next) => {
         bgColor: typeof centerImage.bgColor === 'string' ? centerImage.bgColor.trim() : '#ffffff',
       };
     }
+    if (centerImage === null) {
+      // Explicitly removed in the designer: clear the saved logo
+      newQrSettings.centerImage = { src: null, sizePercent: 22, radius: 20, padding: 4, bgColor: '#ffffff' };
+    }
     newQrSettings.updatedAt = new Date();
 
     urlRecord.qrSettings = newQrSettings;

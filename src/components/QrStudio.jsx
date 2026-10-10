@@ -227,7 +227,7 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
   const [moduleShape, setModuleShape] = useState(initial.moduleShape || 'square');
   const [finderStyle, setFinderStyle] = useState(normalizeFinder(initial.finderStyle));
   const [quietZone, setQuietZone] = useState(initial.quietZone || 'standard');
-  const [centerImage, setCenterImage] = useState(initial.centerImage || null);
+  const [centerImage, setCenterImage] = useState(initial.centerImage && initial.centerImage.src ? initial.centerImage : null);
   const [saveStatus, setSaveStatus] = useState('');
   const [imageError, setImageError] = useState('');
   const toast = useToast();
