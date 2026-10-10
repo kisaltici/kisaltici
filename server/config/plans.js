@@ -13,7 +13,9 @@ export const PLAN_IDS = ['free', 'starter', 'pro', 'business'];
 
 export const PLAN_LIMITS = {
   guest: { dailyLinks: 1, dailyQr: 1, statsDays: 30, customLinks: false, customQr: false },
-  free: { dailyLinks: 5, dailyQr: 3, statsDays: 30, customLinks: false, customQr: false },
+  // 'free' is the state of an account without an active subscription: existing links keep working and stay
+  // manageable, but nothing new can be created until a plan is started.
+  free: { dailyLinks: 0, dailyQr: 0, statsDays: 30, customLinks: false, customQr: false },
   starter: { dailyLinks: 30, dailyQr: 20, statsDays: 90, customLinks: false, customQr: true },
   pro: { dailyLinks: 100, dailyQr: 100, statsDays: 365, customLinks: true, customQr: true },
   business: { dailyLinks: 500, dailyQr: 500, statsDays: null, customLinks: true, customQr: true },

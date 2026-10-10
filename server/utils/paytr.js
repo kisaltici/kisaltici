@@ -68,3 +68,10 @@ export const requestIframeToken = async (config, fields) => {
   }
   return data.token;
 };
+
+/**
+ * Charge a stored card without the customer present (trial end / renewal).
+ * NOT IMPLEMENTED: this needs PayTR's card-storage + recurring-payment authorization on the store. Until it is
+ * implemented, accounts that reach this point are marked past_due and are never charged. Keep PAYTR_TRIAL unset.
+ */
+export const chargeStoredCard = async () => ({ ok: false, reason: 'PAYTR_RECURRING_NOT_IMPLEMENTED' });

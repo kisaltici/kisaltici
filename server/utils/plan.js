@@ -17,14 +17,22 @@ export const effectivePlanOf = (userDoc) => {
 /** Subscription summary sent to the client. */
 export const subscriptionOf = (userDoc) => {
   const stored = PLAN_IDS.includes(userDoc?.membershipPlan) ? userDoc.membershipPlan : 'free';
-  if (stored === 'free') return { plan: 'free', status: 'none', period: null, expiresAt: null };
-  if (!userDoc.planExpiresAt) return { plan: stored, status: 'manual', period: null, expiresAt: null };
+  const trialAvailable = !userDoc?.trialUsedAt;
+  if (stored === 'free') return { plan: 'free', status: 'none', period: null, expiresAt: null, autoRenew: false, trialAvailable };
+  if (!userDoc.planExpiresAt) {
+    return { plan: stored, status: 'manual', period: null, expiresAt: null, autoRenew: false, trialAvailable };
+  }
   const active = new Date(userDoc.planExpiresAt) > new Date();
+  const stateful = ['trialing', 'canceled', 'past_due'].includes(userDoc.subscriptionStatus)
+    ? userDoc.subscriptionStatus
+    : 'active';
   return {
     plan: stored,
-    status: active ? 'active' : 'expired',
+    status: active ? stateful : 'expired',
     period: userDoc.billingPeriod || null,
     expiresAt: userDoc.planExpiresAt,
+    autoRenew: Boolean(userDoc.autoRenew),
+    trialAvailable,
   };
 };
 

@@ -37,6 +37,19 @@ const userSchema = new mongoose.Schema(
     planExpiresAt: { type: Date, default: null },
     billingPeriod: { type: String, enum: ['monthly', 'yearly', null], default: null },
     subscriptionStartedAt: { type: Date, default: null },
+    // none | trialing | active (paid) | canceled (auto-renew off, access until planExpiresAt) | past_due (charge failed)
+    subscriptionStatus: {
+      type: String,
+      enum: ['none', 'trialing', 'active', 'canceled', 'past_due'],
+      default: 'none',
+    },
+    autoRenew: { type: Boolean, default: false },
+    trialUsedAt: { type: Date, default: null },
+    canceledAt: { type: Date, default: null },
+    lastRenewalAttemptAt: { type: Date, default: null },
+    // PayTR card-storage tokens for off-session charges. Never selected by default, never sent to the client.
+    paytrUtoken: { type: String, select: false, default: null },
+    paytrCtoken: { type: String, select: false, default: null },
   },
   {
     timestamps: true,

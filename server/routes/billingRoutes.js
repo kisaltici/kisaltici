@@ -8,6 +8,9 @@ import {
   BILLING_PERIODS,
   MONTHLY_PRICE_TRY,
   TERMS_VERSION,
+  TRIAL_DAYS,
+  TRIAL_VERIFY_KURUS,
+  isTrialEnabled,
   YEARLY_MONTHS_CHARGED,
   PLAN_NAMES_TR,
   priceTry,
@@ -23,6 +26,7 @@ import {
   resolveUserIp,
   requestIframeToken,
 } from '../utils/paytr.js';
+import { startTrial, cancelAutoRenew, resumeAutoRenew, processDueRenewals } from '../utils/subscription.js';
 
 const router = express.Router();
 
@@ -77,6 +81,8 @@ router.get('/config', (req, res) => {
     success: true,
     enabled: config.enabled,
     testMode: config.testMode === '1',
+    trial: isTrialEnabled(),
+    trialDays: TRIAL_DAYS,
     prices: MONTHLY_PRICE_TRY,
     yearlyMonthsCharged: YEARLY_MONTHS_CHARGED,
   });
@@ -129,12 +135,15 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       return res.status(400).json({ success: false, error: 'Hesabında e-posta adresi bulunamadı.' });
     }
 
-    const amountKurus = toKurus(priceTry(plan, period));
+    // First checkout of an account that has not used its trial: a card-verification payment starts the trial
+    const account = await User.findOne({ userId: req.user.uid }).select('trialUsedAt').lean();
+    const isTrial = isTrialEnabled() && !account?.trialUsedAt;
+    const amountKurus = isTrial ? TRIAL_VERIFY_KURUS : toKurus(priceTry(plan, period));
     const orderId = newMerchantOid();
     const appUrl = getAppUrl();
     const periodLabel = period === 'yearly' ? 'Yıllık' : 'Aylık';
     const basket = Buffer.from(
-      JSON.stringify([[`Kısaltıcı ${PLAN_NAMES_TR[plan]} (${periodLabel})`, (amountKurus / 100).toFixed(2), 1]])
+      JSON.stringify([[isTrial ? `Kısaltıcı ${PLAN_NAMES_TR[plan]} deneme doğrulaması` : `Kısaltıcı ${PLAN_NAMES_TR[plan]} (${periodLabel})`, (amountKurus / 100).toFixed(2), 1]])
     ).toString('base64');
 
     const userIp = resolveUserIp(req.ip);
@@ -178,6 +187,7 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       userId: req.user.uid,
       plan,
       period,
+      kind: isTrial ? 'trial' : 'payment',
       amountKurus,
       testMode: config.testMode === '1',
       email,
@@ -205,6 +215,8 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       iframeUrl: `${config.apiBase}/odeme/guvenli/${token}`,
       amountKurus,
       testMode: config.testMode === '1',
+      trial: isTrial,
+      trialDays: isTrial ? TRIAL_DAYS : 0,
     });
   } catch (error) {
     next(error);
@@ -250,8 +262,11 @@ router.post('/paytr/callback', async (req, res) => {
         if (Number(post.total_amount) < order.amountKurus) {
           console.error(`PayTR amount mismatch for ${orderId}: paid ${post.total_amount} < ${order.amountKurus}`);
         } else {
-          const expiresAt = await activateSubscription(order);
-          await Order.updateOne({ orderId }, { $set: { activatedUntil: expiresAt } });
+          const expiresAt =
+            order.kind === 'trial'
+              ? await startTrial(order, { utoken: post.utoken, ctoken: post.ctoken })
+              : await activateSubscription(order);
+          if (expiresAt) await Order.updateOne({ orderId }, { $set: { activatedUntil: expiresAt } });
         }
       }
     } else {
@@ -296,6 +311,44 @@ router.get('/order/:orderId', requireAuth, async (req, res, next) => {
       failedReason: order.status === 'failed' ? order.failedReasonMsg || null : null,
       testMode: Boolean(order.testMode),
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/** POST /api/billing/cancel: stop automatic renewal; access continues until the period ends. */
+router.post('/cancel', requireAuth, async (req, res, next) => {
+  try {
+    const ok = await cancelAutoRenew(req.user.uid);
+    return res.json({ success: true, changed: ok });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/** POST /api/billing/resume: turn automatic renewal back on (period still running, card on file). */
+router.post('/resume', requireAuth, async (req, res, next) => {
+  try {
+    const ok = await resumeAutoRenew(req.user.uid);
+    return res.json({ success: true, changed: ok });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/billing/cron/renew: daily Vercel cron (Authorization: Bearer CRON_SECRET) that charges accounts whose
+ * trial or period has ended. Without CRON_SECRET the endpoint stays closed.
+ */
+router.get('/cron/renew', async (req, res, next) => {
+  try {
+    const secret = process.env.CRON_SECRET;
+    if (!secret || req.get('authorization') !== `Bearer ${secret}`) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+    if (!isTrialEnabled()) return res.json({ success: true, skipped: 'trial_disabled' });
+    const result = await processDueRenewals();
+    return res.json({ success: true, ...result });
   } catch (error) {
     next(error);
   }

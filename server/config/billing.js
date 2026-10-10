@@ -6,6 +6,18 @@
 // Version of the legal texts the buyer accepts at checkout (keep in sync with LEGAL_VERSION in src/config/legal.js)
 export const TERMS_VERSION = '1.0';
 
+// Free trial before the first charge (card required). Keep in sync with TRIAL_DAYS in src/config/plans.js.
+export const TRIAL_DAYS = 7;
+
+/**
+ * Trials (card required, automatic charge when the trial ends) need PayTR card storage + recurring payment
+ * authorization. Keep PAYTR_TRIAL unset until PayTR has enabled it and utils/paytr.js chargeStoredCard is implemented.
+ */
+export const isTrialEnabled = () => process.env.PAYTR_TRIAL === '1';
+
+// Amount (kuruş) of the card-verification payment taken when a trial starts (placeholder until PayTR's card-storage flow is confirmed)
+export const TRIAL_VERIFY_KURUS = Number(process.env.PAYTR_TRIAL_VERIFY_KURUS) || 100;
+
 export const BILLING_PLANS = ['starter', 'pro', 'business'];
 export const BILLING_PERIODS = ['monthly', 'yearly'];
 

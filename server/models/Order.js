@@ -14,6 +14,7 @@ const orderSchema = new mongoose.Schema(
     period: { type: String, enum: ['monthly', 'yearly'], required: true },
     amountKurus: { type: Number, required: true },
     currency: { type: String, default: 'TL' },
+    kind: { type: String, enum: ['payment', 'trial', 'renewal'], default: 'payment' },
     status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
     testMode: { type: Boolean, default: false },
     email: { type: String, default: '' },
