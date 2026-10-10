@@ -2,8 +2,12 @@
 // The enforced limits live on the server (server/config/plans.js). Keep the two in sync.
 // `null` means unlimited.
 
-// Flip to true once the payment flow is live; until then paid plan buttons read "soon".
-export const PAYMENTS_ENABLED = false;
+// Paid plan buttons are enabled by the server (GET /api/billing/config returns enabled: true once PayTR is configured).
+export const BILLING_PERIODS = ['monthly', 'yearly'];
+export const DEFAULT_PERIOD = 'monthly';
+// Yearly billing charges 10 months and gives 12 ("2 months free"); the server recomputes this at checkout.
+export const YEARLY_MONTHS_CHARGED = 10;
+export const PAID_PLANS = ['starter', 'pro', 'business'];
 
 export const PLAN_ORDER = ['free', 'starter', 'pro', 'business'];
 export const FEATURED_PLAN = 'pro';
@@ -44,6 +48,15 @@ const COPY = {
     custom: 'Özel bağlantılar',
     themes: (n) => `${n} renk teması`,
     period: '/ ay',
+    periodYear: '/ yıl',
+    periodMonthly: 'Aylık',
+    periodYearly: 'Yıllık',
+    yearlyBadge: '2 ay ücretsiz',
+    subActive: (date) => `Bitiş: ${date}`,
+    subDaysLeft: (n) => `${n} gün kaldı`,
+    subExpired: 'Planının süresi doldu',
+    subRenew: 'Süreyi uzat',
+    subManual: 'Süresiz',
     recommended: 'Önerilen',
     soon: 'Yakında',
     currentPlan: 'Mevcut planın',
@@ -77,6 +90,15 @@ const COPY = {
     custom: 'Custom links',
     themes: (n) => `${n} color themes`,
     period: '/ mo',
+    periodYear: '/ yr',
+    periodMonthly: 'Monthly',
+    periodYearly: 'Yearly',
+    yearlyBadge: '2 months free',
+    subActive: (date) => `Ends: ${date}`,
+    subDaysLeft: (n) => `${n} days left`,
+    subExpired: 'Your plan has expired',
+    subRenew: 'Extend plan',
+    subManual: 'No expiry',
     recommended: 'Recommended',
     soon: 'Soon',
     currentPlan: 'Your current plan',
@@ -90,7 +112,13 @@ const COPY = {
 
 export const getPlanCopy = (lang) => COPY[lang] || COPY.en;
 
-export const formatPrice = (planId) => `₺${PLAN_PRICES[planId]}`;
+export const getPlanPrice = (planId, period = 'monthly') =>
+  period === 'yearly' ? PLAN_PRICES[planId] * YEARLY_MONTHS_CHARGED : PLAN_PRICES[planId];
+
+export const formatPrice = (planId, period = 'monthly') => `₺${getPlanPrice(planId, period)}`;
+
+export const isBillingPeriod = (value) => BILLING_PERIODS.includes(value);
+export const isPaidPlanId = (value) => PAID_PLANS.includes(value);
 
 /**
  * Feature rows for one plan. Every plan returns the same rows in the same order so cards

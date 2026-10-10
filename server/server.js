@@ -9,6 +9,7 @@ import { connectDB } from './config/db.js';
 import { requireDbReady } from './middleware/dbMiddleware.js';
 import urlRoutes from './routes/urlRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import billingRoutes from './routes/billingRoutes.js';
 import Url from './models/Url.js';
 
 // Load environment variables from .env file
@@ -76,6 +77,8 @@ app.use(
 
 // 3. Parse incoming JSON request bodies
 app.use(express.json({ limit: '10kb' }));
+// PayTR sends its payment notification as application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false, limit: '20kb' }));
 
 // 4. API Health Check Route (always accessible, reports live database state)
 app.get('/api/health', (req, res) => {
@@ -98,6 +101,7 @@ app.get('/api/health', (req, res) => {
 
 // 5. API Routers protected by database readiness check (fail fast with 503 instead of hanging)
 app.use('/api/user', requireDbReady, userRoutes);
+app.use('/api/billing', requireDbReady, billingRoutes);
 app.use('/api', requireDbReady, urlRoutes);
 
 // 6. Short URL redirection (GET /@:userIdent/:customText and GET /:shortCode)

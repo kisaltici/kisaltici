@@ -4,18 +4,22 @@ import { useAuth } from '../context/AuthContext';
 import {
   PLAN_ORDER,
   FEATURED_PLAN,
-  PAYMENTS_ENABLED,
+  DEFAULT_PERIOD,
   buildPlanRows,
   formatPrice,
   getClientLimits,
   getPlanCopy,
 } from '../config/plans';
+import { useBillingConfig } from '../utils/useBillingConfig';
+import BillingToggle from './BillingToggle';
 import './PricingModal.css';
 
-function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
+function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal, onSelectPlan }) {
   const { t, lang } = useTranslation();
   const { user, userProfile } = useAuth();
   const copy = getPlanCopy(lang);
+  const billing = useBillingConfig();
+  const [period, setPeriod] = useState(DEFAULT_PERIOD);
 
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimatingIn, setIsAnimatingIn] = useState(false);
@@ -53,6 +57,11 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
   const isAdmin = userPlan === 'admin';
   const usage = userProfile?.usage;
   const currentLimits = getClientLimits(userPlan);
+  const subscription = userProfile?.subscription;
+  const subDate = (value) =>
+    new Date(value).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+  const daysLeft = (value) => Math.max(0, Math.ceil((new Date(value).getTime() - Date.now()) / 86400000));
+  const isExpired = subscription?.status === 'expired';
 
   return (
     <div
@@ -101,6 +110,15 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
         {/* Modal Body / Pricing Cards */}
         <div className="pricingModalBody">
           {isAdmin && <p className="pricingNotice">{copy.adminNote}</p>}
+          {isExpired && (
+            <p className="pricingNotice">
+              {copy.subExpired}: {copy.names[subscription.plan]} · {subDate(subscription.expiresAt)}
+            </p>
+          )}
+
+          <div className="pricingToggleRow">
+            <BillingToggle period={period} onChange={setPeriod} />
+          </div>
 
           <div className="pricingGrid">
             {PLAN_ORDER.map((planId) => {
@@ -126,8 +144,8 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
                     </div>
                     <p className="planDesc">{copy.descs[planId]}</p>
                     <div className="planPriceRow">
-                      <span className="priceAmount">{formatPrice(planId)}</span>
-                      <span className="pricePeriod">{copy.period}</span>
+                      <span className="priceAmount">{formatPrice(planId, period)}</span>
+                      <span className="pricePeriod">{period === 'yearly' ? copy.periodYear : copy.period}</span>
                     </div>
                   </div>
 
@@ -166,9 +184,29 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
                       </p>
                     )}
                     {isCurrent ? (
-                      <button type="button" className="planBtn current" disabled>
-                        {copy.currentPlan}
-                      </button>
+                      <>
+                        {planId !== 'free' && subscription?.status === 'active' && subscription.expiresAt && (
+                          <p className="planUsage">
+                            {copy.subActive(subDate(subscription.expiresAt))} · {copy.subDaysLeft(daysLeft(subscription.expiresAt))}
+                          </p>
+                        )}
+                        {planId !== 'free' && subscription?.status === 'manual' && (
+                          <p className="planUsage">{copy.subManual}</p>
+                        )}
+                        {planId !== 'free' && billing.enabled && subscription?.status === 'active' && onSelectPlan ? (
+                          <button
+                            type="button"
+                            className="planBtn upgrade"
+                            onClick={() => onSelectPlan(planId, subscription.period || period)}
+                          >
+                            {copy.subRenew}
+                          </button>
+                        ) : (
+                          <button type="button" className="planBtn current" disabled>
+                            {copy.currentPlan}
+                          </button>
+                        )}
+                      </>
                     ) : planId === 'free' ? (
                       !user && onOpenAuthModal ? (
                         <button
@@ -186,9 +224,10 @@ function PricingModal({ isOpen, onClose, userPlan = 'free', onOpenAuthModal }) {
                       <button
                         type="button"
                         className={`planBtn upgrade ${isFeatured ? 'primary' : ''}`}
-                        disabled={!PAYMENTS_ENABLED}
+                        disabled={!billing.enabled}
+                        onClick={() => onSelectPlan && onSelectPlan(planId, period)}
                       >
-                        {PAYMENTS_ENABLED ? copy.selectPlan(copy.names[planId]) : copy.soon}
+                        {billing.enabled ? copy.selectPlan(copy.names[planId]) : copy.soon}
                       </button>
                     )}
                   </div>

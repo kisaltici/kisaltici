@@ -11,10 +11,12 @@ import LimitBanner from '../components/LimitBanner';
 import {
   PLAN_ORDER,
   FEATURED_PLAN,
+  DEFAULT_PERIOD,
   buildPlanRows,
   formatPrice,
   getPlanCopy,
 } from '../config/plans';
+import BillingToggle from '../components/BillingToggle';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -100,7 +102,7 @@ function Icon({ name }) {
   }
 }
 
-function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSigningIn = false }) {
+function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onStartCheckout, isSigningIn = false }) {
   const { t, lang, setLanguageMode } = useTranslation();
   const { signInWithGoogle, getIdToken } = useAuth();
   const copy = LANDING_COPY[lang] || LANDING_COPY.en;
@@ -116,6 +118,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
+  const [period, setPeriod] = useState(DEFAULT_PERIOD);
   // Guests get one link a day; once used, the form is replaced by a sign-in prompt
   const guestBlocked = hasUsedGuestLinkToday();
 
@@ -731,6 +734,10 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
             <p className="lpLead">{plans.sub}</p>
           </div>
 
+          <div className="lpBillingToggle" data-reveal>
+            <BillingToggle period={period} onChange={setPeriod} />
+          </div>
+
           <div className="lpPlans">
             {PLAN_ORDER.map((planId, index) => {
               const featured = planId === FEATURED_PLAN;
@@ -749,8 +756,8 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
                     </div>
                     <p className="lpCellText">{planCopy.descs[planId]}</p>
                     <div className="lpPrice">
-                      <span className="lpPriceAmount">{formatPrice(planId)}</span>
-                      <span className="lpPricePeriod">{planCopy.period}</span>
+                      <span className="lpPriceAmount">{formatPrice(planId, period)}</span>
+                      <span className="lpPricePeriod">{period === 'yearly' ? planCopy.periodYear : planCopy.period}</span>
                     </div>
                   </header>
 
@@ -768,7 +775,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSig
                   <button
                     type="button"
                     className={`lpBtn ${featured ? 'lpBtnPrimary' : 'lpBtnGhost'} lpPlanBtn`}
-                    onClick={planId === 'free' ? handleGoogle : () => onOpenAuthModal('login')}
+                    onClick={planId === 'free' ? handleGoogle : () => (onStartCheckout ? onStartCheckout(planId, period) : onOpenAuthModal('login'))}
                   >
                     {planId === 'free' ? plans.freeCta : plans.paidCta}
                   </button>

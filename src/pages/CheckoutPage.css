@@ -1,0 +1,536 @@
+/* ==========================================================================
+   Checkout. Radius system: 20px cards, 14px option cards, 12px controls.
+   ========================================================================== */
+
+.cxPage {
+  min-height: 100dvh;
+  width: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+/* ---------- Top bar ---------- */
+.cxTop {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--surface-border);
+  background-color: color-mix(in srgb, var(--bg-color) 88%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.cxTopInner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  max-width: 1120px;
+  height: 60px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.cxBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 0.8rem 0 0.65rem;
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.cxBack:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.cxLogo {
+  display: block;
+  height: 24px;
+  width: auto;
+}
+
+.cxSecure {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-self: end;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- Layout ---------- */
+.cxMain {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem) 1.25rem 4rem;
+}
+
+.cxTitle {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.cxGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.cxCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+}
+
+.cxCard h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Plan selection ---------- */
+.cxPlanList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cxPlan {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem;
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.cxPlan:hover {
+  border-color: var(--text-muted);
+}
+
+.cxPlan.isOn {
+  border-color: var(--accent-color);
+  background-color: color-mix(in srgb, var(--accent-color) 6%, transparent);
+}
+
+.cxPlanRadio {
+  position: relative;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--text-muted);
+  border-radius: 50%;
+  transition: border-color 0.2s ease;
+}
+
+.cxPlan.isOn .cxPlanRadio {
+  border-color: var(--accent-color);
+}
+
+.cxPlan.isOn .cxPlanRadio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+}
+
+.cxPlanText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cxPlanName {
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.cxPlanDesc {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.cxPlanPrice {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.cxPlanPrice em {
+  margin-left: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.cxFeatures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 1rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--surface-border);
+  list-style: none;
+}
+
+.cxFeatures li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.cxFeatures li svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent-color);
+}
+
+.cxFeatures li.isOff {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.cxFeatures li.isOff svg {
+  color: var(--text-muted);
+}
+
+.cxSummary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--surface-border);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+.cxSummary strong {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cxNote {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* ---------- Form / payment ---------- */
+.cxForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cxField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.cxInput {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cxInput:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.cxInput.isReadonly {
+  color: var(--text-muted);
+}
+
+.cxTextarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
+.cxError {
+  margin: 0;
+  color: var(--error-text);
+  font-size: 0.875rem;
+}
+
+.cxTest {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #f59e0b;
+  border-radius: 10px;
+  background-color: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+  font-size: 0.8125rem;
+}
+
+.cxPayHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cxLink {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.cxLink:hover {
+  color: var(--accent-color);
+}
+
+.cxFrame {
+  width: 100%;
+  min-height: 640px;
+  border: 0;
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+.cxDisabled {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cxDisabled p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ---------- Buttons ---------- */
+.cxBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.4rem;
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+
+.cxBtn:hover:not(:disabled) {
+  border-color: var(--accent-color);
+}
+
+.cxBtn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.cxBtn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.cxBtn.isPrimary {
+  border-color: transparent;
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+}
+
+.cxBtn.isPrimary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.cxBtn.isWide {
+  width: 100%;
+}
+
+/* ---------- Result pages ---------- */
+.cxResult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: clamp(3rem, 12vw, 7rem) 1.25rem;
+  text-align: center;
+}
+
+.cxResultMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background-color: var(--surface-bg);
+  color: var(--text-secondary);
+}
+
+.cxResultMark.isGood {
+  border-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
+  color: var(--accent-color);
+}
+
+.cxResultMark.isBad {
+  border-color: color-mix(in srgb, var(--error-text) 50%, transparent);
+  color: var(--error-text);
+}
+
+.cxResultTitle {
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.cxResultText {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.cxResultActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.cxResultBar {
+  position: relative;
+  display: block;
+  width: 160px;
+  height: 3px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  border-radius: 3px;
+  background-color: var(--surface-border);
+}
+
+.cxResultBar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  border-radius: inherit;
+  background-color: var(--accent-color);
+  animation: cxIndeterminate 1.3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes cxIndeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
+}
+
+.cxPage button:focus-visible,
+.cxPage input:focus-visible,
+.cxPage textarea:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cxResultBar::after {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .cxGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+}
+
+@media (max-width: 560px) {
+  .cxTopInner {
+    grid-template-columns: auto 1fr;
+    padding: 0 0.9rem;
+  }
+
+  .cxLogo {
+    justify-self: end;
+  }
+
+  .cxSecure {
+    display: none;
+  }
+
+  .cxFeatures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cxPlan {
+    flex-wrap: wrap;
+  }
+
+  .cxPlanPrice {
+    margin-left: 2rem;
+  }
+}

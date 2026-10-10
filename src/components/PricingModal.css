@@ -320,3 +320,7 @@
 .planBtn:disabled {
   cursor: not-allowed;
 }
+
+.pricingToggleRow {
+  margin: 0 0 1.25rem;
+}

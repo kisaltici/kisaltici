@@ -1629,3 +1629,9 @@
     transform: none;
   }
 }
+
+.lpBillingToggle {
+  display: flex;
+  justify-content: flex-start;
+  margin: -1rem 0 1.75rem;
+}

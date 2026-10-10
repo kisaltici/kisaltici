@@ -22,6 +22,14 @@
       "destination": "/index.html"
     },
     {
+      "source": "/checkout",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/checkout/:path*",
+      "destination": "/index.html"
+    },
+    {
       "source": "/stats",
       "destination": "/index.html"
     },

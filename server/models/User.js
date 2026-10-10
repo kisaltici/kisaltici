@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       enum: ['free', 'starter', 'pro', 'business'],
       default: 'free',
     },
+    // Paid subscription period. null planExpiresAt on a paid plan = no expiry (set manually / grandfathered)
+    planExpiresAt: { type: Date, default: null },
+    billingPeriod: { type: String, enum: ['monthly', 'yearly', null], default: null },
+    subscriptionStartedAt: { type: Date, default: null },
   },
   {
     timestamps: true,

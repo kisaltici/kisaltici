@@ -19,12 +19,15 @@ const AuthModal = lazy(() => import('./components/AuthModal'));
 import UrlForm from './components/UrlForm';
 const LinkAnalyticsPage = lazy(() => import('./pages/LinkAnalyticsPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 import { generateTitleFromUrl } from './utils/titleGenerator';
 import { applyColorTheme } from './utils/themePresets';
 import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
 import { LanguageProvider, useTranslation } from './i18n/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
+import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout } from './utils/checkout';
+import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD } from './config/plans';
 import './App.css';
 
 function MainComposerView({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, membershipPlan }) {
@@ -642,6 +645,56 @@ function AppContent() {
     navigate(`/link/${encodeURIComponent(newCode)}`);
   };
 
+  // Plan picked (landing, pricing modal, upgrade buttons): signed-in users go straight to checkout,
+  // signed-out visitors sign in first and are then sent to checkout with the same plan preselected
+  const handleStartCheckout = (plan, period = DEFAULT_PERIOD) => {
+    if (user) {
+      navigate(checkoutPath(plan, period));
+    } else {
+      savePendingCheckout(plan, period);
+      handleOpenAuthModal('register');
+    }
+  };
+
+  useEffect(() => {
+    if (user && hasPendingCheckout()) {
+      const pending = takePendingCheckout();
+      if (pending) {
+        setIsAuthModalOpen(false);
+        navigate(checkoutPath(pending.plan, pending.period), { replace: true });
+      }
+    }
+  }, [user, navigate]);
+
+  // Opening /checkout while signed out: remember the plan from the URL, then sign in first
+  useEffect(() => {
+    if (!location.pathname.startsWith('/checkout') || user || (authLoading && !authWaitExpired)) return;
+    const query = new URLSearchParams(location.search);
+    const plan = query.get('plan');
+    if (isPaidPlanId(plan)) {
+      savePendingCheckout(plan, isBillingPeriod(query.get('period')) ? query.get('period') : DEFAULT_PERIOD);
+    }
+    navigate('/', { replace: true });
+    handleOpenAuthModal('register');
+  }, [location.pathname, location.search, user, authLoading, authWaitExpired]);
+
+  // PayTR returns inside its iframe: break out so the result page fills the whole window
+  useEffect(() => {
+    if (window.self !== window.top && /^\/checkout\/(success|failed)/.test(window.location.pathname)) {
+      window.top.location.replace(window.location.href);
+    }
+  }, []);
+
+  // Checkout is a focused page without the app shell
+  if (location.pathname.startsWith('/checkout') && (user || (authLoading && !authWaitExpired))) {
+    if (!user) return <div className="landingSplash" aria-hidden="true" />;
+    return (
+      <Suspense fallback={<div className="landingSplash" aria-hidden="true" />}>
+        <CheckoutPage theme={theme} />
+      </Suspense>
+    );
+  }
+
   // Signed-out visitors on the root path see the marketing landing page instead of the app shell
   if (location.pathname === '/' && !user) {
     // Only the very first auth check shows the placeholder; sign-in keeps the landing page visible
@@ -655,6 +708,7 @@ function AppContent() {
           onToggleTheme={handleToggleTheme}
           onShortened={handleUrlShortened}
           onOpenAuthModal={handleOpenAuthModal}
+          onStartCheckout={handleStartCheckout}
           isSigningIn={authTransitioning}
         />
         <AuthModal
@@ -809,6 +863,10 @@ function AppContent() {
         onClose={() => setIsPricingOpen(false)}
         userPlan={membershipPlan}
         onOpenAuthModal={handleOpenAuthModal}
+        onSelectPlan={(plan, period) => {
+          setIsPricingOpen(false);
+          handleStartCheckout(plan, period);
+        }}
       />
 
       <AuthModal

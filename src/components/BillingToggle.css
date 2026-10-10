@@ -1,0 +1,48 @@
+.billingToggleWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.billingToggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background-color: var(--badge-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+}
+
+.billingToggleBtn {
+  min-height: 36px;
+  padding: 0 1.1rem;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.billingToggleBtn:hover {
+  color: var(--text-primary);
+}
+
+.billingToggleBtn.isOn {
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+}
+
+.billingToggleBadge {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 45%, transparent);
+  border-radius: 999px;
+  color: var(--accent-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
