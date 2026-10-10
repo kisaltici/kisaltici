@@ -164,11 +164,11 @@ function Tiles({ label, options, value, onChange, renderIcon, getLabel }) {
   );
 }
 
-function Segmented({ label, options, value, onChange }) {
+function Segmented({ label, options, value, onChange, stacked = false }) {
   return (
     <div className="qrxField">
       <span className="qrxFieldLabel">{label}</span>
-      <div className="qrxSegmented" role="radiogroup" aria-label={label}>
+      <div className={`qrxSegmented ${stacked ? 'isStacked' : ''}`} role="radiogroup" aria-label={label}>
         {options.map((option) => (
           <button
             key={option.id}
@@ -526,6 +526,7 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
               }))}
               value={complexity}
               onChange={setComplexity}
+              stacked
             />
             {sameSizeHint && <p className="qrxHint">{sameSizeHint}</p>}
             <label className="qrxToggleRow">
@@ -535,7 +536,6 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
                 <em>{t('qrCompactHint')}</em>
               </span>
             </label>
-            {qrData && <p className="qrxHint">{t('qrGridInfo', { size: qrData.size + ' × ' + qrData.size })}</p>}
             <Segmented
               label={t('qrQuietZone')}
               options={QUIET.map((q) => ({ id: q.id, label: t(q.labelKey) }))}
