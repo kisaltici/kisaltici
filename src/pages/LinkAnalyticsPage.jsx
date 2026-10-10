@@ -381,17 +381,22 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal 
   if (errorStatus === 404) {
     return (
       <div className="analyticsPage">
-        <div className="notFoundContainer">
-          <div className="notFoundIcon">🔍</div>
-          <h2 className="notFoundTitle">{t('linkNotFoundTitle')}</h2>
-          <p className="notFoundSub">{t('linkNotFoundSub')}</p>
-          <button
-            type="button"
-            className="primaryActionBtn"
-            onClick={() => navigate('/')}
-          >
-            {t('backToHome')}
-          </button>
+        <div className="stateScreen">
+          <span className="stateCode" aria-hidden="true">404</span>
+          <span className="stateMark" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.1 0l2.4-2.4a5 5 0 0 0-7.1-7.1l-.9.9" />
+              <path d="M14 11a5 5 0 0 0-7.1 0l-2.4 2.4a5 5 0 0 0 7.1 7.1l.9-.9" />
+              <line x1="4" y1="4" x2="20" y2="20" />
+            </svg>
+          </span>
+          <h2 className="stateTitle">{t('linkNotFoundTitle')}</h2>
+          <p className="stateText">{t('linkNotFoundSub')}</p>
+          <div className="stateActions">
+            <button type="button" className="stateBtn primary" onClick={() => navigate('/')}>
+              {t('backToHome')}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -400,26 +405,24 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal 
   if (errorStatus || !linkData) {
     return (
       <div className="analyticsPage">
-        <div className="notFoundContainer">
-          <div className="notFoundIcon">⚠️</div>
-          <h2 className="notFoundTitle">{t('errorDatabaseUnavailable') || 'Sunucuya Bağlanılamadı'}</h2>
-          <p className="notFoundSub">
+        <div className="stateScreen">
+          <span className="stateMark" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 2v4M15 2v4" />
+              <path d="M6 6h12v4a6 6 0 0 1-12 0z" />
+              <path d="M12 16v3a3 3 0 0 0 3 3h2" />
+              <line x1="3" y1="3" x2="21" y2="21" />
+            </svg>
+          </span>
+          <h2 className="stateTitle">{t('errorDatabaseUnavailable') || 'Sunucuya Bağlanılamadı'}</h2>
+          <p className="stateText">
             {t('errorGeneric') || 'Sunucu şu anda yanıt veremiyor. Lütfen tekrar deneyin.'}
           </p>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '16px' }}>
-            <button
-              type="button"
-              className="primaryActionBtn"
-              onClick={() => setRefreshKey((k) => k + 1)}
-            >
-              🔄 {t('tryAgain') || 'Tekrar Dene'}
+          <div className="stateActions">
+            <button type="button" className="stateBtn primary" onClick={() => setRefreshKey((k) => k + 1)}>
+              {t('tryAgain') || 'Tekrar Dene'}
             </button>
-            <button
-              type="button"
-              className="primaryActionBtn"
-              style={{ background: 'var(--card-bg, #1e293b)', color: 'var(--text-primary, #fff)', border: '1px solid rgba(255,255,255,0.1)' }}
-              onClick={() => navigate('/')}
-            >
+            <button type="button" className="stateBtn" onClick={() => navigate('/')}>
               {t('backToHome')}
             </button>
           </div>

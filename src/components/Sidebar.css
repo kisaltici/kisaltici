@@ -700,16 +700,14 @@
   color: var(--text-muted);
 }
 
-/* ---------- Daily allowance ---------- */
+/* ---------- Daily usage (quiet: flat, neutral until the limit approaches) ---------- */
 .sidebarUsage {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin: 0 0.5rem 0.5rem;
-  padding: 0.75rem;
-  background-color: var(--input-bg);
-  border: 1px solid var(--surface-border);
-  border-radius: 12px;
+  gap: 0.55rem;
+  margin: 0 0.75rem 0.5rem;
+  padding: 0.65rem 0.25rem 0.25rem;
+  border-top: 1px solid var(--surface-border);
 }
 
 .usageHead,
@@ -721,27 +719,22 @@
 }
 
 .usageTitle {
-  color: var(--text-primary);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.usageReset {
   color: var(--text-muted);
   font-size: 0.6875rem;
+  font-weight: 500;
 }
 
 .usageUnlimitedValue {
-  color: var(--accent-color);
-  font-size: 0.8125rem;
-  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .usageRowText {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   font-size: 0.75rem;
 }
 
@@ -749,22 +742,22 @@
   color: var(--text-secondary);
 }
 
-.usageLeft {
-  color: var(--text-primary);
-  font-weight: 600;
+.usageCount {
+  color: var(--text-muted);
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
-.usageLeft.low {
+.usageCount.high {
   color: #f59e0b;
 }
 
-.usageLeft.empty {
+.usageCount.full {
   color: var(--error-text);
 }
 
 .usageTrack {
-  height: 6px;
+  height: 3px;
   overflow: hidden;
   border-radius: 999px;
   background-color: var(--badge-bg);
@@ -774,15 +767,15 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background-color: var(--accent-color);
+  background-color: color-mix(in srgb, var(--text-secondary) 75%, transparent);
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
 }
 
-.usageFill.low {
+.usageFill.high {
   background-color: #f59e0b;
 }
 
-.usageFill.empty {
+.usageFill.full {
   background-color: var(--error-text);
 }
 

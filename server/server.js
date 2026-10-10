@@ -104,17 +104,19 @@ app.use('/api', requireDbReady, urlRoutes);
 const SHORT_CODE_REGEX = /^[A-Za-z0-9_-]{1,30}$/;
 const CUSTOM_TEXT_REGEX = /^@[A-Za-z0-9_-]{1,30}\/[A-Za-z0-9_-]{1,30}$/;
 
-const renderErrorPage = (title, message, linkLabel, lang = 'en') => `<!DOCTYPE html>
+const renderErrorPage = (title, message, linkLabel, lang = 'en', code = '') => `<!DOCTYPE html>
 <html lang="${lang}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title}</title>
-<style>body{font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f8fafc;color:#0f172a;text-align:center}
-.card{background:white;padding:2.5rem;border-radius:12px;border:1px solid #e2e8f0;max-width:440px;box-shadow:0 4px 6px rgba(0,0,0,.05)}
-h1{font-size:1.5rem;margin-bottom:.5rem;color:#ef4444}p{color:#64748b;margin-bottom:1.5rem;font-size:.95rem}
-a{text-decoration:none;background:#2563eb;color:white;padding:.625rem 1.25rem;border-radius:8px;font-weight:600;font-size:.875rem}</style>
-</head><body><div class="card"><h1>${title}</h1><p>${message}</p><a href="${FRONTEND_URL}">${linkLabel}</a></div></body></html>`;
+<meta name="robots" content="noindex"><title>${title}</title>
+<style>*{box-sizing:border-box;margin:0}body{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:#000;color:#f3f4f6;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;text-align:center}
+.wrap{position:relative;width:min(100%,440px);display:flex;flex-direction:column;align-items:center;gap:.9rem}
+.wrap:before{content:"";position:absolute;top:-120px;left:50%;width:520px;height:260px;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 50%,rgba(222,255,54,.11),transparent 68%);pointer-events:none}
+.logo{height:24px;margin-bottom:1.25rem;position:relative}.code{position:relative;font:700 5.5rem/1 ui-monospace,Menlo,monospace;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1.5px rgba(156,163,175,.55)}
+h1{position:relative;font-size:1.75rem;font-weight:650;letter-spacing:-.03em;line-height:1.1}p{position:relative;color:#9ca3af;line-height:1.6;font-size:1rem;max-width:40ch}
+a.btn{position:relative;margin-top:.75rem;text-decoration:none;background:#DEFF36;color:#080a11;padding:.85rem 1.4rem;border-radius:12px;font-weight:600;font-size:.9375rem}a.btn:hover{background:#cbe82e}</style>
+</head><body><main class="wrap"><img class="logo" src="${FRONTEND_URL}/KSLT_LOGO_DARK.svg" alt="Kısaltıcı">${code ? `<div class="code" aria-hidden="true">${code}</div>` : ''}<h1>${title}</h1><p>${message}</p><a class="btn" href="${FRONTEND_URL}">${linkLabel}</a></main></body></html>`;
 
 const notFoundPage = () =>
-  renderErrorPage('Link Not Found', 'The shortened URL you are looking for does not exist or may have been removed.', 'Go to Homepage');
+  renderErrorPage('Link not found', 'This short link does not exist or may have been removed.', 'Go to homepage', 'en', '404');
 
 const registerClick = (shortCode) =>
   Url.findOneAndUpdate(
@@ -139,7 +141,7 @@ const handleRedirect = (resolveCode) => async (req, res, next) => {
     if (!isConnected || mongoose.connection.readyState !== 1) {
       return res
         .status(503)
-        .send(renderErrorPage('Veritabanı Kullanılamıyor', 'Sunucu şu anda veritabanına bağlanamıyor. Lütfen biraz sonra tekrar deneyin.', 'Ana Sayfaya Dön', 'tr'));
+        .send(renderErrorPage('Geçici bir sorun var', 'Sunucu şu anda veritabanına bağlanamıyor. Lütfen biraz sonra tekrar deneyin.', 'Ana sayfaya dön', 'tr', '503'));
     }
 
     // Atomically count the click, retrying once after a transient reconnect

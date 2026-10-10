@@ -92,7 +92,12 @@ function AnalyticsChart({ clicks = [] }) {
   if (clicks.length === 0) {
     return (
       <div className="chartEmptyState">
-        <div className="emptyChartIcon">📈</div>
+        <div className="emptyChartIcon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="3 17 9 11 13 15 21 7" />
+            <polyline points="15 7 21 7 21 13" />
+          </svg>
+        </div>
         <h4 className="emptyChartTitle">{t('noClickActivityHeader')}</h4>
         <p className="emptyChartSub">{t('noClickActivitySub')}</p>
       </div>

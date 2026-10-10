@@ -35,20 +35,20 @@ function FooterSkeleton({ isCollapsed }) {
   );
 }
 
-/* One quota row: remaining count with a bar that drains as the allowance is used */
-function UsageRow({ label, used, limit, t }) {
-  const left = Math.max(0, limit - used);
-  const ratio = limit > 0 ? left / limit : 0;
-  const state = left === 0 ? 'empty' : ratio <= 0.34 ? 'low' : 'ok';
+/* One quota row: used / limit with a thin bar that fills as the allowance is used */
+function UsageRow({ label, used, limit }) {
+  const safeUsed = Math.min(used, limit);
+  const ratio = limit > 0 ? safeUsed / limit : 1;
+  const state = ratio >= 1 ? 'full' : ratio >= 0.7 ? 'high' : 'ok';
   return (
     <div className="usageRow">
       <div className="usageRowText">
         <span className="usageLabel">{label}</span>
-        <span className={`usageLeft ${state}`}>
-          {t('usageLeft', { n: `${left}/${limit}` })}
+        <span className={`usageCount ${state}`}>
+          {safeUsed}/{limit}
         </span>
       </div>
-      <div className="usageTrack" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={left} aria-label={label}>
+      <div className="usageTrack" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={safeUsed} aria-label={label}>
         <span className={`usageFill ${state}`} style={{ width: `${Math.round(ratio * 100)}%` }} />
       </div>
     </div>
@@ -453,12 +453,11 @@ function Sidebar({
                 </div>
               ) : (
                 <>
-                  <div className="usageHead">
+                  <div className="usageHead" title={t('usageResets')}>
                     <span className="usageTitle">{t('usageTitle')}</span>
-                    <span className="usageReset">{t('usageResets')}</span>
                   </div>
-                  <UsageRow label={t('usageLinks')} used={usage.links} limit={limits.dailyLinks} t={t} />
-                  <UsageRow label={t('usageQr')} used={usage.qr} limit={limits.dailyQr} t={t} />
+                  <UsageRow label={t('usageLinks')} used={usage.links} limit={limits.dailyLinks} />
+                  <UsageRow label={t('usageQr')} used={usage.qr} limit={limits.dailyQr} />
                 </>
               )
             ) : (
@@ -470,7 +469,6 @@ function Sidebar({
                   label={t('usageLinks')}
                   used={guestLinkUsed ? GUEST_LIMITS.dailyLinks : 0}
                   limit={GUEST_LIMITS.dailyLinks}
-                  t={t}
                 />
                 <p className="usageHint">{t('usageGuestHint')}</p>
               </>

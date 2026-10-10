@@ -717,3 +717,108 @@
   color: var(--text-muted);
   font-size: 0.8125rem;
 }
+
+/* ---------- Premium state screens (not found / server error) ---------- */
+.stateScreen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: clamp(3rem, 10vw, 6rem) 1rem;
+  text-align: center;
+  isolation: isolate;
+}
+
+.stateScreen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: -1;
+  width: min(560px, 100%);
+  height: 280px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--accent-color) 12%, transparent), transparent 68%);
+  pointer-events: none;
+}
+
+.stateCode {
+  color: transparent;
+  font: 700 clamp(4.5rem, 16vw, 8rem) / 1 ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  letter-spacing: -0.06em;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--text-muted) 80%, transparent);
+}
+
+.stateMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  color: var(--accent-color);
+  background-color: var(--surface-bg);
+}
+
+.stateCode + .stateMark {
+  margin-top: -0.5rem;
+}
+
+.stateTitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-primary);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.stateText {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.stateActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.stateBtn {
+  min-height: 44px;
+  padding: 0 1.25rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+
+.stateBtn:hover {
+  border-color: var(--accent-color);
+}
+
+.stateBtn:active {
+  transform: scale(0.98);
+}
+
+.stateBtn.primary {
+  border-color: transparent;
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+}
+
+.stateBtn.primary:hover {
+  background-color: var(--accent-hover);
+}

@@ -110,7 +110,14 @@ function ResultSection({ result }) {
             onClick={handleOpenQr}
             aria-label="Customize QR Code"
           >
-            <span className="btnIcon">📷</span>
+            <span className="btnIcon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <path d="M14 14h3v3M21 14v.01M14 21h.01M17.5 21H21v-3.5" />
+              </svg>
+            </span>
             <span>QR Code</span>
           </button>
 
@@ -136,7 +143,13 @@ function ResultSection({ result }) {
 
       <div className="statsFooter">
         <div className="clickStats">
-          <span className="statsIcon">📊</span>
+          <span className="statsIcon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="6" y1="20" x2="6" y2="12" />
+              <line x1="12" y1="20" x2="12" y2="5" />
+              <line x1="18" y1="20" x2="18" y2="9" />
+            </svg>
+          </span>
           <span className="clickCountText">
             <strong>{clickCount}</strong> {clickCount === 1 ? 'click' : 'clicks'}
           </span>

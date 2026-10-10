@@ -171,7 +171,7 @@ function NewLinkModal({ isOpen, onClose, onUrlShortened, onLimitReached }) {
 
           {errorMessage && (
             <div className="modalErrorMessage" role="alert">
-              <span>⚠️ {errorMessage}</span>
+              <span>{errorMessage}</span>
             </div>
           )}
         </form>
