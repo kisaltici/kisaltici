@@ -498,7 +498,28 @@ export function getFinderPatternOrigins(size) {
  * Minimal uses Level M (15% redundancy), producing a genuinely distinct matrix.
  * Automatically elevates error correction level if a center image is present.
  */
-export function generateQrMatrix(text, complexity = 'minimal', hasCenterImage = false) {
+/** Address without its scheme ("https://lnk1.tr/aB3xYz" -> "lnk1.tr/aB3xYz"): fewer bytes, so a smaller QR grid. */
+export const compactPayload = (text) => String(text).replace(/^https?:\/\//i, '');
+
+/**
+ * Grid size (modules per side) the payload needs at each error-correction level: { L, M, Q, H }.
+ * The grid only grows when the payload no longer fits the current QR version, so neighbouring levels often match.
+ */
+export function estimateGridSizes(text, compact = false) {
+  const payload = compact ? compactPayload(text) : text;
+  const sizes = {};
+  [['L', QrCode.Ecc.LOW], ['M', QrCode.Ecc.MEDIUM], ['Q', QrCode.Ecc.QUARTILE], ['H', QrCode.Ecc.HIGH]].forEach(([key, level]) => {
+    try {
+      sizes[key] = encodeTextToQr(payload, level).size;
+    } catch {
+      sizes[key] = null;
+    }
+  });
+  return sizes;
+}
+
+export function generateQrMatrix(text, complexity = 'minimal', hasCenterImage = false, compact = false) {
+  if (compact) text = compactPayload(text);
   let ecc = QrCode.Ecc.MEDIUM;
   let densityLabel = 'Dengeli';
   let scanReliability = 'Normal';

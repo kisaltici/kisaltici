@@ -63,6 +63,11 @@ const urlSchema = new mongoose.Schema({
       type: String,
       default: 'custom',
     },
+    // Encode the address without https:// (smaller grid, bigger modules)
+    compact: {
+      type: Boolean,
+      default: false,
+    },
     level: {
       type: String,
       enum: ['L', 'M', 'Q', 'H'],

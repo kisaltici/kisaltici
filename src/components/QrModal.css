@@ -408,6 +408,13 @@
   background-color: color-mix(in srgb, var(--bg-color) 55%, var(--surface-bg));
 }
 
+.qrxStageCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: min(100%, 340px);
+}
+
 .qrxStageLabel {
   align-self: flex-start;
   color: var(--text-muted);
@@ -842,4 +849,35 @@
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+.qrxToggleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-top: 0.75rem;
+  cursor: pointer;
+}
+
+.qrxToggleRow input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent-color);
+}
+
+.qrxToggleRow span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.qrxToggleRow em {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-style: normal;
+  line-height: 1.5;
 }

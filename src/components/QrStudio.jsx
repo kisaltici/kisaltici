@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
 import {
   generateQrMatrix,
+  estimateGridSizes,
   generateQrSvgString,
   getContrastRatio,
 } from '../utils/qrRenderer';
@@ -220,6 +221,7 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
   const initial = useMemo(() => getEffectiveSettings(), [getEffectiveSettings]);
 
   const [complexity, setComplexity] = useState(initial.complexity || 'minimal');
+  const [compact, setCompact] = useState(Boolean(initial.compact));
   const [fgColor, setFgColor] = useState(initial.fgColor || '#000000');
   const [bgColor, setBgColor] = useState(initial.bgColor !== undefined ? initial.bgColor : '#ffffff');
   const [moduleShape, setModuleShape] = useState(initial.moduleShape || 'square');
@@ -300,24 +302,37 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
       finderStyle,
       quietZone,
       centerImage,
+      compact,
     };
     saveTimeoutRef.current = setTimeout(() => persistSettings(config), 450);
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
-  }, [complexity, fgColor, bgColor, moduleShape, finderStyle, quietZone, centerImage, persistSettings]);
+  }, [complexity, fgColor, bgColor, moduleShape, finderStyle, quietZone, centerImage, compact, persistSettings]);
 
   const marginSize = quietZone === 'compact' ? 2 : quietZone === 'generous' ? 6 : 4;
 
   const qrData = useMemo(() => {
     if (!shortUrl) return null;
     try {
-      return generateQrMatrix(shortUrl, complexity, Boolean(centerImage && centerImage.src));
+      return generateQrMatrix(shortUrl, complexity, Boolean(centerImage && centerImage.src), compact);
     } catch (e) {
       console.error('Error generating QR matrix:', e);
       return null;
     }
-  }, [shortUrl, complexity, centerImage]);
+  }, [shortUrl, complexity, centerImage, compact]);
+
+  // Grid size at every level for this address, so the detail options show what they really change
+  const gridSizes = useMemo(() => (shortUrl ? estimateGridSizes(shortUrl, compact) : {}), [shortUrl, compact]);
+  const sameSizeHint = useMemo(() => {
+    const order = ['L', 'M', 'Q', 'H'];
+    for (let i = 0; i < order.length - 1; i += 1) {
+      if (gridSizes[order[i]] && gridSizes[order[i]] === gridSizes[order[i + 1]]) {
+        return t('qrSameSize', { a: order[i], b: order[i + 1], size: `${gridSizes[order[i]]} × ${gridSizes[order[i]]}` });
+      }
+    }
+    return '';
+  }, [gridSizes, t]);
 
   const svgString = useMemo(() => {
     if (!qrData) return '';
@@ -386,9 +401,11 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
       <div className="qrxStudioBody">
         {/* Preview stage */}
         <section className="qrxStage" aria-label={t('qrLivePreview')}>
-          <span className="qrxStageLabel">{t('qrLivePreview')}</span>
-          <div className={`qrxPreviewFrame ${bgColor === 'transparent' ? 'isTransparent' : ''}`}>
-            <div className="qrxPreviewSvg" dangerouslySetInnerHTML={{ __html: svgString }} />
+          <div className="qrxStageCol">
+            <span className="qrxStageLabel">{t('qrLivePreview')}</span>
+            <div className={`qrxPreviewFrame ${bgColor === 'transparent' ? 'isTransparent' : ''}`}>
+              <div className="qrxPreviewSvg" dangerouslySetInnerHTML={{ __html: svgString }} />
+            </div>
           </div>
 
           <div className={`qrxScan ${isLowContrast ? 'isRisk' : 'isGood'}`} role="status">
@@ -502,10 +519,23 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
             <h3 className="qrxGroupTitle">{t('qrSectionReadability')}</h3>
             <Segmented
               label={t('qrComplexityTitle')}
-              options={COMPLEXITY.map((c) => ({ id: c.id, label: t(c.labelKey), tag: c.tag }))}
+              options={COMPLEXITY.map((c) => ({
+                id: c.id,
+                label: t(c.labelKey),
+                tag: gridSizes[c.tag] ? `${c.tag} · ${gridSizes[c.tag]}×${gridSizes[c.tag]}` : c.tag,
+              }))}
               value={complexity}
               onChange={setComplexity}
             />
+            {sameSizeHint && <p className="qrxHint">{sameSizeHint}</p>}
+            <label className="qrxToggleRow">
+              <input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} />
+              <span>
+                <strong>{t('qrCompactLabel')}</strong>
+                <em>{t('qrCompactHint')}</em>
+              </span>
+            </label>
+            {qrData && <p className="qrxHint">{t('qrGridInfo', { size: qrData.size + ' × ' + qrData.size })}</p>}
             <Segmented
               label={t('qrQuietZone')}
               options={QUIET.map((q) => ({ id: q.id, label: t(q.labelKey) }))}

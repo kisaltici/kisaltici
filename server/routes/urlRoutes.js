@@ -434,6 +434,7 @@ router.patch('/urls/:shortCode/qr', optionalAuth, async (req, res, next) => {
       finderStyle,
       quietZone,
       centerImage,
+      compact,
     } = req.body || {};
 
     const validComplexities = ['ultra-minimal', 'minimal', 'balanced', 'high'];
@@ -467,6 +468,9 @@ router.patch('/urls/:shortCode/qr', optionalAuth, async (req, res, next) => {
     }
     if (quietZone && validQuietZones.includes(quietZone)) {
       newQrSettings.quietZone = quietZone;
+    }
+    if (typeof compact === 'boolean') {
+      newQrSettings.compact = compact;
     }
     if (centerImage && typeof centerImage === 'object') {
       newQrSettings.centerImage = {
