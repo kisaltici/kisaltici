@@ -469,14 +469,14 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     }
 
     // Admin status is bound to the stored (guarded) username, never to an email-derived identifier
-    const isAdminUser = isAdminUser(req.user) || userDoc.username === 'admin';
+    const isRootSlugUser = isAdminUser(req.user) || userDoc.username === 'admin';
 
     // Allowed characters: A-Z a-z 0-9 - _
     // Length: 1-30 for admin, 3-30 for everyone else
-    const TEXT_REGEX = isAdminUser
+    const TEXT_REGEX = isRootSlugUser
       ? /^[A-Za-z0-9_-]{1,30}$/
       : /^[A-Za-z0-9_-]{3,30}$/;
-    const lengthDesc = isAdminUser ? '1-30' : '3-30';
+    const lengthDesc = isRootSlugUser ? '1-30' : '3-30';
     if (!TEXT_REGEX.test(trimmedText)) {
       return res.status(400).json({
         success: false,
@@ -512,7 +512,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     // - For the special "admin" user: just use customText directly (no @admin/ prefix)
     //   so the URL becomes: domain/custom-text
     // - For all other users: "@userIdent/customText"
-    const compositeCode = isAdminUser ? trimmedText : `@${userIdent}/${trimmedText}`;
+    const compositeCode = isRootSlugUser ? trimmedText : `@${userIdent}/${trimmedText}`;
 
     // --- Ownership + existence check for the current record ---
     const urlRecord = await Url.findOne({ shortCode: shortCode.trim() });
