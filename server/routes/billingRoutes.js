@@ -7,6 +7,7 @@ import {
   BILLING_PLANS,
   BILLING_PERIODS,
   MONTHLY_PRICE_TRY,
+  TERMS_VERSION,
   YEARLY_MONTHS_CHARGED,
   PLAN_NAMES_TR,
   priceTry,
@@ -96,7 +97,14 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       });
     }
 
-    const { plan, period, fullName, phone, address } = req.body || {};
+    const { plan, period, fullName, phone, address, acceptTerms } = req.body || {};
+
+    if (acceptTerms !== true) {
+      return res.status(400).json({
+        success: false,
+        error: 'Lütfen ön bilgilendirme formunu ve mesafeli satış sözleşmesini onayla.',
+      });
+    }
 
     if (!BILLING_PLANS.includes(plan) || !BILLING_PERIODS.includes(period)) {
       return res.status(400).json({ success: false, error: 'Geçersiz plan veya dönem.' });
@@ -174,6 +182,8 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
       testMode: config.testMode === '1',
       email,
       fullName: name,
+      termsAcceptedAt: new Date(),
+      termsVersion: TERMS_VERSION,
     });
 
     let token;

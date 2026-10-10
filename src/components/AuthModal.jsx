@@ -345,6 +345,15 @@ function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
               </span>
             )}
           </div>
+          {isRegister && (
+            <p className="authLegalNote">
+              Kaydolarak{' '}
+              <a href="/yasal/kullanim-kosullari" target="_blank" rel="noopener noreferrer">Kullanım Koşulları</a>
+              {' '}ve{' '}
+              <a href="/yasal/kvkk-aydinlatma-metni" target="_blank" rel="noopener noreferrer">KVKK Aydınlatma Metni</a>
+              {"'ni okuduğunu kabul edersin."}
+            </p>
+          )}
         </form>
       </div>
     </div>

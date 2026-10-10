@@ -22,6 +22,14 @@
       "destination": "/index.html"
     },
     {
+      "source": "/yasal",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/yasal/:path*",
+      "destination": "/index.html"
+    },
+    {
       "source": "/checkout",
       "destination": "/index.html"
     },

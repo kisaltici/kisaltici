@@ -273,3 +273,21 @@
     gap: 0.85rem;
   }
 }
+
+.authLegalNote {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.authLegalNote a {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.authLegalNote a:hover {
+  color: var(--accent-color);
+}

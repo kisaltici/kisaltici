@@ -1,0 +1,16 @@
+.legalLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+}
+
+.legalLink {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legalLink:hover {
+  color: var(--accent-color);
+}

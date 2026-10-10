@@ -534,3 +534,38 @@
     margin-left: 2rem;
   }
 }
+
+.cxConsent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.cxConsent input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.cxConsent a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cxConsent a:hover {
+  color: var(--accent-color);
+}
+
+.cxLegal {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--surface-border);
+}

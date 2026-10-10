@@ -17,6 +17,7 @@ import {
   getPlanCopy,
 } from '../config/plans';
 import BillingToggle from '../components/BillingToggle';
+import LegalLinks from '../components/LegalLinks';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -868,6 +869,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <li><a href="#sss">{nav.faq}</a></li>
           </ul>
           <span className="lpFooterRights">{footer.rights}</span>
+          <LegalLinks className="lpFooterLegal" />
         </div>
       </footer>
     </div>

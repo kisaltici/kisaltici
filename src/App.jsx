@@ -20,6 +20,7 @@ import UrlForm from './components/UrlForm';
 const LinkAnalyticsPage = lazy(() => import('./pages/LinkAnalyticsPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const LegalPage = lazy(() => import('./pages/LegalPage'));
 import { generateTitleFromUrl } from './utils/titleGenerator';
 import { applyColorTheme } from './utils/themePresets';
 import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
@@ -684,6 +685,15 @@ function AppContent() {
       window.top.location.replace(window.location.href);
     }
   }, []);
+
+  // Legal pages are public and have their own layout
+  if (location.pathname.startsWith('/yasal')) {
+    return (
+      <Suspense fallback={<div className="landingSplash" aria-hidden="true" />}>
+        <LegalPage theme={theme} />
+      </Suspense>
+    );
+  }
 
   // Checkout is a focused page without the app shell
   if (location.pathname.startsWith('/checkout') && (user || (authLoading && !authWaitExpired))) {

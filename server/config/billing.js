@@ -3,6 +3,9 @@
  * The marketing copy on the client (src/config/plans.js) mirrors these numbers for display only;
  * the amount charged is always computed here.
  */
+// Version of the legal texts the buyer accepts at checkout (keep in sync with LEGAL_VERSION in src/config/legal.js)
+export const TERMS_VERSION = '1.0';
+
 export const BILLING_PLANS = ['starter', 'pro', 'business'];
 export const BILLING_PERIODS = ['monthly', 'yearly'];
 

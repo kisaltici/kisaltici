@@ -17,6 +17,7 @@ import {
 import { checkoutPath } from '../utils/checkout';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import BillingToggle from '../components/BillingToggle';
+import LegalLinks from '../components/LegalLinks';
 import './CheckoutPage.css';
 
 const formatDate = (value, lang) =>
@@ -187,6 +188,7 @@ function CheckoutForm({ theme }) {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState('');
   const [payment, setPayment] = useState(null); // { iframeUrl, testMode }
 
@@ -221,6 +223,10 @@ function CheckoutForm({ theme }) {
       setError(text.errors.required);
       return;
     }
+    if (!accepted) {
+      setError(text.termsRequired);
+      return;
+    }
     setError('');
     setIsLoading(true);
     try {
@@ -228,7 +234,7 @@ function CheckoutForm({ theme }) {
       const res = await fetch(`${API_BASE_URL}/api/billing/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({ plan, period, fullName, phone, address }),
+        body: JSON.stringify({ plan, period, fullName, phone, address, acceptTerms: true }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.success) {
@@ -344,6 +350,17 @@ function CheckoutForm({ theme }) {
                   <textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder={text.addressPlaceholder} className="cxInput cxTextarea" rows={3} maxLength={400} autoComplete="street-address" />
                 </label>
 
+                <label className="cxConsent">
+                  <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
+                  <span>
+                    {text.termsLead}
+                    <a href="/yasal/on-bilgilendirme-formu" target="_blank" rel="noopener noreferrer">{text.termsForm}</a>
+                    {text.termsAnd}
+                    <a href="/yasal/mesafeli-satis-sozlesmesi" target="_blank" rel="noopener noreferrer">{text.termsContract}</a>
+                    {text.termsTail}
+                  </span>
+                </label>
+
                 {billing.testMode && <p className="cxTest">{text.testMode}</p>}
                 {error && <p className="cxError" role="alert">{error}</p>}
 
@@ -355,6 +372,7 @@ function CheckoutForm({ theme }) {
             )}
           </section>
         </div>
+        <LegalLinks className="cxLegal" />
       </main>
     </div>
   );

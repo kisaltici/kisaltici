@@ -24,6 +24,8 @@ const orderSchema = new mongoose.Schema(
     failedReasonCode: { type: String, default: null },
     failedReasonMsg: { type: String, default: null },
     activatedUntil: { type: Date, default: null },
+    termsAcceptedAt: { type: Date, default: null },
+    termsVersion: { type: String, default: null },
   },
   { timestamps: true }
 );
