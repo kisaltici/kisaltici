@@ -52,7 +52,7 @@ function QrCustomizationModal({
   onSettingsSaved = null,
 }) {
   const { t } = useTranslation();
-  const { user, getIdToken } = useAuth();
+  const { user, getIdToken, refetchProfile } = useAuth();
 
   const getEffectiveSettings = useCallback(() => {
     if (initialSettings && initialSettings.fgColor) {
@@ -297,6 +297,8 @@ function QrCustomizationModal({
     const gate = await consumeQr(shortCode, getIdToken);
     if (gate.allowed) {
       setQrLimitMessage('');
+      // Keep the sidebar allowance bar in sync
+      if (user && refetchProfile) refetchProfile();
       return true;
     }
     setQrLimitMessage(

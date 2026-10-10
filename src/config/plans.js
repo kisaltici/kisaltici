@@ -21,7 +21,7 @@ export const GUEST_LIMITS = { dailyLinks: 1, dailyQr: 1 };
 
 const COPY = {
   tr: {
-    names: { free: 'Ücretsiz', starter: 'Başlangıç', pro: 'Pro', business: 'Business' },
+    names: { free: 'Ücretsiz', starter: 'Başlangıç', pro: 'Profesyonel', business: 'Kurumsal' },
     descs: {
       free: 'Denemek ve küçük işler için.',
       starter: 'Düzenli paylaşım yapanlar için.',
@@ -53,7 +53,7 @@ const COPY = {
     selectPlan: (name) => `${name} planını seç`,
   },
   en: {
-    names: { free: 'Free', starter: 'Starter', pro: 'Pro', business: 'Business' },
+    names: { free: 'Free', starter: 'Starter', pro: 'Professional', business: 'Business' },
     descs: {
       free: 'For trying it out and small jobs.',
       starter: 'For people who share regularly.',

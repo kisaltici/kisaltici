@@ -169,7 +169,7 @@ function UrlForm({ onUrlShortened, onUrlShortenedWithIntent, onLimitReached, mem
   const handleCustomizeChip = async () => {
     if (!isPro) {
       pushToast(
-        'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
+        t('customLinkNeedsPlan'),
         'info',
         3000
       );

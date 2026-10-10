@@ -99,8 +99,8 @@
 .faqSectionTitle {
   font-size: 0.78rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-bottom: 0.25rem;
 }
@@ -239,5 +239,170 @@
   .faqQuestionHeader {
     padding: 0.75rem 0.85rem;
     font-size: 0.85rem;
+  }
+}
+
+
+/* ==========================================================================
+   Design v2: matches the Settings modal; smooth accordion
+   ========================================================================== */
+.helpModalBackdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.helpModalBox {
+  width: min(96%, 720px);
+  max-width: 720px;
+  border-radius: 20px;
+  transform: translateY(8px) scale(0.985);
+}
+
+.helpModalBox.visible {
+  transform: translateY(0) scale(1);
+}
+
+.helpModalHeader {
+  padding: 1.25rem 1.25rem 1.1rem 1.75rem;
+}
+
+.helpModalTitle {
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.helpCloseBtn {
+  width: 36px;
+  height: 36px;
+  margin-top: 0;
+  border-radius: 10px;
+}
+
+.helpModalBody {
+  padding: 1.25rem 1.75rem 1.75rem;
+  gap: 1.25rem;
+}
+
+.faqSectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+/* Hairline rows instead of boxed cards */
+.faqList {
+  gap: 0;
+  border-top: 1px solid var(--surface-border);
+}
+
+.faqItem {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--surface-border);
+  border-radius: 0;
+  overflow: visible;
+}
+
+.faqItem:hover,
+.faqItem.expanded {
+  border-color: var(--surface-border);
+}
+
+.faqQuestionHeader {
+  padding: 1.1rem 0.25rem;
+  font-size: 0.9375rem;
+  border-radius: 8px;
+  transition: color 0.2s ease;
+}
+
+.faqQuestionHeader:hover .faqQuestionText {
+  color: var(--accent-color);
+}
+
+.faqItem.expanded .faqQuestionText {
+  color: var(--text-primary);
+}
+
+.faqChevronIcon {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease;
+}
+
+/* Height animates from 0fr to 1fr, so the duration always matches the real content height */
+.faqAnswerWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  max-height: none;
+  opacity: 0;
+  overflow: visible;
+  transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.faqAnswerWrapper.open {
+  grid-template-rows: 1fr;
+  max-height: none;
+  opacity: 1;
+}
+
+.faqAnswerContent {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  border-top: 0;
+}
+
+.faqAnswerContent p {
+  margin: 0;
+  padding: 0 2rem 1.25rem 0.25rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.helpFooterCard {
+  margin-top: 0.25rem;
+  border-radius: 14px;
+  border-color: color-mix(in srgb, var(--accent-color) 30%, var(--surface-border));
+  background-color: color-mix(in srgb, var(--accent-color) 5%, var(--surface-bg));
+}
+
+@media (max-width: 639px) {
+  .helpModalBackdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .helpModalBox {
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    transform: translateY(24px);
+  }
+
+  .helpModalBox.visible {
+    transform: translateY(0);
+  }
+
+  .helpModalHeader {
+    padding: 1rem 0.85rem 1rem 1.25rem;
+  }
+
+  .helpModalBody {
+    padding: 1rem 1.25rem 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .helpModalBox,
+  .helpModalBox.visible {
+    transform: none;
+    transition: opacity 150ms ease;
+  }
+
+  .faqAnswerWrapper,
+  .faqChevronIcon {
+    transition: none;
   }
 }

@@ -1361,6 +1361,88 @@
   opacity: 1;
 }
 
+/* ---------- Signing-in overlay ---------- */
+.lpSigningIn {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--bg-color) 62%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: lpFade 0.3s ease both;
+}
+
+.lpSigningInCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: min(100%, 360px);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  animation: lpRise 0.5s var(--lp-ease) both;
+}
+
+.lpSigningInLogo {
+  display: block;
+  height: 26px;
+  width: auto;
+}
+
+.lpSigningInBar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--lp-line);
+}
+
+.lpSigningInBar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  border-radius: inherit;
+  background: var(--accent-color);
+  animation: lpIndeterminate 1.3s var(--lp-ease) infinite;
+}
+
+.lpSigningInTitle {
+  color: var(--text-primary);
+  font: 650 1.375rem/1.2 var(--lp-font);
+  letter-spacing: -0.02em;
+}
+
+.lpSigningInText {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+@keyframes lpFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lpIndeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(270%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lpSigningInBar::after {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
+  }
+}
+
 /* ---------- Focus ---------- */
 .lp a:focus-visible,
 .lp button:focus-visible {

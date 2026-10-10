@@ -566,7 +566,7 @@ function LinkAnalyticsPage({ onOpenNewLink, onShortCodeChanged, onOpenAuthModal 
                 {/* Gate message for free users */}
                 {gateMsg && (
                   <span className="customizeMsg" role="status">
-                    Bağlantıyı özelleştirmek için Pro üyelik gereklidir.
+                    {t('customLinkNeedsPlan')}
                   </span>
                 )}
               </>

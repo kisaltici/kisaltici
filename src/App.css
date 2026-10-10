@@ -85,3 +85,10 @@
   min-height: 100dvh;
   background-color: var(--bg-color);
 }
+
+/* No top bar on desktop: sections sized against it must not reserve its height */
+@media (min-width: 769px) {
+  .appLayout {
+    --header-height: 0px;
+  }
+}

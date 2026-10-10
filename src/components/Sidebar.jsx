@@ -1,8 +1,59 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { getPlanDisplayName, isPaidPlan } from '../utils/membership';
+import { getClientLimits, GUEST_LIMITS } from '../config/plans';
+import { hasUsedGuestLinkToday } from '../utils/shortenApi';
+import { isMac } from '../utils/keyboardDefaults';
 import './Sidebar.css';
+
+/* Skeleton placeholders (no spinners) */
+function HistorySkeleton() {
+  return (
+    <div className="sidebarSkeletonList" aria-hidden="true">
+      {[78, 62, 88, 54].map((width, index) => (
+        <div className="skeletonRow" key={index}>
+          <span className="skeletonBar" style={{ width: `${width}%` }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FooterSkeleton({ isCollapsed }) {
+  return (
+    <div className="sidebarProfileSkeleton" aria-hidden="true">
+      <span className="skeletonCircle" />
+      {!isCollapsed && (
+        <span className="skeletonStack">
+          <span className="skeletonBar" style={{ width: '70%' }} />
+          <span className="skeletonBar short" style={{ width: '40%' }} />
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* One quota row: remaining count with a bar that drains as the allowance is used */
+function UsageRow({ label, used, limit, t }) {
+  const left = Math.max(0, limit - used);
+  const ratio = limit > 0 ? left / limit : 0;
+  const state = left === 0 ? 'empty' : ratio <= 0.34 ? 'low' : 'ok';
+  return (
+    <div className="usageRow">
+      <div className="usageRowText">
+        <span className="usageLabel">{label}</span>
+        <span className={`usageLeft ${state}`}>
+          {t('usageLeft', { n: `${left}/${limit}` })}
+        </span>
+      </div>
+      <div className="usageTrack" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={left} aria-label={label}>
+        <span className={`usageFill ${state}`} style={{ width: `${Math.round(ratio * 100)}%` }} />
+      </div>
+    </div>
+  );
+}
 
 function Sidebar({
   historyList,
@@ -20,11 +71,16 @@ function Sidebar({
   isOpen,
   onCloseMobile,
   isCollapsed,
+  onToggleSidebar,
+  onOpenSearch,
+  theme = 'dark',
   userPlan = 'free',
 }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     user,
+    userProfile,
     profileDisplayName,
     profilePhotoURL,
     authLoading,
@@ -32,6 +88,13 @@ function Sidebar({
     signInWithGoogle,
     signOutUser,
   } = useAuth();
+
+  const isDark = theme === 'dark';
+  const isAdminPlan = userPlan === 'admin';
+  const limits = userProfile?.limits || getClientLimits(userPlan);
+  const usage = userProfile?.usage || { links: 0, qr: 0 };
+  const searchHint = isMac ? '⌘ /' : 'Ctrl /';
+  const guestLinkUsed = hasUsedGuestLinkToday();
 
   const [editingCode, setEditingCode] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
@@ -102,7 +165,51 @@ function Sidebar({
           isCollapsed ? 'collapsed' : ''
         }`}
       >
-        {/* Sidebar New Link Header */}
+        {/* Brand row: logo + collapse toggle (desktop). On mobile the top bar provides these. */}
+        <div className="sidebarBrandRow">
+          {!isCollapsed && (
+            <button
+              type="button"
+              className="sidebarBrand"
+              onClick={() => navigate('/')}
+              aria-label="Kısaltıcı"
+            >
+              <img
+                src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'}
+                alt="Kısaltıcı"
+                className="sidebarBrandImg"
+              />
+            </button>
+          )}
+          <button
+            type="button"
+            className="sidebarToggleBtn"
+            onClick={onToggleSidebar}
+            aria-label={isCollapsed ? t('toggleSidebarExpand') : t('toggleSidebarCollapse')}
+            title={isCollapsed ? t('toggleSidebarExpand') : t('toggleSidebarCollapse')}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                transform: isCollapsed ? 'rotate(180deg)' : 'none',
+                transition: 'transform 0.25s ease',
+              }}
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+              <path d="M15 9l-3 3 3 3" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Primary actions */}
         <div className="sidebarHeader">
           <button
             type="button"
@@ -129,6 +236,36 @@ function Sidebar({
             </svg>
             {!isCollapsed && <span>{t('newLink')}</span>}
           </button>
+
+          <button
+            type="button"
+            className="sidebarSearchBtn"
+            onClick={() => {
+              if (onOpenSearch) onOpenSearch();
+              if (onCloseMobile) onCloseMobile();
+            }}
+            title={t('search')}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            {!isCollapsed && (
+              <>
+                <span>{t('search')}</span>
+                <kbd className="sidebarKbd">{searchHint}</kbd>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Sidebar Content (Link History - Hidden when collapsed) */}
@@ -137,13 +274,11 @@ function Sidebar({
             <>
               <div className="historySectionHeader">
                 <span className="historyTitle">{t('recentLinks')}</span>
-                {user && <span className="historyCount">{historyList.length}</span>}
+                {user && !isHistoryLoading && <span className="historyCount">{historyList.length}</span>}
               </div>
 
               {authLoading || authTransitioning ? (
-                <div className="sidebarHistoryLoading">
-                  <div className="sidebarHistorySpinner" />
-                </div>
+                <HistorySkeleton />
               ) : !user ? (
                 <div
                   className="guestHistoryNoticeCard"
@@ -167,9 +302,7 @@ function Sidebar({
                   <span>{t('guestHistoryNotice')}</span>
                 </div>
               ) : isHistoryLoading ? (
-                <div className="sidebarHistoryLoading">
-                  <div className="sidebarHistorySpinner" />
-                </div>
+                <HistorySkeleton />
               ) : historyList.length === 0 ? (
                 <div className="emptyHistoryMessage">
                   {t('noRecentLinks')}
@@ -303,12 +436,52 @@ function Sidebar({
           )}
         </div>
 
+        {/* Daily allowance (remaining links / QR codes) */}
+        {!isCollapsed && !(authLoading || authTransitioning) && (
+          <div className="sidebarUsage">
+            {user && !userProfile ? (
+              <div className="usageSkeleton" aria-hidden="true">
+                <span className="skeletonBar" style={{ width: '45%' }} />
+                <span className="skeletonBar" style={{ width: '100%', height: 6 }} />
+                <span className="skeletonBar" style={{ width: '100%', height: 6 }} />
+              </div>
+            ) : user ? (
+              isAdminPlan || limits.dailyLinks === null || limits.dailyQr === null ? (
+                <div className="usageUnlimited">
+                  <span className="usageTitle">{t('usageTitle')}</span>
+                  <span className="usageUnlimitedValue">∞ {t('usageUnlimited')}</span>
+                </div>
+              ) : (
+                <>
+                  <div className="usageHead">
+                    <span className="usageTitle">{t('usageTitle')}</span>
+                    <span className="usageReset">{t('usageResets')}</span>
+                  </div>
+                  <UsageRow label={t('usageLinks')} used={usage.links} limit={limits.dailyLinks} t={t} />
+                  <UsageRow label={t('usageQr')} used={usage.qr} limit={limits.dailyQr} t={t} />
+                </>
+              )
+            ) : (
+              <>
+                <div className="usageHead">
+                  <span className="usageTitle">{t('usageGuestTitle')}</span>
+                </div>
+                <UsageRow
+                  label={t('usageLinks')}
+                  used={guestLinkUsed ? GUEST_LIMITS.dailyLinks : 0}
+                  limit={GUEST_LIMITS.dailyLinks}
+                  t={t}
+                />
+                <p className="usageHint">{t('usageGuestHint')}</p>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Sidebar Bottom ChatGPT-style Profile Section */}
         <div className="sidebarFooter" ref={userMenuRef}>
           {authLoading || authTransitioning ? (
-            <div className="sidebarFooterSkeleton">
-              <div className="sidebarFooterSpinner" />
-            </div>
+            <FooterSkeleton isCollapsed={isCollapsed} />
           ) : user ? (
             <div className="sidebarProfileWrapper">
               <div
@@ -606,7 +779,19 @@ function Sidebar({
                 {!isCollapsed && <span>{t('help')}</span>}
               </button>
 
-              {/* 4. Oturum Aç */}
+              {/* 4. Ücretsiz kaydol */}
+              {!isCollapsed && (
+                <button
+                  type="button"
+                  className="sidebarSignUpBtn"
+                  onClick={() => onOpenAuthModal && onOpenAuthModal('register')}
+                  disabled={authLoading}
+                >
+                  {t('signUpFree')}
+                </button>
+              )}
+
+              {/* 5. Oturum Aç */}
               <button
                 type="button"
                 className="sidebarNavItem sidebarSignInBtn"

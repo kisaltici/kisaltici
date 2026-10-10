@@ -475,18 +475,24 @@
   height: 36px;
 }
 
-.headerAuthSpinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--surface-border);
-  border-top-color: var(--accent-color);
+.headerAuthSkeleton {
+  display: block;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  animation: headerSpin 0.75s linear infinite;
+  background: linear-gradient(
+    90deg,
+    var(--badge-bg) 25%,
+    color-mix(in srgb, var(--text-muted) 24%, var(--badge-bg)) 50%,
+    var(--badge-bg) 75%
+  );
+  background-size: 220% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
 
-@keyframes headerSpin {
-  to {
-    transform: rotate(360deg);
+@media (prefers-reduced-motion: reduce) {
+  .headerAuthSkeleton {
+    animation: none;
   }
 }
 
@@ -525,3 +531,10 @@
   opacity: 1;
 }
 
+
+/* Desktop: the sidebar carries the logo, search and collapse button; the top bar is mobile-only */
+@media (min-width: 769px) {
+  .header {
+    display: none;
+  }
+}

@@ -627,7 +627,8 @@ function AppContent() {
 
   // Signed-out visitors on the root path see the marketing landing page instead of the app shell
   if (location.pathname === '/' && !user) {
-    if ((authLoading && !authWaitExpired) || authTransitioning) {
+    // Only the very first auth check shows the placeholder; sign-in keeps the landing page visible
+    if (authLoading && !authWaitExpired) {
       return <div className="landingSplash" aria-hidden="true" />;
     }
     return (
@@ -637,6 +638,7 @@ function AppContent() {
           onToggleTheme={handleToggleTheme}
           onShortened={handleUrlShortened}
           onOpenAuthModal={handleOpenAuthModal}
+          isSigningIn={authTransitioning}
         />
         <AuthModal
           isOpen={isAuthModalOpen}
@@ -680,6 +682,9 @@ function AppContent() {
           isOpen={isMobileSidebarOpen}
           isCollapsed={isSidebarCollapsed}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          onToggleSidebar={handleToggleSidebar}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          theme={theme}
         />
 
         <main className="mainContent">

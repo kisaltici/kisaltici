@@ -25,18 +25,17 @@
 }
 
 .sidebarHeader {
-  padding: 1rem 0.75rem 0.75rem;
+  padding: 0.25rem 0.75rem 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  border-bottom: 1px solid var(--surface-border);
 }
 
 .newLinkBtn {
   width: 100%;
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-  border: 1px dashed var(--input-border);
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: 1px solid transparent;
   font-size: 0.875rem;
   font-weight: 600;
   padding: 0.625rem 0.75rem;
@@ -46,7 +45,11 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.newLinkBtn:active {
+  transform: scale(0.98);
 }
 
 .sidebar.collapsed .newLinkBtn {
@@ -58,9 +61,7 @@
 }
 
 .newLinkBtn:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  background-color: var(--badge-bg);
+  background-color: var(--accent-hover);
 }
 
 .plusSvg {
@@ -142,27 +143,7 @@
   line-height: 1.35;
 }
 
-.sidebarHistoryLoading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem 0.5rem;
-}
 
-.sidebarHistorySpinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--surface-border);
-  border-top-color: var(--accent-color);
-  border-radius: 50%;
-  animation: sidebarSpin 0.75s linear infinite;
-}
-
-@keyframes sidebarSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 .historyList {
   display: flex;
@@ -191,8 +172,9 @@
 
 .historyItemRow.active {
   background-color: var(--badge-bg);
-  color: var(--accent-color);
+  color: var(--text-primary);
   font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--accent-color);
 }
 
 .historyItemTitle {
@@ -474,22 +456,7 @@
   color: var(--accent-color);
 }
 
-.sidebarFooterSkeleton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 0.5rem;
-  min-height: 44px;
-}
 
-.sidebarFooterSpinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--surface-border);
-  border-top-color: var(--accent-color);
-  border-radius: 50%;
-  animation: sidebarSpin 0.75s linear infinite;
-}
 
 .sidebarUpgradeBtn {
   background-color: var(--action-btn-bg);
@@ -635,5 +602,315 @@
     max-width: 240px;
     left: 0.5rem;
     bottom: calc(100% + 6px);
+  }
+}
+
+/* ---------- Brand row (desktop only; mobile uses the top bar) ---------- */
+.sidebarBrandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 0.75rem 0 1rem;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .sidebarBrandRow {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebarBrand {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.1rem;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sidebarBrandImg {
+  display: block;
+  height: 22px;
+  width: auto;
+}
+
+.sidebarToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebarToggleBtn:hover {
+  background-color: var(--badge-bg);
+  color: var(--text-primary);
+}
+
+/* ---------- Search row ---------- */
+.sidebarSearchBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.sidebarSearchBtn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+  background-color: var(--badge-bg);
+}
+
+.sidebarSearchBtn svg {
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .sidebarSearchBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.sidebarKbd {
+  margin-left: auto;
+  padding: 1px 6px;
+  border: 1px solid var(--surface-border);
+  border-radius: 6px;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Daily allowance ---------- */
+.sidebarUsage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0 0.5rem 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+}
+
+.usageHead,
+.usageUnlimited {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.usageTitle {
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.usageReset {
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+}
+
+.usageUnlimitedValue {
+  color: var(--accent-color);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.usageRowText {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+}
+
+.usageLabel {
+  color: var(--text-secondary);
+}
+
+.usageLeft {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.usageLeft.low {
+  color: #f59e0b;
+}
+
+.usageLeft.empty {
+  color: var(--error-text);
+}
+
+.usageTrack {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: var(--badge-bg);
+}
+
+.usageFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--accent-color);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+}
+
+.usageFill.low {
+  background-color: #f59e0b;
+}
+
+.usageFill.empty {
+  background-color: var(--error-text);
+}
+
+.usageHint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+
+/* ---------- Guest sign-up button ---------- */
+.sidebarSignUpBtn {
+  width: 100%;
+  margin: 0.25rem 0;
+  padding: 0.6rem 0.75rem;
+  background-color: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: 0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.sidebarSignUpBtn:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.sidebarSignUpBtn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ---------- Skeletons (replace spinners) ---------- */
+.skeletonBar,
+.skeletonCircle {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--badge-bg) 25%,
+    color-mix(in srgb, var(--text-muted) 24%, var(--badge-bg)) 50%,
+    var(--badge-bg) 75%
+  );
+  background-size: 220% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+.skeletonBar {
+  height: 10px;
+  border-radius: 6px;
+}
+
+.skeletonCircle {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.sidebarSkeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem 0;
+}
+
+.skeletonRow {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 0.75rem;
+}
+
+.sidebarProfileSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.25rem 0.35rem;
+}
+
+.sidebar.collapsed .sidebarProfileSkeleton {
+  justify-content: center;
+}
+
+.skeletonStack {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 7px;
+}
+
+@keyframes skeletonShimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonBar,
+  .skeletonCircle {
+    animation: none;
+  }
+}
+
+/* On mobile the top bar carries the logo and the menu button */
+@media (max-width: 768px) {
+  .sidebarBrandRow {
+    display: none;
+  }
+
+  .sidebarHeader {
+    padding-top: 0.75rem;
+  }
+}
+
+.usageSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+@media (max-width: 768px) {
+  .sidebarKbd {
+    display: none;
   }
 }

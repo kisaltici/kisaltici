@@ -186,7 +186,7 @@ function Header({
 
           {isAuthInitializing ? (
             <div className="headerAuthLoading">
-              <span className="headerAuthSpinner" />
+              <span className="headerAuthSkeleton" aria-hidden="true" />
             </div>
           ) : (
             <div className="headerAuthContainer">

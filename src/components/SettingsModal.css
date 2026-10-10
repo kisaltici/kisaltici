@@ -446,8 +446,8 @@
 .themeGroupSubhead {
   font-size: 0.78rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--text-muted);
   margin-top: 0.5rem;
   display: flex;
@@ -1176,5 +1176,177 @@
   .colorThemeGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.65rem;
+  }
+}
+
+
+/* ==========================================================================
+   Design v2: shared modal language (also used by the Help modal)
+   - 20px container radius, 12px controls, hairlines instead of boxed rows
+   - fixed height so switching tabs never resizes the dialog
+   ========================================================================== */
+.settingsModalBackdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.settingsModalBox {
+  width: min(96%, 880px);
+  max-width: 880px;
+  height: min(640px, calc(100dvh - 32px));
+  border-radius: 20px;
+  transform: translateY(8px) scale(0.985);
+}
+
+.settingsModalBox.visible {
+  transform: translateY(0) scale(1);
+}
+
+.settingsModalHeader {
+  padding: 1.1rem 1.25rem 1.1rem 1.75rem;
+}
+
+.settingsModalTitle {
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.settingsCloseBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.settingsModalLayout {
+  flex: 1;
+  min-height: 0;
+}
+
+.settingsNav {
+  width: 232px;
+  padding: 1rem 0.75rem;
+  background-color: color-mix(in srgb, var(--bg-color) 45%, var(--surface-bg));
+}
+
+.settingsSearchInput {
+  border-radius: 10px;
+}
+
+.settingsNavItem {
+  position: relative;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+}
+
+.settingsNavItem.active {
+  background-color: var(--badge-bg);
+}
+
+.settingsNavItem.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 3px;
+  border-radius: 3px;
+  background-color: var(--accent-color);
+}
+
+.settingsContent {
+  padding: 1.75rem 2rem 2rem;
+  max-height: none;
+  min-height: 0;
+}
+
+.settingsPaneHeader {
+  margin-bottom: 1.5rem;
+}
+
+.settingsPaneTitle {
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.settingsPaneDesc {
+  font-size: 0.9rem;
+}
+
+.settingsRow {
+  padding: 1.05rem 0;
+}
+
+.settingsLabel {
+  font-size: 0.9375rem;
+}
+
+.settingsSubtext {
+  font-size: 0.8125rem;
+}
+
+.settingsSelect {
+  border-radius: 10px;
+  padding: 0.55rem 2.25rem 0.55rem 0.9rem;
+}
+
+.settingsPromoCard {
+  border-radius: 14px;
+  border-color: color-mix(in srgb, var(--accent-color) 38%, var(--input-border));
+  background-color: color-mix(in srgb, var(--accent-color) 6%, var(--input-bg));
+}
+
+.settingsPromoBtn {
+  border-radius: 10px;
+}
+
+/* Mobile: the dialog becomes a bottom sheet */
+@media (max-width: 639px) {
+  .settingsModalBackdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .settingsModalBox {
+    width: 100%;
+    max-width: none;
+    height: min(92dvh, 760px);
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    transform: translateY(24px);
+  }
+
+  .settingsModalBox.visible {
+    transform: translateY(0);
+  }
+
+  .settingsModalHeader {
+    padding: 0.9rem 0.85rem 0.9rem 1.25rem;
+  }
+
+  .settingsNav {
+    background-color: var(--surface-bg);
+  }
+
+  .settingsNavItem.active::before {
+    display: none;
+  }
+
+  .settingsContent {
+    padding: 1.25rem 1.1rem 1.5rem;
+    max-height: none;
+  }
+
+  .settingsPaneTitle {
+    font-size: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settingsModalBox,
+  .settingsModalBox.visible {
+    transition: opacity 150ms ease;
+    transform: none;
   }
 }

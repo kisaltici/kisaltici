@@ -99,7 +99,7 @@ function Icon({ name }) {
   }
 }
 
-function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal }) {
+function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, isSigningIn = false }) {
   const { t, lang, setLanguageMode } = useTranslation();
   const { signInWithGoogle, getIdToken } = useAuth();
   const copy = LANDING_COPY[lang] || LANDING_COPY.en;
@@ -819,6 +819,22 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal }) {
           </div>
         </section>
       </main>
+
+      {/* Shown while the Google window is open / the account is being signed in */}
+      {isSigningIn && (
+        <div className="lpSigningIn" role="status" aria-live="polite">
+          <div className="lpSigningInCard lpGlass">
+            <img
+              src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'}
+              alt="Kısaltıcı"
+              className="lpSigningInLogo"
+            />
+            <span className="lpSigningInBar" aria-hidden="true" />
+            <h2 className="lpSigningInTitle">{t('signingInTitle')}</h2>
+            <p className="lpSigningInText">{t('signingInText')}</p>
+          </div>
+        </div>
+      )}
 
       <footer className="lpFooter">
         <div className="lpFooterInner">

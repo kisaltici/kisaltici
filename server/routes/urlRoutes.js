@@ -544,7 +544,7 @@ router.patch('/urls/:shortCode/rename', requireAuth, async (req, res, next) => {
     if (!getLimits(await resolvePlan(req.user)).customLinks) {
       return res.status(403).json({
         success: false,
-        error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
+        error: 'Bağlantıyı özelleştirmek için Profesyonel veya üzeri bir plan gereklidir.',
       });
     }
 
@@ -692,7 +692,7 @@ router.patch('/urls/:shortCode/restore', requireAuth, async (req, res, next) => 
     if (!getLimits(await resolvePlan(req.user)).customLinks) {
       return res.status(403).json({
         success: false,
-        error: 'Bağlantıyı özelleştirmek için Pro üyelik gereklidir.',
+        error: 'Bağlantıyı özelleştirmek için Profesyonel veya üzeri bir plan gereklidir.',
       });
     }
 
