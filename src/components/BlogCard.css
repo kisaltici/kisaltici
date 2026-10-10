@@ -21,7 +21,7 @@
   aspect-ratio: 24 / 9;
   overflow: hidden;
   border-bottom: 1px solid var(--surface-border);
-  background: color-mix(in srgb, var(--accent-color) 5%, var(--bg-color));
+  background: color-mix(in srgb, var(--accent-color) 3%, var(--surface-bg));
 }
 
 .bcCoverArt {
@@ -30,11 +30,14 @@
   width: 100%;
   height: 100%;
   fill: var(--accent-color);
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  /* The texture dissolves towards the edges so it never reads as a hard pattern */
+  -webkit-mask-image: radial-gradient(120% 140% at 78% 35%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(120% 140% at 78% 35%, #000 25%, transparent 78%);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bcCard:hover .bcCoverArt {
-  transform: scale(1.06) translateX(-1.5%);
+  transform: scale(1.03);
 }
 
 .bcCategory {
@@ -43,9 +46,9 @@
   bottom: 0.8rem;
   padding: 0.3rem 0.6rem;
   border-radius: 7px;
-  background: var(--bg-color);
-  color: var(--text-primary);
-  font: 600 0.6875rem/1 'Geist Mono', ui-monospace, monospace;
+  background: color-mix(in srgb, var(--bg-color) 80%, transparent);
+  color: var(--text-secondary);
+  font: 500 0.6875rem/1 'Geist Mono', ui-monospace, monospace;
   letter-spacing: 0.02em;
 }
 
