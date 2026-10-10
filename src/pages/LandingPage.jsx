@@ -260,7 +260,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
         const qa = (selector) => gsap.utils.toArray(selector, root);
 
         // Hero card drifts up and tilts as the page is scrolled away from it
-        [['.lpHvMain', -10], ['.lpHvQr', -26], ['.lpHvStats', -16]].forEach(([target, shift]) => {
+        (wide ? [['.lpHvMain', -10], ['.lpHvQr', -26], ['.lpHvStats', -16]] : []).forEach(([target, shift]) => {
           gsap.to(target, {
             yPercent: shift,
             ease: 'none',
@@ -484,35 +484,6 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
     <div className="lp" ref={rootRef}>
       <div ref={sentinelRef} className="lpSentinel" aria-hidden="true" />
 
-      {showLangHint && (
-        <div className="lpLangHint" role="note">
-          <span>{lang === 'tr' ? 'This page is also available in English.' : 'Bu sayfanın Türkçe sürümü de var.'}</span>
-          <a
-            href={homePath(browserLang)}
-            onClick={(event) => {
-              event.preventDefault();
-              navigate(homePath(browserLang));
-            }}
-          >
-            {browserLang === 'en' ? 'View in English' : 'Türkçe görüntüle'}
-          </a>
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => {
-              setHintDismissed(true);
-              try {
-                localStorage.setItem('kslt_lang_hint', '1');
-              } catch {
-                /* storage unavailable */
-              }
-            }}
-          >
-            ×
-          </button>
-        </div>
-      )}
-
       {/* NAVIGATION */}
       <header className={`lpNavWrap ${isScrolled ? 'isScrolled' : ''}`}>
         <nav className="lpNav" aria-label="Main">
@@ -566,6 +537,37 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
           </div>
         </nav>
       </header>
+      <div className="lpNavSpacer" aria-hidden="true" />
+
+      {showLangHint && (
+        <div className="lpLangHint" role="note">
+          <span>{lang === 'tr' ? 'This page is also available in English.' : 'Bu sayfanın Türkçe sürümü de var.'}</span>
+          <a
+            href={homePath(browserLang)}
+            onClick={(event) => {
+              event.preventDefault();
+              navigate(homePath(browserLang));
+            }}
+          >
+            {browserLang === 'en' ? 'View in English' : 'Türkçe görüntüle'}
+          </a>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => {
+              setHintDismissed(true);
+              try {
+                localStorage.setItem('kslt_lang_hint', '1');
+              } catch {
+                /* storage unavailable */
+              }
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
 
       <main id="top">
         {/* HERO */}

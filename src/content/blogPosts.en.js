@@ -3,6 +3,133 @@
  * slug (English URL), title, description, highlights and sections in the same shape as the Turkish source.
  */
 export const POSTS_EN = {
+  'kisa-link-nasil-olusturulur': {
+    slug: 'how-to-create-a-short-link',
+    seoTitle: 'How to Create a Short Link, Step by Step',
+    title: 'How to Create a Short Link: A Step-by-Step Guide and Things to Watch For',
+    description:
+      'The steps to create a short link from a long address, tips for copying and sharing, click tracking and common mistakes. An example flow with Kısaltıcı.',
+    highlights: [
+      'To create a short link, copy the long address and paste it into a shortening service.',
+      'After creating it, test the link and use a separate short link for each channel.',
+      'Watch the click count to see which channel works.',
+    ],
+    sections: [
+      {
+        p: [
+          'Sharing a long web address is a hassle: it breaks in messages, looks messy in a bio and invites typing mistakes. A short link solves this. Here is how to create one from start to finish.',
+        ],
+      },
+      {
+        h: '1. Prepare the long address',
+        p: [
+          'Copy the full address of the page you want to share from your browser’s address bar. Make sure it starts with https:// and that the page opens. If you will track a campaign, you can prepare the address with UTM tags first.',
+        ],
+      },
+      {
+        h: '2. Paste it into the shortening service',
+        p: [
+          'On Kısaltıcı, after starting a plan and signing in, paste the address into the box on the main screen and choose to shorten it. If you like, you can create a QR code for the same address, and on the Professional and Business plans you can write the end of the address yourself.',
+        ],
+      },
+      {
+        h: '3. Copy and test',
+        list: [
+          'Copy the short link that is created.',
+          'Open it in a new tab and check that it goes to the right page.',
+          'Open it on mobile too: does the page look fast and tidy?',
+        ],
+      },
+      {
+        h: '4. Share',
+        list: [
+          'Social media bios and post descriptions',
+          'Email, messages and newsletters',
+          'As a QR code on printed materials',
+        ],
+      },
+      {
+        h: '5. Track the clicks',
+        p: [
+          'On each link’s own page you see the total clicks, the last click and the distribution over time. If you create separate short links for different channels, you can easily compare which channel gets more interest.',
+        ],
+      },
+      {
+        h: 'Common mistakes',
+        list: [
+          'Sharing the link without testing it.',
+          'Using the same short link in every channel and blurring the measurement.',
+          'Copying the destination wrongly: a short link’s destination cannot be changed later, so you would need to create a new link.',
+          'Pointing to a temporary page that will expire.',
+        ],
+      },
+    ],
+  },
+
+  'link-kisaltici-secerken-kriterler': {
+    slug: 'choosing-a-link-shortener',
+    seoTitle: '7 Criteria for Choosing a Link Shortener',
+    title: '7 Criteria for Choosing a Link Shortener: Which Service Should You Use?',
+    description:
+      'Learn seven criteria to check when choosing a link shortening service: security, continuity, measurement, QR codes, custom links and price.',
+    highlights: [
+      'The most important criterion is that links keep working for a long time.',
+      'Choose a plan by your need for measurement, QR codes and custom links.',
+      'Prefer a service with abuse monitoring and transparent pricing.',
+    ],
+    sections: [
+      {
+        p: [
+          'There are many link shortening services. Even if they all seem to do the same job, the differences can have big consequences for printed materials, campaigns or your brand’s reputation. Look at these seven criteria when choosing.',
+        ],
+      },
+      {
+        h: '1. Continuity: how long do links live?',
+        p: [
+          'If a short link is printed on a business card or poster, it needs to work for years. Check that the service keeps links working until the user deletes them and does not set a time limit.',
+        ],
+      },
+      {
+        h: '2. Security and abuse monitoring',
+        p: [
+          'A service that monitors for phishing and harmful content and offers abuse reporting protects both you and your visitors. A domain’s reputation depends on the care taken here.',
+        ],
+      },
+      {
+        h: '3. Click measurement',
+        p: [
+          'Check information such as total clicks, the distribution over time and, if needed, how far back the history goes. Measurement is the basis for improving your campaigns.',
+        ],
+      },
+      {
+        h: '4. QR code support',
+        p: [
+          'If you use printed materials, a service that can create QR codes and offers customization such as color, shape and logo makes your job easier. When the QR code points to the short link, scans are counted.',
+        ],
+      },
+      {
+        h: '5. Custom links',
+        p: [
+          'For brand recognition, being able to write the end of the address yourself can matter. A custom link means memorable, trust-building addresses.',
+        ],
+      },
+      {
+        h: '6. Transparent pricing',
+        list: [
+          'See the plan limits (daily links, QR codes, statistics period) clearly.',
+          'Learn the trial period and cancellation terms in advance.',
+          'Check payment security and invoice details.',
+        ],
+      },
+      {
+        h: '7. Support and legal transparency',
+        p: [
+          'Choose a provider that clearly publishes who runs the service, its privacy policy and its terms of use. If contact details and refund terms are unclear, you will struggle when a problem comes up.',
+        ],
+      },
+    ],
+  },
+
   'etkinlik-daveti-qr-kod': {
     slug: 'qr-code-for-event-invitations',
     seoTitle: 'QR Codes for Event Invitations',

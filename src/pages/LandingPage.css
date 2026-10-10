@@ -51,6 +51,10 @@
   pointer-events: none;
 }
 
+.lpNavSpacer {
+  display: none;
+}
+
 .lpSentinel {
   position: absolute;
   top: 48px; /* the nav changes style 48px below the top, so iOS rubber-band overscroll never flips it back and forth */
@@ -2041,9 +2045,25 @@
     background: var(--surface-bg);
   }
 
+  /* A fixed bar does not stutter during momentum scrolling the way a sticky one can; the spacer keeps its place */
   .lpNavWrap {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .lpNavSpacer {
+    display: block;
+    height: 76px;
+  }
+
+  /* Endless decorative drifting is dropped on touch devices (less work while scrolling) */
+  .lpHvMain,
+  .lpHvQr,
+  .lpHvStats {
+    animation: none;
+    will-change: auto;
   }
 }
 

@@ -31,6 +31,8 @@ const LINK_TERMS = {
     'etkinlik-daveti-qr-kod': ['davetiye', 'davet'],
     'kisa-linkler-nasil-calisir': ['yönlendirme'],
     'qr-kod-ile-yol-tarifi': ['yol tarifi', 'konum'],
+    'kisa-link-nasil-olusturulur': ['kısa link oluştur', 'kısa bağlantı oluştur'],
+    'link-kisaltici-secerken-kriterler': ['link kısaltıcı', 'kısaltma hizmeti'],
   },
   en: {
     'qr-kod-nasil-olusturulur': ['create a QR code', 'creating a QR code', 'QR code creation', 'QR code'],
@@ -56,6 +58,8 @@ const LINK_TERMS = {
     'etkinlik-daveti-qr-kod': ['invitation', 'invitations'],
     'kisa-linkler-nasil-calisir': ['redirect'],
     'qr-kod-ile-yol-tarifi': ['directions', 'location'],
+    'kisa-link-nasil-olusturulur': ['create a short link', 'creating a short link'],
+    'link-kisaltici-secerken-kriterler': ['link shortener', 'shortening service'],
   },
 };
 

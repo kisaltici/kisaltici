@@ -10,6 +10,137 @@
  */
 export const POSTS_TR = [
   {
+    slug: 'kisa-link-nasil-olusturulur',
+    seoTitle: 'Kısa Link Nasıl Oluşturulur? Adım Adım',
+    title: 'Kısa Link Nasıl Oluşturulur? Adım Adım Rehber ve Dikkat Edilecek Noktalar',
+    description:
+      'Uzun bir adresten kısa link oluşturmanın adımları, kopyalama ve paylaşma ipuçları, tıklama takibi ve sık yapılan hatalar. Kısaltıcı ile örnek akış.',
+    date: '2026-10-10',
+    readMinutes: 4,
+    category: 'Rehber',
+    highlights: [
+      'Kısa link oluşturmak için uzun adresi kopyalayıp bir kısaltma hizmetine yapıştırman yeterli.',
+      'Oluşturduktan sonra bağlantıyı test et ve her kanal için ayrı bir kısa link kullan.',
+      'Tıklama sayısını izleyerek hangi kanalın işe yaradığını gör.',
+    ],
+    sections: [
+      {
+        p: [
+          'Uzun bir web adresini paylaşmak zahmetlidir: mesajda kırılır, biyografide dağınık görünür, yazarken hata yapılır. Kısa link bu sorunu çözer. İşte bir kısa linki baştan sona nasıl oluşturacağın.',
+        ],
+      },
+      {
+        h: '1. Uzun adresi hazırla',
+        p: [
+          'Paylaşmak istediğin sayfanın tam adresini tarayıcının adres çubuğundan kopyala. Adresin https:// ile başladığından ve sayfanın açıldığından emin ol. Kampanya takibi yapacaksan adresi önce UTM etiketleriyle hazırlayabilirsin.',
+        ],
+      },
+      {
+        h: '2. Kısaltma hizmetine yapıştır',
+        p: [
+          'Kısaltıcı’da bir plan başlatıp giriş yaptıktan sonra ana ekrandaki kutuya adresi yapıştır ve kısaltmayı seç. İstersen aynı adres için bir QR kod oluşturabilir, Profesyonel ve Kurumsal planlarda adresin sonunu kendin belirleyebilirsin.',
+        ],
+      },
+      {
+        h: '3. Kopyala ve test et',
+        list: [
+          'Oluşan kısa bağlantıyı kopyala.',
+          'Yeni bir sekmede aç ve doğru sayfaya gittiğini kontrol et.',
+          'Mobilde de aç: sayfa hızlı ve düzgün görünüyor mu?',
+        ],
+      },
+      {
+        h: '4. Paylaş',
+        list: [
+          'Sosyal medya biyografisi ve gönderi açıklamaları',
+          'E-posta, mesaj ve bültenler',
+          'Basılı materyalde QR kod olarak',
+        ],
+      },
+      {
+        h: '5. Tıklamaları takip et',
+        p: [
+          'Her bağlantının kendi sayfasında toplam tıklama, son tıklama ve zaman içindeki dağılımı görürsün. Farklı kanallar için ayrı kısa linkler oluşturursan hangi kanalın daha çok ilgi gördüğünü kolayca karşılaştırırsın.',
+        ],
+      },
+      {
+        h: 'Sık yapılan hatalar',
+        list: [
+          'Bağlantıyı test etmeden paylaşmak.',
+          'Tüm kanallarda aynı kısa linki kullanıp ölçümü bulanıklaştırmak.',
+          'Hedef adresi yanlış kopyalamak: kısa linkin hedefi sonradan değiştirilemez, yanlışsa yeni bir link oluşturman gerekir.',
+          'Süresi dolacak geçici bir sayfaya bağlamak.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'link-kisaltici-secerken-kriterler',
+    seoTitle: 'Link Kısaltıcı Seçerken 7 Kriter',
+    title: 'Link Kısaltıcı Seçerken Dikkat Edilecek 7 Kriter: Hangi Hizmeti Kullanmalısın?',
+    description:
+      'Bir link kısaltma hizmeti seçerken güvenlik, süreklilik, ölçüm, QR kod, özel bağlantı ve fiyat gibi bakman gereken yedi kriteri öğren.',
+    date: '2026-10-10',
+    readMinutes: 5,
+    category: 'Temel Bilgi',
+    highlights: [
+      'En önemli kriter, bağlantıların uzun süre çalışmaya devam etmesidir.',
+      'Ölçüm, QR kod ve özel bağlantı ihtiyacına göre plan seç.',
+      'Güvenlik ve kötüye kullanım denetimi olan, şeffaf fiyatlı bir hizmet tercih et.',
+    ],
+    sections: [
+      {
+        p: [
+          'Piyasada çok sayıda link kısaltma hizmeti var. Hepsi aynı işi yapıyor gibi görünse de aralarındaki farklar basılı materyalde, kampanyada veya markanın itibarında büyük sonuçlar doğurabilir. Seçerken şu yedi kritere bak.',
+        ],
+      },
+      {
+        h: '1. Süreklilik: bağlantılar ne kadar yaşar?',
+        p: [
+          'Bir kısa bağlantı kartvizite veya afişe basıldıysa yıllarca çalışması gerekir. Hizmetin, kullanıcı silmedikçe bağlantıları çalışır tuttuğunu ve süre sınırı koymadığını doğrula.',
+        ],
+      },
+      {
+        h: '2. Güvenlik ve kötüye kullanım denetimi',
+        p: [
+          'Kimlik avı ve zararlı içeriğe karşı denetim yapan, kötüye kullanım bildirimi sunan bir hizmet hem seni hem ziyaretçilerini korur. Bir alan adının itibarı bu konudaki özene bağlıdır.',
+        ],
+      },
+      {
+        h: '3. Tıklama ölçümü',
+        p: [
+          'Toplam tıklama, zaman içindeki dağılım ve gerekirse ölçüm süresi (geçmiş) gibi bilgileri kontrol et. Ölçüm, kampanyalarını iyileştirmenin temelidir.',
+        ],
+      },
+      {
+        h: '4. QR kod desteği',
+        p: [
+          'Basılı materyal kullanıyorsan QR kod oluşturabilen ve renk, şekil, logo gibi özelleştirme sunan bir hizmet işini kolaylaştırır. QR kodun kısa bağlantıya işaret etmesi, taramaların sayılmasını sağlar.',
+        ],
+      },
+      {
+        h: '5. Özel bağlantı',
+        p: [
+          'Marka bilinirliği için adresin sonunu kendin yazabilmen önemli olabilir. Özel bağlantı, akılda kalan ve güven veren adresler demektir.',
+        ],
+      },
+      {
+        h: '6. Şeffaf fiyatlandırma',
+        list: [
+          'Planların limitlerini (günlük bağlantı, QR kod, istatistik süresi) açıkça gör.',
+          'Deneme süresi ve iptal koşullarını önceden öğren.',
+          'Ödeme güvenliği ve fatura bilgilerini kontrol et.',
+        ],
+      },
+      {
+        h: '7. Destek ve yasal şeffaflık',
+        p: [
+          'Hizmeti kimin sunduğunu, gizlilik ve kullanım koşullarını açıkça yayımlayan bir sağlayıcı seç. İletişim bilgisi ve iade koşulları net değilse sorun çıktığında zorlanırsın.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'etkinlik-daveti-qr-kod',
     seoTitle: 'Etkinlik Daveti İçin QR Kod',
     title: 'Etkinlik Daveti İçin QR Kod: Katılımcıyı Tek Taramayla Kayıt ve Konuma Yönlendir',
