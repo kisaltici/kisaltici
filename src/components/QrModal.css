@@ -933,3 +933,137 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Detail level slider */
+.qrxLevel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem 1.05rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  background: var(--surface-bg);
+}
+
+.qrxLevelHead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.qrxLevelHead strong {
+  color: var(--text-primary);
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.qrxLevelBadge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent-color) 16%, transparent);
+  color: var(--accent-color);
+  font: 600 0.6875rem/1 'Geist Mono', ui-monospace, monospace;
+}
+
+.qrxLevelRange {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.qrxLevelRange::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--accent-color) var(--fill, 0%), var(--surface-border) var(--fill, 0%));
+}
+
+.qrxLevelRange::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-border);
+}
+
+.qrxLevelRange::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-color);
+}
+
+.qrxLevelRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border: 3px solid var(--bg-color);
+  border-radius: 50%;
+  background: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color), 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.qrxLevelRange::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--bg-color);
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+.qrxLevelRange:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.qrxLevelTicks {
+  display: flex;
+  justify-content: space-between;
+  margin: -0.15rem -0.2rem 0;
+}
+
+.qrxLevelTick {
+  padding: 0.25rem 0.2rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.qrxLevelTick.isOn {
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+.qrxLevelDesc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.qrxLevelStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.qrxLevelStats span {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font: 500 0.75rem/1 'Geist Mono', ui-monospace, monospace;
+}
+
+.qrxLevelNote {
+  margin: 0;
+}

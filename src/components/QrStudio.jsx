@@ -187,6 +187,69 @@ function Segmented({ label, options, value, onChange, stacked = false }) {
   );
 }
 
+const LEVEL_PERCENT = { L: 7, M: 15, Q: 25, H: 30 };
+
+/** Detail level as one slider: plain-language names, a live description and the real numbers (grid size, damage tolerance). */
+function LevelPicker({ value, onChange, gridSizes, hasLogo }) {
+  const { t } = useTranslation();
+  const index = Math.max(0, COMPLEXITY.findIndex((c) => c.id === value));
+  const current = COMPLEXITY[index];
+  const key = current.tag;
+  const names = t('qrLevelName');
+  const descriptions = t('qrLevelDesc');
+  const size = gridSizes[key];
+  const logoRaised = hasLogo && key === 'L';
+
+  return (
+    <div className="qrxField">
+      <span className="qrxFieldLabel">{t('qrComplexityTitle')}</span>
+
+      <div className="qrxLevel">
+        <div className="qrxLevelHead">
+          <strong>{names[key]}</strong>
+          {key === 'M' && <span className="qrxLevelBadge">{t('qrLevelRecommended')}</span>}
+        </div>
+
+        <input
+          type="range"
+          className="qrxLevelRange"
+          min={0}
+          max={COMPLEXITY.length - 1}
+          step={1}
+          value={index}
+          onChange={(event) => onChange(COMPLEXITY[Number(event.target.value)].id)}
+          aria-label={t('qrComplexityTitle')}
+          aria-valuetext={names[key]}
+          style={{ '--fill': `${(index / (COMPLEXITY.length - 1)) * 100}%` }}
+        />
+
+        <div className="qrxLevelTicks" role="radiogroup" aria-label={t('qrComplexityTitle')}>
+          {COMPLEXITY.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              role="radio"
+              aria-checked={value === c.id}
+              className={`qrxLevelTick ${value === c.id ? 'isOn' : ''}`}
+              onClick={() => onChange(c.id)}
+            >
+              {names[c.tag]}
+            </button>
+          ))}
+        </div>
+
+        <p className="qrxLevelDesc">{descriptions[key]}</p>
+
+        <div className="qrxLevelStats">
+          {size && <span>{t('qrLevelGrid', { size: `${size} × ${size}` })}</span>}
+          <span>{t('qrLevelTolerance', { p: LEVEL_PERCENT[key] })}</span>
+        </div>
+        {logoRaised && <p className="qrxHint qrxLevelNote">{t('qrLevelLogo')}</p>}
+      </div>
+    </div>
+  );
+}
+
 function Range({ label, value, min, max, unit, onChange }) {
   return (
     <label className="qrxRange">
@@ -229,7 +292,7 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
   const [quietZone, setQuietZone] = useState(initial.quietZone || 'standard');
   const [centerImage, setCenterImage] = useState(initial.centerImage && initial.centerImage.src ? initial.centerImage : null);
   const [saveStatus, setSaveStatus] = useState('');
-  const [imageError, setImageError] = useState('');
+  const [, setImageError] = useState('');
   const toast = useToast();
   const showImageError = (message) => {
     setImageError(message);
@@ -324,15 +387,7 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
 
   // Grid size at every level for this address, so the detail options show what they really change
   const gridSizes = useMemo(() => (shortUrl ? estimateGridSizes(shortUrl, compact) : {}), [shortUrl, compact]);
-  const sameSizeHint = useMemo(() => {
-    const order = ['L', 'M', 'Q', 'H'];
-    for (let i = 0; i < order.length - 1; i += 1) {
-      if (gridSizes[order[i]] && gridSizes[order[i]] === gridSizes[order[i + 1]]) {
-        return t('qrSameSize', { a: order[i], b: order[i + 1], size: `${gridSizes[order[i]]} × ${gridSizes[order[i]]}` });
-      }
-    }
-    return '';
-  }, [gridSizes, t]);
+
 
   const svgString = useMemo(() => {
     if (!qrData) return '';
@@ -517,18 +572,12 @@ function QrStudio({ shortCode, shortUrl, initialSettings, onSettingsSaved, heade
 
           <div className="qrxGroup">
             <h3 className="qrxGroupTitle">{t('qrSectionReadability')}</h3>
-            <Segmented
-              label={t('qrComplexityTitle')}
-              options={COMPLEXITY.map((c) => ({
-                id: c.id,
-                label: t(c.labelKey),
-                tag: gridSizes[c.tag] ? `${c.tag} · ${gridSizes[c.tag]}×${gridSizes[c.tag]}` : c.tag,
-              }))}
+            <LevelPicker
               value={complexity}
               onChange={setComplexity}
-              stacked
+              gridSizes={gridSizes}
+              hasLogo={Boolean(centerImage && centerImage.src)}
             />
-            {sameSizeHint && <p className="qrxHint">{sameSizeHint}</p>}
             <label className="qrxToggleRow">
               <input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} />
               <span>
