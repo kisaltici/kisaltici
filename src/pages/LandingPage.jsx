@@ -438,13 +438,13 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
         return (
           <div className="lpVisQr" data-reveal aria-hidden="true">
             <div className="lpQrCard lpQrBack">
-              <QRCodeSVG value="https://kisaltici.com/b" size={128} level="L" bgColor="#080a11" fgColor="#DEFF36" marginSize={0} />
+              <QRCodeSVG value="https://lnk1.tr/b" size={128} level="L" bgColor="#080a11" fgColor="#DEFF36" marginSize={0} />
             </div>
             <div className="lpQrCard lpQrMid">
-              <QRCodeSVG value="https://kisaltici.com/c" size={128} level="L" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
+              <QRCodeSVG value="https://lnk1.tr/c" size={128} level="L" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
             </div>
             <div className="lpQrCard lpQrFront">
-              <QRCodeSVG value="https://kisaltici.com/a" size={176} level="M" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
+              <QRCodeSVG value="https://lnk1.tr/a" size={176} level="M" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
             </div>
           </div>
         );
@@ -615,7 +615,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
                 <span className="lpResultLinkIcon"><Icon name="link" /></span>
                 <div className="lpResultLinkText">
                   <span className="lpResultLabel">{hero.previewLinkLabel}</span>
-                  <span className="lpResultShort">kisaltici.com/aB3xYz</span>
+                  <span className="lpResultShort">lnk1.tr/aB3xYz</span>
                 </div>
                 <span className="lpResultCopy"><Icon name="copy" /></span>
               </div>
@@ -623,7 +623,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
 
             <div className="lpHvQr lpGlass">
               <div className="lpQrTile">
-                <QRCodeSVG value="https://kisaltici.com" size={104} level="M" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
+                <QRCodeSVG value="https://lnk1.tr/aB3xYz" size={104} level="M" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
               </div>
               <span className="lpHvChip">{hero.previewQr}</span>
             </div>

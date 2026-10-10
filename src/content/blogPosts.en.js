@@ -256,7 +256,7 @@ export const POSTS_EN = {
       {
         h: 'Strengthen your brand with a custom link',
         p: [
-          'On Kısaltıcı’s Professional and Business plans you can write the end of the address yourself, for example kisaltici.com/@name/portfolio. An address like that shows both the owner and the content, and it is memorable.',
+          'On Kısaltıcı’s Professional and Business plans you can write the end of the address yourself, for example lnk1.tr/@name/portfolio. An address like that shows both the owner and the content, and it is memorable.',
         ],
       },
       {
@@ -1157,7 +1157,7 @@ export const POSTS_EN = {
       {
         h: '3. It keeps your brand consistent',
         p: [
-          'Using the same pattern in every channel looks professional. For example, an address tied to your name, like kisaltici.com/@name/portfolio, shows both the owner and the content.',
+          'Using the same pattern in every channel looks professional. For example, an address tied to your name, like lnk1.tr/@name/portfolio, shows both the owner and the content.',
         ],
       },
       {

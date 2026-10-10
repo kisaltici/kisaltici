@@ -7,7 +7,7 @@ const TEXT = {
   tr: {
     title: 'Bildirim formu',
     url: 'Bildirilecek kısa bağlantı',
-    urlPlaceholder: 'https://kisaltici.com/aB3xYz',
+    urlPlaceholder: 'https://lnk1.tr/aB3xYz',
     reason: 'Neden bildiriyorsun?',
     reasons: {
       phishing: 'Kimlik avı / dolandırıcılık',
@@ -26,7 +26,7 @@ const TEXT = {
   en: {
     title: 'Report form',
     url: 'Short link to report',
-    urlPlaceholder: 'https://kisaltici.com/aB3xYz',
+    urlPlaceholder: 'https://lnk1.tr/aB3xYz',
     reason: 'Why are you reporting it?',
     reasons: {
       phishing: 'Phishing / fraud',

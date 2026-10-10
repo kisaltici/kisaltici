@@ -371,6 +371,7 @@ try {
 > Kısaltıcı (kisaltici.com) is a Turkish URL shortener, QR code generator and link click tracker. It turns long web addresses into short links, creates QR codes (standard and custom-designed) and shows click statistics per link. The site is available in Turkish and English. Operated by ${SELLER.unvan}, a sole proprietorship in Bolu, Türkiye.
 
 Key facts:
+- Short links are served from lnk1.tr (for example lnk1.tr/aB3xYz); the product and dashboard live on kisaltici.com.
 - Short links keep working until the owner deletes them; destinations cannot be changed after creation.
 - Every paid plan starts with a 7-day free trial (a card is required; canceling before the trial ends costs nothing).
 - Prices are shown in Turkish lira (TRY) for customers in Türkiye${intlPricing ? '; customers elsewhere pay in US dollars (USD)' : ''}.

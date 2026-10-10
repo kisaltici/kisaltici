@@ -273,7 +273,7 @@ export const POSTS_TR = [
       {
         h: 'Özel bağlantıyla markanı güçlendir',
         p: [
-          'Kısaltıcı’nın Profesyonel ve Kurumsal planlarında adresin sonunu kendin belirleyebilirsin; örneğin kisaltici.com/@ad/portfolyo. Böyle bir adres hem sahibini hem içeriği belli eder ve akılda kalır.',
+          'Kısaltıcı’nın Profesyonel ve Kurumsal planlarında adresin sonunu kendin belirleyebilirsin; örneğin lnk1.tr/@ad/portfolyo. Böyle bir adres hem sahibini hem içeriği belli eder ve akılda kalır.',
         ],
       },
       {
@@ -1204,7 +1204,7 @@ export const POSTS_TR = [
       {
         h: '3. Marka tutarlılığı sağlar',
         p: [
-          'Tüm kanallarda aynı kalıbı kullanmak profesyonel bir görünüm kazandırır. Örneğin kisaltici.com/@ad/portfolyo biçiminde adına bağlı bir adres hem sahibini hem içeriği belli eder.',
+          'Tüm kanallarda aynı kalıbı kullanmak profesyonel bir görünüm kazandırır. Örneğin lnk1.tr/@ad/portfolyo biçiminde adına bağlı bir adres hem sahibini hem içeriği belli eder.',
         ],
       },
       {
