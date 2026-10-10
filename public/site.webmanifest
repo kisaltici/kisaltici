@@ -1,7 +1,7 @@
 {
   "name": "Kısaltıcı",
   "short_name": "Kısaltıcı",
-  "description": "Ücretsiz URL kısaltma, QR kod ve link takibi.",
+  "description": "URL kısaltma, QR kod ve link takibi.",
   "lang": "tr",
   "start_url": "/",
   "display": "browser",

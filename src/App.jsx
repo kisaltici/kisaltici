@@ -60,9 +60,9 @@ function AppContent() {
     if (path.startsWith('/yasal')) return;
     if (path === '/') {
       applySeo({
-        title: 'Kısaltıcı | Ücretsiz URL Kısaltma, QR Kod ve Link Takibi',
+        title: 'Kısaltıcı | URL Kısaltma, QR Kod ve Link Takibi',
         description:
-          'Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. Üyeliksiz dene, ücretsiz başla.',
+          'Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. Üyeliksiz hemen dene.',
         path: '/',
       });
     } else {
