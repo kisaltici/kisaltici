@@ -29,5 +29,6 @@ const FREE_CLOSED = { ...PLAN_LIMITS.free, dailyLinks: 0, dailyQr: 0 };
 
 export const getLimits = (planId) => {
   const id = PLAN_LIMITS[planId] ? planId : 'free';
-  return id === 'free' && isFreePlanClosed() ? FREE_CLOSED : PLAN_LIMITS[id];
+  if ((id === 'free' || id === 'guest') && isFreePlanClosed()) return FREE_CLOSED;
+  return PLAN_LIMITS[id];
 };

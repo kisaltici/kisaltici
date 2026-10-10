@@ -16,7 +16,16 @@ export const LANDING_COPY = {
     hero: {
       title: 'Bağlantını kısalt, paylaş ve takip et.',
       titleAccent: 'takip et',
-      sub: 'Bağlantını yapıştır, ne yapmak istediğini seç. Hesap açmadan hemen başlayabilirsin.',
+      sub: 'Uzun adresleri kısa ve takip edilebilir bağlantılara çevir, markana uygun QR kodlar oluştur ve her tıklamayı tek yerden izle.',
+      eyebrow: 'URL kısaltma · QR kod · Link takibi',
+      ctaPrimary: 'Planları gör',
+      ctaSecondary: 'Nasıl çalışır?',
+      note: 'Her plan için 7 gün ücretsiz deneme. Kart bilgisi gerekir, deneme bitmeden iptal edersen ücret alınmaz.',
+      noteNoTrial: 'Plan seç, hemen başla. Aboneliği istediğin an iptal edebilirsin.',
+      proof: ['Anında yönlendirme', 'Özel QR tasarımı', 'Tıklama istatistikleri'],
+      previewLong: 'ornek-site.com/blog/2026/yaz-kampanyasi?kaynak=bulten&utm_medium=eposta',
+      previewClicks: 'Toplam tıklama',
+      previewTrend: 'Bu hafta +18%',
       question: 'Bu bağlantı için ne yapmak istersiniz?',
       placeholder: 'https://uzun-bir-baglanti.com/sayfa',
       inputLabel: 'Kısaltılacak bağlantı',
@@ -94,7 +103,6 @@ export const LANDING_COPY = {
     plans: {
       title: 'Sana uygun planı seç',
       sub: 'Planını seç ve ücretsiz dene, ihtiyacın büyüdükçe yükselt.',
-      guestNote: 'Giriş yapmadan da dene: misafir olarak 1 bağlantı ve 1 QR kod oluşturabilirsin.',
       freeCta: 'Ücretsiz başla',
       paidCta: 'Giriş yap ve seç',
     },
@@ -102,8 +110,8 @@ export const LANDING_COPY = {
       title: 'Sık sorulan sorular',
       items: [
         {
-          q: 'Hesap açmadan kullanabilir miyim?',
-          a: 'Evet. Misafir olarak bağlantı kısaltabilir ve QR kod oluşturabilirsin. Geçmişin kaydedilmesi, özel bağlantılar ve gelişmiş istatistikler için giriş yapman gerekir.',
+          q: 'Önce ücretsiz deneyebilir miyim?',
+          a: 'Evet. Her planı 7 gün boyunca ücretsiz deneyebilirsin. Deneme için kart bilgisi gerekir; deneme bitmeden iptal edersen hiçbir ücret alınmaz.',
         },
         {
           q: 'Kısa bağlantılarım ne kadar süre çalışır?',
@@ -149,7 +157,16 @@ export const LANDING_COPY = {
     hero: {
       title: 'Shorten, share and track your links.',
       titleAccent: 'track',
-      sub: 'Paste your link and pick what you want to do. You can start right away without an account.',
+      sub: 'Turn long addresses into short, trackable links, create QR codes that match your brand and watch every click in one place.',
+      eyebrow: 'URL shortener · QR codes · Link tracking',
+      ctaPrimary: 'See plans',
+      ctaSecondary: 'How it works',
+      note: 'A 7-day free trial on every plan. A card is required; cancel before the trial ends and you pay nothing.',
+      noteNoTrial: 'Pick a plan and start right away. Cancel the subscription any time.',
+      proof: ['Instant redirects', 'Custom QR design', 'Click statistics'],
+      previewLong: 'example-site.com/blog/2026/summer-campaign?source=newsletter&utm_medium=email',
+      previewClicks: 'Total clicks',
+      previewTrend: '+18% this week',
       question: 'What do you want to do with this link?',
       placeholder: 'https://a-very-long-link.com/page',
       inputLabel: 'Link to shorten',
@@ -227,7 +244,6 @@ export const LANDING_COPY = {
     plans: {
       title: 'Pick the plan that fits you',
       sub: 'Pick a plan and try it free, upgrade as your needs grow.',
-      guestNote: 'Try it without signing in: as a guest you can create 1 link and 1 QR code.',
       freeCta: 'Start free',
       paidCta: 'Sign in and choose',
     },
@@ -235,8 +251,8 @@ export const LANDING_COPY = {
       title: 'Frequently asked questions',
       items: [
         {
-          q: 'Can I use it without an account?',
-          a: 'Yes. As a guest you can shorten links and create QR codes. Saved history, custom links and advanced statistics require signing in.',
+          q: 'Can I try it for free first?',
+          a: 'Yes. You can try any plan free for 7 days. A card is required for the trial; if you cancel before it ends, you are not charged at all.',
         },
         {
           q: 'How long do my short links keep working?',

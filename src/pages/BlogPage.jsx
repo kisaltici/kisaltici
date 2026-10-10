@@ -11,36 +11,10 @@ import {
   headingId,
 } from '../content/blogPosts';
 import LegalLinks from '../components/LegalLinks';
+import BlogCard from '../components/BlogCard';
 import { applySeo } from '../utils/seo';
 import { alternatePath, homePath, langFromPath } from '../i18n/siteLang';
 import './BlogPage.css';
-
-const Arrow = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M5 12h14M13 6l6 6-6 6" />
-  </svg>
-);
-
-function PostRow({ post, lang, ui, index }) {
-  return (
-    <Link to={blogPath(lang, post.slug)} className="blRow">
-      <span className="blRowMeta">
-        <span className="blRowNum">{String(index + 1).padStart(2, '0')}</span>
-        <span>{post.category}</span>
-      </span>
-      <span className="blRowBody">
-        <span className="blRowTitle">{post.title}</span>
-        <span className="blRowText">{post.description}</span>
-        <span className="blRowFoot">
-          {formatPostDate(post.date, lang)} · {post.readMinutes} {ui.minRead}
-        </span>
-      </span>
-      <span className="blRowArrow">
-        <Arrow />
-      </span>
-    </Link>
-  );
-}
 
 /* ---------------- index ---------------- */
 function BlogIndex({ lang, ui }) {
@@ -87,9 +61,15 @@ function BlogIndex({ lang, ui }) {
       </div>
 
       {posts.length > 0 ? (
-        <section className="blList" aria-label="Posts">
+        <section className="blGrid" aria-label="Posts">
           {posts.map((post, index) => (
-            <PostRow key={post.id} post={post} lang={lang} ui={ui} index={index} />
+            <BlogCard
+              key={post.id}
+              post={post}
+              lang={lang}
+              minLabel={ui.minRead}
+              featured={index === 0 && category === 'all' && !query.trim()}
+            />
           ))}
         </section>
       ) : (
@@ -250,9 +230,9 @@ function BlogArticle({ post, lang, ui }) {
 
       <section className="blRelated" aria-label={ui.related}>
         <h2>{ui.related}</h2>
-        <div className="blList">
-          {getRelatedPosts(post.id, lang).map((item, index) => (
-            <PostRow key={item.id} post={item} lang={lang} ui={ui} index={index} />
+        <div className="blGrid">
+          {getRelatedPosts(post.id, lang).map((item) => (
+            <BlogCard key={item.id} post={item} lang={lang} minLabel={ui.minRead} />
           ))}
         </div>
       </section>

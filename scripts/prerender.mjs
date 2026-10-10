@@ -128,7 +128,7 @@ try {
 <h2>${esc(copy.themes.title)}</h2>
 <p>${esc(copy.themes.text)}</p>
 <h2>${esc(copy.plans.title)}</h2>
-<p>${esc(copy.plans.sub)} ${esc(copy.plans.guestNote)}</p>
+<p>${esc(copy.plans.sub)}</p>
 <ul>${planBlocks}</ul>
 <h2>${esc(copy.faq.title)}</h2>
 <dl>${copy.faq.items.map((f) => `<dt>${esc(f.q)}</dt><dd>${esc(f.a)}</dd>`).join('')}</dl>

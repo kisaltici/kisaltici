@@ -111,13 +111,13 @@ router.post('/shorten', optionalAuth, shortenLimiter, async (req, res, next) => 
         const isGuest = plan === 'guest';
         return res.status(429).json({
           success: false,
-          code: isGuest ? 'GUEST_LIMIT' : limits.dailyLinks === 0 && plan === 'free' ? 'NO_PLAN' : 'DAILY_LINK_LIMIT',
+          code: limits.dailyLinks === 0 ? 'NO_PLAN' : isGuest ? 'GUEST_LIMIT' : 'DAILY_LINK_LIMIT',
           plan,
           limit: limits.dailyLinks,
-          error: isGuest
+          error: limits.dailyLinks === 0
+            ? 'Bağlantı oluşturmak için giriş yapıp bir plan başlat. Mevcut bağlantıların çalışmaya devam eder.'
+            : isGuest
             ? 'Misafir hakkını kullandın. Daha fazla bağlantı kısaltmak için giriş yap.'
-            : limits.dailyLinks === 0 && plan === 'free'
-            ? 'Yeni bağlantı oluşturmak için bir plan başlat. Mevcut bağlantıların çalışmaya devam eder.'
             : `Bugünkü ${limits.dailyLinks} bağlantı hakkını kullandın. Limit ertesi gün sıfırlanır, daha fazlası için planını yükseltebilirsin.`,
         });
       }
@@ -218,13 +218,13 @@ router.post('/qr/consume', optionalAuth, async (req, res, next) => {
       const isGuest = plan === 'guest';
       return res.status(429).json({
         success: false,
-        code: isGuest ? 'GUEST_LIMIT' : limits.dailyLinks === 0 && plan === 'free' ? 'NO_PLAN' : 'DAILY_QR_LIMIT',
+        code: limits.dailyQr === 0 ? 'NO_PLAN' : isGuest ? 'GUEST_LIMIT' : 'DAILY_QR_LIMIT',
         plan,
         limit: limits.dailyQr,
-        error: isGuest
+        error: limits.dailyQr === 0
+          ? 'QR kod oluşturmak için giriş yapıp bir plan başlat. Mevcut bağlantıların çalışmaya devam eder.'
+          : isGuest
           ? 'Misafir QR hakkını kullandın. Daha fazlası için giriş yap.'
-          : limits.dailyQr === 0 && plan === 'free'
-          ? 'QR kod oluşturmak için bir plan başlat. Mevcut bağlantıların çalışmaya devam eder.'
           : `Bugünkü ${limits.dailyQr} QR kod hakkını kullandın. Limit ertesi gün sıfırlanır, daha fazlası için planını yükseltebilirsin.`,
       });
     }

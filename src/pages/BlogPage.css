@@ -214,75 +214,15 @@
   color: var(--text-muted);
 }
 
-.blList {
-  display: flex;
-  flex-direction: column;
-}
-
-.blRow {
+.blGrid {
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr) 32px;
-  gap: 1.5rem;
-  align-items: start;
-  padding: clamp(1.4rem, 3vw, 2rem) 0;
-  border-bottom: 1px solid var(--surface-border);
-  color: inherit;
-  text-decoration: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.9rem, 1.8vw, 1.4rem);
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
 }
 
-.blRowMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  padding-top: 0.35rem;
-  color: var(--text-muted);
-  font: 500 0.8125rem/1.3 'Geist Mono', ui-monospace, monospace;
-}
-
-.blRowNum {
-  color: var(--accent-color);
-}
-
-.blRowBody {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  min-width: 0;
-}
-
-.blRowTitle {
-  max-width: 30ch;
-  font-size: clamp(1.35rem, 2.6vw, 2rem);
-  font-weight: 650;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-}
-
-.blRowText {
-  max-width: 62ch;
-  color: var(--text-secondary);
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.blRowFoot {
-  color: var(--text-muted);
-  font-size: 0.8125rem;
-}
-
-.blRowArrow {
-  padding-top: 0.5rem;
-  color: var(--text-muted);
-  transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.blRow:hover .blRowTitle {
-  color: var(--accent-color);
-}
-
-.blRow:hover .blRowArrow {
-  color: var(--accent-color);
-  transform: translateX(4px);
+.blRelated .blGrid {
+  margin-top: 1.25rem;
 }
 
 .blEmpty {
@@ -521,28 +461,19 @@
   }
 }
 
+@media (max-width: 960px) {
+  .blGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .blGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 720px) {
-  .blRow {
-    grid-template-columns: minmax(0, 1fr) 24px;
-    gap: 0.75rem;
-  }
-
-  .blRowMeta {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    gap: 0.75rem;
-    padding-top: 0;
-  }
-
-  .blRowBody {
-    grid-column: 1;
-  }
-
-  .blRowArrow {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
   .blTab.isOn::after {
     bottom: -0.2rem;
   }

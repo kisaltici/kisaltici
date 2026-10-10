@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { getPlanDisplayName, isPaidPlan } from '../utils/membership';
-import { getClientLimits, GUEST_LIMITS } from '../config/plans';
-import { hasUsedGuestLinkToday } from '../utils/shortenApi';
+import { getClientLimits } from '../config/plans';
 import { isMac } from '../utils/keyboardDefaults';
 import './Sidebar.css';
 
@@ -97,7 +96,6 @@ function Sidebar({
   const limits = userProfile?.limits || getClientLimits(userPlan);
   const usage = userProfile?.usage || { links: 0, qr: 0 };
   const searchHint = isMac ? '⌘ /' : 'Ctrl /';
-  const guestLinkUsed = hasUsedGuestLinkToday();
 
   const [editingCode, setEditingCode] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
@@ -485,11 +483,6 @@ function Sidebar({
                 <div className="usageHead">
                   <span className="usageTitle">{t('usageGuestTitle')}</span>
                 </div>
-                <UsageRow
-                  label={t('usageLinks')}
-                  used={guestLinkUsed ? GUEST_LIMITS.dailyLinks : 0}
-                  limit={GUEST_LIMITS.dailyLinks}
-                />
                 <p className="usageHint">{t('usageGuestHint')}</p>
               </>
             )}

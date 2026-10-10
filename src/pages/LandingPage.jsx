@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { QRCodeSVG } from 'qrcode.react';
@@ -6,8 +6,6 @@ import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { LANDING_COPY } from '../i18n/landingCopy';
 import { COLOR_THEMES } from '../utils/themePresets';
-import { shortenUrl, hasUsedGuestLinkToday } from '../utils/shortenApi';
-import LimitBanner from '../components/LimitBanner';
 import {
   SALE_PLANS,
   TRIAL_DAYS,
@@ -23,13 +21,13 @@ import BillingToggle from '../components/BillingToggle';
 import { useBillingConfig } from '../utils/useBillingConfig';
 import LegalLinks from '../components/LegalLinks';
 import { BLOG_UI, blogPath, getPosts } from '../content/blogPosts';
+import BlogCard from '../components/BlogCard';
 import { alternatePath } from '../i18n/siteLang';
 import { detectBrowserLanguage } from '../i18n/LanguageContext';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MODE_INTENT = { shorten: null, qr: 'qr', custom: 'customize' };
 const THEME_LIST = Object.values(COLOR_THEMES);
 
 function Icon({ name }) {
@@ -110,9 +108,9 @@ function Icon({ name }) {
   }
 }
 
-function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onStartCheckout, isSigningIn = false }) {
+function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, isSigningIn = false }) {
   const { t, lang, setLanguageMode } = useTranslation();
-  const { signInWithGoogle, getIdToken } = useAuth();
+  const { signInWithGoogle } = useAuth();
   const copy = LANDING_COPY[lang] || LANDING_COPY.en;
   const blogUi = BLOG_UI[lang] || BLOG_UI.en;
 
@@ -128,13 +126,8 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
   const showLangHint = !hintDismissed && browserLang !== lang;
 
   const rootRef = useRef(null);
-  const inputRef = useRef(null);
   const sentinelRef = useRef(null);
 
-  const [url, setUrl] = useState('');
-  const [mode, setMode] = useState('shorten');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
@@ -144,8 +137,9 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
   // Trial wording is only shown while it is true: before payments open, or when the server has trials enabled
   const billing = useBillingConfig();
   const showTrial = billing.loading || !billing.enabled || billing.trial;
-  // Guests get one link a day; once used, the form is replaced by a sign-in prompt
-  const guestBlocked = hasUsedGuestLinkToday();
+  const [clicks, setClicks] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1284 : 0
+  );
 
   /* Smooth anchor scrolling only while the landing page is mounted */
   useEffect(() => {
@@ -230,11 +224,12 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
         const qa = (selector) => gsap.utils.toArray(selector, root);
 
         // Hero card drifts up and tilts as the page is scrolled away from it
-        gsap.to('.lpResultCard', {
-          yPercent: -14,
-          rotate: -3,
-          ease: 'none',
-          scrollTrigger: { trigger: '.lpHero', start: 'top top', end: 'bottom top', scrub: true },
+        [['.lpHvMain', -10], ['.lpHvQr', -26], ['.lpHvStats', -16]].forEach(([target, shift]) => {
+          gsap.to(target, {
+            yPercent: shift,
+            ease: 'none',
+            scrollTrigger: { trigger: '.lpHero', start: 'top top', end: 'bottom top', scrub: true },
+          });
         });
 
         // Statement: words light up one by one while the block crosses the viewport
@@ -337,68 +332,6 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
     return () => mm.revert();
   }, []);
 
-  const validate = useCallback(
-    (value) => {
-      const trimmed = value.trim();
-      if (!trimmed) return t('errorEmptyUrl');
-      try {
-        const parsed = new URL(trimmed);
-        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          return t('errorInvalidProtocol');
-        }
-        return '';
-      } catch {
-        return t('errorInvalidUrl');
-      }
-    },
-    [t]
-  );
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (isLoading || guestBlocked) return;
-
-    const validationError = validate(url);
-    if (validationError) {
-      setError(validationError);
-      inputRef.current?.focus();
-      return;
-    }
-
-    setError('');
-
-    // Guests get one link per day: explain it and open the sign-in dialog
-    if (hasUsedGuestLinkToday()) {
-      setError(t('guestLimitReached'));
-      onOpenAuthModal('login');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const result = await shortenUrl(url, getIdToken);
-      if (!result.success) {
-        if (result.errorCode === 'guest_limit') {
-          setError(t('guestLimitReached'));
-          onOpenAuthModal('login');
-          return;
-        }
-        setError(
-          result.errorCode === 'db'
-            ? t('errorDatabaseUnavailable')
-            : result.errorMessage || t('errorGeneric')
-        );
-        return;
-      }
-      onShortened(result.data, MODE_INTENT[mode]);
-    } catch (err) {
-      console.error('Landing shorten request error:', err);
-      setError(navigator.onLine ? t('errorBackendOffline') : t('errorGeneric'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleGoogle = async () => {
     try {
       await signInWithGoogle();
@@ -408,11 +341,29 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
     }
   };
 
-  const focusComposer = (event) => {
+  const scrollToTop = (event) => {
     event.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 350);
   };
+
+  const scrollToPlans = () => {
+    document.getElementById('planlar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // Hero stats card: the click counter counts up once on load (static when motion is reduced)
+  useEffect(() => {
+    const target = 1284;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let frame;
+    const start = performance.now() + 700;
+    const tick = (now) => {
+      const progress = Math.min(Math.max((now - start) / 1400, 0), 1);
+      setClicks(Math.round(target * (1 - (1 - progress) ** 3)));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   const isDark = theme === 'dark';
   const { hero, nav, how, statement, stack, themes, ticker, plans, faq, cta, footer } = copy;
@@ -525,7 +476,7 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
       {/* NAVIGATION */}
       <header className={`lpNavWrap ${isScrolled ? 'isScrolled' : ''}`}>
         <nav className="lpNav" aria-label="Main">
-          <a href="#top" className="lpBrand" onClick={focusComposer} aria-label="Kısaltıcı">
+          <a href="#top" className="lpBrand" onClick={scrollToTop} aria-label="Kısaltıcı">
             <img
               src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'}
               alt="Kısaltıcı"
@@ -579,75 +530,47 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
         {/* HERO */}
         <section className="lpHero">
           <div className="lpHeroCopy">
-            <h1 className="lpHeroTitle lpLoadIn" style={{ '--i': 0 }}>
+            <p className="lpEyebrow lpLoadIn" style={{ '--i': 0 }}>
+              <span className="lpLiveDot" aria-hidden="true" />
+              {hero.eyebrow}
+            </p>
+            <h1 className="lpHeroTitle lpLoadIn" style={{ '--i': 1 }}>
               {renderHeroTitle()}
             </h1>
-            <p className="lpHeroSub lpLoadIn" style={{ '--i': 1 }}>
+            <p className="lpHeroSub lpLoadIn" style={{ '--i': 2 }}>
               {hero.sub}
             </p>
 
-            <form className="lpComposer lpGlass lpLoadIn" style={{ '--i': 2 }} onSubmit={handleSubmit} noValidate>
-              <label className="lpComposerQuestion" htmlFor="lp-url">
-                {hero.question}
-              </label>
+            <div className="lpHeroActions lpLoadIn" style={{ '--i': 3 }}>
+              <button type="button" className="lpBtn lpBtnPrimary lpBtnLg" onClick={scrollToPlans}>
+                <span>{showTrial ? planCopy.trialCta(TRIAL_DAYS) : hero.ctaPrimary}</span>
+                <Icon name="arrow" />
+              </button>
+              <a href="#nasil" className="lpBtn lpBtnGhost lpBtnLg">
+                {hero.ctaSecondary}
+              </a>
+            </div>
+            <p className="lpHeroNote lpLoadIn" style={{ '--i': 4 }}>
+              {showTrial ? hero.note : hero.noteNoTrial}
+            </p>
 
-              <div className="lpModes" role="radiogroup" aria-label={hero.question}>
-                {Object.keys(hero.modes).map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    role="radio"
-                    aria-checked={mode === key}
-                    className={`lpMode ${mode === key ? 'isActive' : ''}`}
-                    onClick={() => setMode(key)}
-                  >
-                    <Icon name={key === 'shorten' ? 'link' : key === 'qr' ? 'qr' : 'spark'} />
-                    <span>{hero.modes[key]}</span>
-                  </button>
-                ))}
-              </div>
-
-              {guestBlocked && (
-                <LimitBanner kind="guest" onAction={() => onOpenAuthModal('login')} />
-              )}
-
-              <div className={`lpField ${error ? 'hasError' : ''}`}>
-                <input
-                  id="lp-url"
-                  ref={inputRef}
-                  type="url"
-                  inputMode="url"
-                  autoComplete="off"
-                  spellCheck="false"
-                  className="lpInput"
-                  placeholder={hero.placeholder}
-                  value={url}
-                  onChange={(e) => {
-                    setUrl(e.target.value);
-                    if (error) setError('');
-                  }}
-                  aria-label={hero.inputLabel}
-                  disabled={guestBlocked}
-                  aria-invalid={Boolean(error)}
-                  aria-describedby={error ? 'lp-url-error' : undefined}
-                />
-                <button type="submit" className="lpBtn lpBtnPrimary lpSubmit" disabled={isLoading || guestBlocked}>
-                  <span>{isLoading ? hero.submitting : hero.submit}</span>
-                  {!isLoading && <Icon name="arrow" />}
-                </button>
-              </div>
-
-              {error && (
-                <p id="lp-url-error" className="lpError" role="alert">
-                  {error}
-                </p>
-              )}
-            </form>
+            <ul className="lpHeroProof lpLoadIn" style={{ '--i': 5 }}>
+              {hero.proof.map((item, index) => (
+                <li key={item}>
+                  <Icon name={index === 0 ? 'link' : index === 1 ? 'qr' : 'spark'} />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="lpHeroVisual lpLoadIn" style={{ '--i': 3 }} aria-hidden="true">
-            <div className="lpResultCard lpGlass">
-              <div className="lpResultLinkRow">
+            <div className="lpHvMain lpGlass">
+              <p className="lpHvLong">{hero.previewLong}</p>
+              <div className="lpHvFlow">
+                <span className="lpHvRail"><span className="lpHvPulse" /></span>
+              </div>
+              <div className="lpHvShortRow">
                 <span className="lpResultLinkIcon"><Icon name="link" /></span>
                 <div className="lpResultLinkText">
                   <span className="lpResultLabel">{hero.previewLinkLabel}</span>
@@ -655,17 +578,24 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
                 </div>
                 <span className="lpResultCopy"><Icon name="copy" /></span>
               </div>
+            </div>
 
+            <div className="lpHvQr lpGlass">
               <div className="lpQrTile">
-                <QRCodeSVG
-                  value="https://kisaltici.com"
-                  size={180}
-                  level="M"
-                  bgColor="#ffffff"
-                  fgColor="#080a11"
-                  marginSize={0}
-                />
+                <QRCodeSVG value="https://kisaltici.com" size={104} level="M" bgColor="#ffffff" fgColor="#080a11" marginSize={0} />
               </div>
+              <span className="lpHvChip">{hero.previewQr}</span>
+            </div>
+
+            <div className="lpHvStats lpGlass">
+              <span className="lpResultLabel">{hero.previewClicks}</span>
+              <span className="lpHvNumber">{clicks.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US')}</span>
+              <div className="lpHvBars">
+                {[38, 52, 34, 60, 48, 72, 56, 84, 66, 92, 78, 100].map((height, index) => (
+                  <span key={index} style={{ '--h': `${height}%`, '--d': `${0.8 + index * 0.06}s` }} />
+                ))}
+              </div>
+              <span className="lpHvTrend">{hero.previewTrend}</span>
             </div>
           </div>
         </section>
@@ -852,7 +782,6 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
           </div>
 
           {showTrial && <p className="lpTrialNote" data-reveal>{planCopy.trialNote(TRIAL_DAYS)}</p>}
-          <p className="lpGuestNote" data-reveal>{plans.guestNote}</p>
         </section>
 
         {/* FAQ */}
@@ -896,32 +825,11 @@ function LandingPage({ theme, onToggleTheme, onShortened, onOpenAuthModal, onSta
             <h2 className="lpH2">Blog</h2>
             <p className="lpLead">{blogUi.landingText}</p>
           </div>
-          <div className="lpBlogList">
+          <div className="lpBlogGrid">
             {getPosts(lang).slice(0, 3).map((post, index) => (
-              <a
-                key={post.id}
-                href={blogPath(lang, post.slug)}
-                className="lpBlogRow"
-                data-reveal
-                style={{ '--i': index }}
-                onClick={(event) => {
-                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-                  event.preventDefault();
-                  navigate(blogPath(lang, post.slug));
-                }}
-              >
-                <span className="lpBlogMeta">
-                  <span>{post.category}</span>
-                  <span>{post.readMinutes} {blogUi.minShort}</span>
-                </span>
-                <span className="lpBlogBody">
-                  <span className="lpBlogTitle">{post.title}</span>
-                  <span className="lpBlogText">{post.description}</span>
-                </span>
-                <span className="lpBlogArrow" aria-hidden="true">
-                  <Icon name="arrow" />
-                </span>
-              </a>
+              <div key={post.id} data-reveal style={{ '--i': index }}>
+                <BlogCard post={post} lang={lang} minLabel={blogUi.minRead} />
+              </div>
             ))}
           </div>
           <p className="lpBlogAll" data-reveal>
