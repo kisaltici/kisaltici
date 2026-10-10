@@ -4,7 +4,7 @@ export const SELLER = {
   brand: 'Kısaltıcı',
   site: 'https://kisaltici.com',
   domain: 'kisaltici.com',
-  unvan: 'Emrecan Yerlikaya – zuulab',
+  unvan: 'Emrecan Yerlikaya',
   type: 'Şahıs işletmesi',
   taxOffice: 'Bolu Vergi Dairesi',
   taxNo: '26080379140',

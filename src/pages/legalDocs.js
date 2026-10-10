@@ -15,7 +15,7 @@ export const LEGAL_DOCS = [
         h: 'İşletme bilgileri',
         list: [
           `Hizmet: ${S.brand} (${S.domain}), bağlantı kısaltma, QR kod ve istatistik hizmeti`,
-          `Unvan: ${S.unvan}`,
+          `Ad soyad: ${S.unvan}`,
           `İşletme türü: ${S.type}`,
           `Vergi dairesi: ${S.taxOffice}`,
           `Vergi kimlik no: ${S.taxNo}`,
@@ -387,7 +387,7 @@ export const LEGAL_DOCS = [
       },
       {
         h: '6. Fikri mülkiyet',
-        p: [`${S.brand} markası, arayüzü ve yazılımı ${S.unvan}'a aittir. Hizmetin kullanımı sana bu hakların devrini sağlamaz.`],
+        p: [`${S.brand} markası, arayüzü ve yazılımı ${S.unvan}'ya aittir. Hizmetin kullanımı sana bu hakların devrini sağlamaz.`],
       },
       {
         h: '7. Değişiklikler ve uygulanacak hukuk',
