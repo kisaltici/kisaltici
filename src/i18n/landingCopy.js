@@ -46,7 +46,7 @@ export const LANDING_COPY = {
       steps: [
         {
           title: 'Planını seç',
-          text: 'Sana uygun planı seç ve giriş yap. Deneme süresi bitmeden istediğin an iptal edebilirsin.',
+          text: 'Sana uygun planı seç ve giriş yap.',
         },
         {
           title: 'Bağlantını kısalt',
@@ -104,7 +104,7 @@ export const LANDING_COPY = {
     ticker: ['Kısalt', 'Paylaş', 'Takip et'],
     plans: {
       title: 'Sana uygun planı seç',
-      sub: 'Planını seç ve ücretsiz dene, ihtiyacın büyüdükçe yükselt.',
+      sub: 'Planını seç, ihtiyacın büyüdükçe yükselt.',
       freeCta: 'Ücretsiz başla',
       paidCta: 'Giriş yap ve seç',
     },
@@ -189,7 +189,7 @@ export const LANDING_COPY = {
       steps: [
         {
           title: 'Choose your plan',
-          text: 'Pick the plan that suits you and sign in. Cancel any time before the trial ends.',
+          text: 'Pick the plan that suits you and sign in.',
         },
         {
           title: 'Shorten your link',
@@ -247,7 +247,7 @@ export const LANDING_COPY = {
     ticker: ['Shorten', 'Share', 'Track'],
     plans: {
       title: 'Pick the plan that fits you',
-      sub: 'Pick a plan and try it free, upgrade as your needs grow.',
+      sub: 'Pick a plan, upgrade as your needs grow.',
       freeCta: 'Start free',
       paidCta: 'Sign in and choose',
     },

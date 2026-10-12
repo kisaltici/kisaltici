@@ -22,6 +22,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/dashboard",
+      "destination": "/index.html"
+    },
+    {
       "source": "/settings",
       "destination": "/index.html"
     },
@@ -88,6 +92,15 @@
     },
     {
       "source": "/link/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/dashboard",
       "headers": [
         {
           "key": "X-Robots-Tag",

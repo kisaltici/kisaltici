@@ -4,6 +4,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -12,6 +13,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -20,6 +22,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -28,6 +31,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -36,6 +40,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -44,6 +49,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -52,6 +58,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -60,6 +67,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -68,6 +76,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -76,6 +85,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -84,6 +94,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -92,6 +103,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -100,6 +112,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -108,6 +121,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -116,6 +130,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -124,6 +139,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 
@@ -132,6 +148,7 @@ Allow: /
 Disallow: /api/
 Disallow: /link/
 Disallow: /settings
+Disallow: /dashboard
 Disallow: /stats
 Disallow: /checkout
 

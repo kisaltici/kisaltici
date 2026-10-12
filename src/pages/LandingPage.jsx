@@ -158,9 +158,9 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
   const [openFaq, setOpenFaq] = useState(0);
   const navigate = useNavigate();
   const [period, setPeriod] = useState(DEFAULT_PERIOD);
-  // Trial wording is only shown while it is true: before payments open, or when the server has trials enabled
+  // Trial wording is only shown when the server has trials enabled (they are off for now)
   const billing = useBillingConfig();
-  const showTrial = billing.loading || !billing.enabled || billing.trial;
+  const showTrial = Boolean(billing.trial);
   const [clicks, setClicks] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1284 : 0
   );

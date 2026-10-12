@@ -5,7 +5,7 @@ export const LANDING_SEO = {
   tr: {
     title: 'Kısaltıcı | URL Kısaltma, QR Kod ve Link Takibi',
     description:
-      'Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et. 7 gün ücretsiz dene.',
+      'Uzun bağlantıları saniyeler içinde kısalt, markana uygun QR kod oluştur ve tıklamaları takip et.',
     ogAlt: 'Kısaltıcı: bağlantını kısalt, paylaş ve takip et',
     image: '/og-image.png',
     locale: 'tr_TR',
@@ -13,7 +13,7 @@ export const LANDING_SEO = {
   en: {
     title: 'Kısaltıcı | URL Shortener, QR Codes and Link Tracking',
     description:
-      'Shorten long links in seconds, create branded QR codes and track clicks. Try it free for 7 days.',
+      'Shorten long links in seconds, create branded QR codes and track clicks.',
     ogAlt: 'Kısaltıcı: shorten, share and track your links',
     image: '/og-image-en.png',
     locale: 'en_US',

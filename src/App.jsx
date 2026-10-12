@@ -28,8 +28,8 @@ import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
 import { LanguageProvider, useTranslation } from './i18n/LanguageContext';
 import { AuthProvider, useAuth, preloadAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
-import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout } from './utils/checkout';
-import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD } from './config/plans';
+import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout, fetchBillingConfig } from './utils/checkout';
+import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD, FEATURED_PLAN } from './config/plans';
 import { applySeo } from './utils/seo';
 import { LANDING_SEO } from './config/seo';
 import { isPublicPath, langFromPath } from './i18n/siteLang';
@@ -65,7 +65,7 @@ function AppContent() {
   // If Firebase does not answer quickly (blocked network, extensions), fall back to the guest view
   const [authWaitExpired, setAuthWaitExpired] = useState(false);
   const { lang, setLang } = useTranslation();
-  const { user, getIdToken, authTransitioning, authLoading, membershipPlan, refetchProfile } = useAuth();
+  const { user, userProfile, profileLoading, getIdToken, authTransitioning, authLoading, membershipPlan, refetchProfile } = useAuth();
 
   // Keep the document head right for each route (legal pages set their own; app/private routes are noindex)
   useEffect(() => {
@@ -92,10 +92,15 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // Signed-in users have no use for the English marketing landing: send /en to the app
+  // Signed-in users live at /dashboard: the marketing landing (/ and /en) sends them there
   useEffect(() => {
-    if (user && location.pathname === '/en') navigate('/', { replace: true });
+    if (user && (location.pathname === '/' || location.pathname === '/en')) navigate('/dashboard', { replace: true });
   }, [user, location.pathname, navigate]);
+
+  // Signed-out visitors have no dashboard: send them to the landing page once the first auth check is done
+  useEffect(() => {
+    if (!user && location.pathname === '/dashboard' && (!authLoading || authWaitExpired)) navigate('/', { replace: true });
+  }, [user, location.pathname, authLoading, authWaitExpired, navigate]);
 
   // Signing out from anywhere in the app returns to the landing page (only on a signed-in -> signed-out change,
   // so guests who never signed in can keep using /link pages)
@@ -712,6 +717,33 @@ function AppContent() {
     }
   }, [user, navigate]);
 
+  // An account without an active plan cannot create anything: after signing in it is sent to the payment page once per
+  // browser session (a plan picked before sign-in is handled above; existing links stay reachable afterwards)
+  useEffect(() => {
+    if (!user || !userProfile || profileLoading || membershipPlan !== 'free') return;
+    if (hasPendingCheckout() || location.pathname.startsWith('/checkout')) return;
+    if (isPublicPath(location.pathname) && location.pathname !== '/' && location.pathname !== '/en') return;
+    const key = `kslt_free_checkout_${user.uid}`;
+    try {
+      if (sessionStorage.getItem(key)) return;
+    } catch {
+      /* storage unavailable: the redirect then happens on every page load */
+    }
+    let active = true;
+    fetchBillingConfig().then((config) => {
+      if (!active || !config.enabled) return;
+      try {
+        sessionStorage.setItem(key, '1');
+      } catch {
+        /* see above */
+      }
+      navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
+    });
+    return () => {
+      active = false;
+    };
+  }, [user, userProfile, profileLoading, membershipPlan, location.pathname, navigate]);
+
   // Opening /checkout while signed out: remember the plan from the URL, then sign in first
   useEffect(() => {
     if (!location.pathname.startsWith('/checkout') || user || (authLoading && !authWaitExpired)) return;
@@ -759,8 +791,8 @@ function AppContent() {
     );
   }
 
-  // Signed-out visitors on the root path see the marketing landing page instead of the app shell
-  if ((location.pathname === '/' || location.pathname === '/en') && !user) {
+  // Signed-out visitors on the root path (or a stale /dashboard link) see the marketing landing page instead of the app shell
+  if ((location.pathname === '/' || location.pathname === '/en' || location.pathname === '/dashboard') && !user) {
     // Only the very first auth check shows the placeholder; sign-in keeps the landing page visible
     if (authLoading && !authWaitExpired && hadSession()) {
       return <div className="landingSplash" aria-hidden="true" />;
@@ -827,6 +859,17 @@ function AppContent() {
         <main className="mainContent">
           <Suspense fallback={null}>
           <Routes>
+            <Route
+              path="/dashboard"
+              element={
+                <MainComposerView
+                  onUrlShortened={handleUrlShortened}
+                  onUrlShortenedWithIntent={handleUrlShortenedWithIntent}
+                  onLimitReached={handleLimitReached}
+                  membershipPlan={membershipPlan}
+                />
+              }
+            />
             <Route
               path="/"
               element={

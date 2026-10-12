@@ -373,7 +373,6 @@ try {
 Key facts:
 - Short links are served from lnk1.tr (for example lnk1.tr/aB3xYz); the product and dashboard live on kisaltici.com.
 - Short links keep working until the owner deletes them; destinations cannot be changed after creation.
-- Every paid plan starts with a 7-day free trial (a card is required; canceling before the trial ends costs nothing).
 - Prices are shown in Turkish lira (TRY) for customers in Türkiye${intlPricing ? '; customers elsewhere pay in US dollars (USD)' : ''}.
 - Contact: ${SELLER.email}
 

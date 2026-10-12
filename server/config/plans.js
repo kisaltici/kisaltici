@@ -22,13 +22,17 @@ export const PLAN_LIMITS = {
   admin: { dailyLinks: null, dailyQr: null, statsDays: null, customLinks: true, customQr: true },
 };
 
-/** Set FREE_PLAN_CLOSED=1 once paid plans can be bought: accounts without a plan can no longer create links/QR. */
-export const isFreePlanClosed = () => process.env.FREE_PLAN_CLOSED === '1';
+/**
+ * Accounts without an active plan cannot create links/QR (existing links keep working). Closed by default so a
+ * missing env var can never leave it open; set FREE_PLAN_OPEN=1 to reopen the small free allowance. Guests keep
+ * their single daily try either way.
+ */
+export const isFreePlanClosed = () => process.env.FREE_PLAN_OPEN !== '1';
 
 const FREE_CLOSED = { ...PLAN_LIMITS.free, dailyLinks: 0, dailyQr: 0 };
 
 export const getLimits = (planId) => {
   const id = PLAN_LIMITS[planId] ? planId : 'free';
-  if ((id === 'free' || id === 'guest') && isFreePlanClosed()) return FREE_CLOSED;
+  if (id === 'free' && isFreePlanClosed()) return FREE_CLOSED;
   return PLAN_LIMITS[id];
 };
