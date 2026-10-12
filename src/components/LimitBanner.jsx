@@ -1,10 +1,14 @@
 import { useTranslation } from '../i18n/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import './LimitBanner.css';
 
 /** Shown in place of a usable input when the daily link allowance is used up. */
 function LimitBanner({ kind, limit, onAction }) {
   const { t } = useTranslation();
+  const { userProfile } = useAuth();
   const isGuest = kind === 'guest';
+  const isNoPlan = kind === 'no_plan';
+  const hadPlan = userProfile?.subscription?.status === 'expired';
   return (
     <div className="limitBanner" role="status">
       <span className="limitBannerIcon" aria-hidden="true">
@@ -14,11 +18,15 @@ function LimitBanner({ kind, limit, onAction }) {
         </svg>
       </span>
       <span className="limitBannerText">
-        {isGuest ? t('guestLimitReached') : t('dailyLinkLimitReached', { limit })}
+        {isGuest
+          ? t('guestLimitReached')
+          : isNoPlan
+          ? t(hadPlan ? 'expiredBanner' : 'noPlanBanner')
+          : t('dailyLinkLimitReached', { limit })}
       </span>
       {onAction && (
         <button type="button" className="limitBannerBtn" onClick={onAction}>
-          {isGuest ? t('signIn') : t('upgradePlan')}
+          {isGuest ? t('signIn') : isNoPlan ? t(hadPlan ? 'expiredBtn' : 'noPlanBtn') : t('upgradePlan')}
         </button>
       )}
     </div>

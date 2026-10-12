@@ -58,12 +58,13 @@ function TopBar({ theme, onBack, text, gated = false }) {
 /* ---------------- Result pages (/checkout/success, /checkout/failed) ---------------- */
 function ResultView({ kind, theme }) {
   const { lang } = useTranslation();
-  const { getIdToken, refetchProfile, membershipPlan, signOutUser } = useAuth();
+  const { getIdToken, refetchProfile, membershipPlan, userProfile, signOutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const text = CHECKOUT_COPY[lang] || CHECKOUT_COPY.en;
   const planCopy = getPlanCopy(lang);
-  const gated = membershipPlan === 'free';
+  // Never bought a plan: no dashboard to go back to, so "sign out" replaces "back"
+  const gated = membershipPlan === 'free' && userProfile?.subscription?.status !== 'expired';
   const orderId = new URLSearchParams(location.search).get('oid');
 
   const [order, setOrder] = useState(null);
@@ -201,7 +202,8 @@ function ResultView({ kind, theme }) {
 /* ---------------- Checkout (/checkout?plan=&period=) ---------------- */
 function CheckoutForm({ theme }) {
   const { lang } = useTranslation();
-  const { user, profileDisplayName, getIdToken, membershipPlan, signOutUser } = useAuth();
+  const { user, profileDisplayName, getIdToken, membershipPlan, userProfile, signOutUser } = useAuth();
+  const gated = membershipPlan === 'free' && userProfile?.subscription?.status !== 'expired';
   const navigate = useNavigate();
   const location = useLocation();
   const billing = useBillingConfig();
@@ -291,9 +293,9 @@ function CheckoutForm({ theme }) {
     <div className="cxPage">
       <TopBar
         theme={theme}
-        onBack={membershipPlan === 'free' ? signOutUser : () => navigate('/dashboard')}
+        onBack={gated ? signOutUser : () => navigate('/dashboard')}
         text={text}
-        gated={membershipPlan === 'free'}
+        gated={gated}
       />
 
       <main className="cxMain">

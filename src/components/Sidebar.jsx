@@ -463,10 +463,10 @@ function Sidebar({
                 </div>
               ) : limits.dailyLinks === 0 ? (
                 <div className="usageNoPlan">
-                  <span className="usageTitle">{t('noPlanTitle')}</span>
-                  <p className="usageHint">{t('noPlanHint')}</p>
+                  <span className="usageTitle">{t(userProfile?.subscription?.status === 'expired' ? 'expiredTitle' : 'noPlanTitle')}</span>
+                  <p className="usageHint">{t(userProfile?.subscription?.status === 'expired' ? 'expiredHint' : 'noPlanHint')}</p>
                   <button type="button" className="usageNoPlanBtn" onClick={() => onOpenPricing && onOpenPricing()}>
-                    {t('noPlanBtn')}
+                    {t(userProfile?.subscription?.status === 'expired' ? 'expiredBtn' : 'noPlanBtn')}
                   </button>
                 </div>
               ) : (

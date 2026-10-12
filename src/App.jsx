@@ -96,6 +96,12 @@ function AppContent() {
   // account without a plan is sent to checkout; if the profile never arrives the wait ends and the dashboard opens.
   const [profileWaitExpired, setProfileWaitExpired] = useState(false);
   const profileReady = Boolean(userProfile) && !profileLoading;
+  // Plan-less accounts: "never bought" stay at the payment page; "ended" (bought before) are sent there once per
+  // sign-in but can come back to follow and delete their links (creating anything stays closed on the server)
+  const isPlanless = profileReady && membershipPlan === 'free';
+  const hadPlan = isPlanless && userProfile?.subscription?.status === 'expired';
+  const neverPaid = isPlanless && !hadPlan;
+  const endedRedirectUidRef = useRef(null);
   useEffect(() => {
     if (!user) {
       setProfileWaitExpired(false);
@@ -112,10 +118,10 @@ function AppContent() {
   useEffect(() => {
     if (!user || waitingForProfile) return;
     if (location.pathname === '/' || location.pathname === '/en') {
-      const noPlan = profileReady && membershipPlan === 'free';
-      if (!noPlan) navigate('/dashboard', { replace: true });
+      const toCheckout = neverPaid || (hadPlan && endedRedirectUidRef.current !== user.uid);
+      if (!toCheckout) navigate('/dashboard', { replace: true });
     }
-  }, [user, waitingForProfile, profileReady, membershipPlan, location.pathname, navigate]);
+  }, [user, waitingForProfile, neverPaid, hadPlan, location.pathname, navigate]);
 
   // Signed-out visitors have no dashboard: send them to the landing page once the first auth check is done
   useEffect(() => {
@@ -125,8 +131,10 @@ function AppContent() {
   // Signing out from anywhere in the app returns to the landing page (only on a signed-in -> signed-out change,
   // so guests who never signed in can keep using /link pages)
   const previousUidRef = useRef(null);
+  const justSignedOutRef = useRef(false);
   useEffect(() => {
     if (previousUidRef.current && !user) {
+      justSignedOutRef.current = true;
       navigate('/', { replace: true });
     }
     previousUidRef.current = user ? user.uid : null;
@@ -737,19 +745,32 @@ function AppContent() {
     }
   }, [user, navigate]);
 
-  // Gate: an account without an active plan (new, or its period ended) only gets the payment page. Every app route sends
-  // it to checkout; public pages (landing, blog, legal) stay open. It leaves via "sign out" on that page, and as soon as a
-  // payment activates a plan the profile refresh lifts the gate.
+  // Gate for accounts without an active plan. Never bought: every app route sends them to checkout (public pages stay
+  // open) and they leave via "sign out" there. Plan ended: sent to checkout once per sign-in, then free to browse. A
+  // payment that activates a plan lifts either state through the profile refresh.
   useEffect(() => {
-    if (!user || !profileReady || membershipPlan !== 'free') return;
+    if (!user) {
+      endedRedirectUidRef.current = null;
+      return;
+    }
+    if (!isPlanless) return;
     if (location.pathname.startsWith('/checkout') || hasPendingCheckout()) return;
     if (isPublicPath(location.pathname) && location.pathname !== '/' && location.pathname !== '/en') return;
+    if (hadPlan) {
+      if (endedRedirectUidRef.current === user.uid) return;
+      endedRedirectUidRef.current = user.uid;
+    }
     navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
-  }, [user, profileReady, membershipPlan, location.pathname, navigate]);
+  }, [user, isPlanless, hadPlan, location.pathname, navigate]);
 
   // Opening /checkout while signed out: remember the plan from the URL, then sign in first
   useEffect(() => {
     if (!location.pathname.startsWith('/checkout') || user || (authLoading && !authWaitExpired)) return;
+    // An intentional sign-out from the payment page just goes to the landing page (no sign-in window)
+    if (justSignedOutRef.current) {
+      justSignedOutRef.current = false;
+      return;
+    }
     const query = new URLSearchParams(location.search);
     const plan = query.get('plan');
     if (isPaidPlanId(plan)) {
@@ -792,6 +813,12 @@ function AppContent() {
         <CheckoutPage theme={theme} />
       </Suspense>
     );
+  }
+
+  // Signed out while on a checkout URL (sign-out from the payment page, or a direct visit): never show the app shell
+  // for a moment, the effects above are already moving to the landing page
+  if (location.pathname.startsWith('/checkout') && !user) {
+    return <div className="landingSplash" aria-hidden="true" />;
   }
 
   // Signed in, plan not known yet: neutral placeholder instead of flashing the dashboard
