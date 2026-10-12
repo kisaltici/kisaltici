@@ -3,6 +3,7 @@ import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../config/api';
 import { formatPrice, getPlanCopy } from '../config/plans';
+import { checkoutPath } from '../utils/checkout';
 import './SubscriptionCard.css';
 import { useToast } from './Toast';
 
@@ -21,6 +22,11 @@ const TEXT = {
     cancelNo: 'Vazgeç',
     resume: 'İptali geri al',
     failed: 'İşlem yapılamadı, lütfen tekrar dene.',
+    oneTime: (plan, date, days) => `${plan} planın ${date} tarihine kadar geçerli (${days} gün kaldı).`,
+    soon: 'Süre dolunca linklerin çalışmaya devam eder; yeni bağlantı ve QR oluşturmak için planını uzatman gerekir.',
+    expired: (plan, date) => `${plan} planının süresi ${date} tarihinde doldu. Linklerin çalışıyor; yeni bağlantı ve QR oluşturmak için planını yenile.`,
+    extend: 'Planı uzat',
+    renewNow: 'Planı yenile',
   },
   en: {
     title: 'Subscription',
@@ -36,6 +42,11 @@ const TEXT = {
     cancelNo: 'Keep it',
     resume: 'Undo cancellation',
     failed: 'Something went wrong, please try again.',
+    oneTime: (plan, date, days) => `Your ${plan} plan is valid until ${date} (${days} days left).`,
+    soon: 'When it ends your links keep working; you will need to extend your plan to create new links and QR codes.',
+    expired: (plan, date) => `Your ${plan} plan ended on ${date}. Your links still work; renew your plan to create new links and QR codes.`,
+    extend: 'Extend plan',
+    renewNow: 'Renew plan',
   },
 };
 
@@ -60,8 +71,10 @@ function SubscriptionCard() {
   };
 
   const sub = userProfile?.subscription;
-  if (!sub || !['trialing', 'active', 'canceled', 'past_due'].includes(sub.status)) return null;
-  if (sub.status === 'active' && !sub.autoRenew) return null;
+  if (!sub || !['trialing', 'active', 'canceled', 'past_due', 'expired'].includes(sub.status)) return null;
+  // A paid period without automatic renewal (the current one-time purchase) still shows its end date and a renew link
+  const isOneTime = sub.status === 'active' && !sub.autoRenew && Boolean(sub.expiresAt);
+  if (sub.status === 'active' && !sub.autoRenew && !isOneTime) return null;
 
   const text = TEXT[lang] || TEXT.en;
   const planCopy = getPlanCopy(lang);
@@ -88,8 +101,13 @@ function SubscriptionCard() {
     }
   };
 
+  const daysLeft = sub.expiresAt ? Math.max(0, Math.ceil((new Date(sub.expiresAt).getTime() - Date.now()) / 86400000)) : 0;
+  const renewHref = checkoutPath(sub.plan, sub.period || 'monthly');
+
   let message;
-  if (sub.status === 'trialing') message = text.trialing(planName, date);
+  if (sub.status === 'expired') message = text.expired(planName, date);
+  else if (isOneTime) message = text.oneTime(planName, date, daysLeft);
+  else if (sub.status === 'trialing') message = text.trialing(planName, date);
   else if (sub.status === 'canceled') message = text.canceled(planName, date);
   else if (sub.status === 'past_due') message = text.pastDue;
   else message = text.activeAuto(planName, date);
@@ -98,6 +116,12 @@ function SubscriptionCard() {
     <div className="subCard">
       <span className="subCardTitle">{text.title}</span>
       <p className="subCardText">{message}</p>
+      {isOneTime && daysLeft <= 7 && <p className="subCardMuted">{text.soon}</p>}
+      {(isOneTime || sub.status === 'expired') && (
+        <a className="subBtn" href={renewHref}>
+          {sub.status === 'expired' ? text.renewNow : text.extend}
+        </a>
+      )}
       {sub.status === 'trialing' && sub.autoRenew && (
         <p className="subCardMuted">{text.thenCharge(formatPrice(sub.plan, sub.period || 'monthly', sub.currency || 'TRY'), date)}</p>
       )}

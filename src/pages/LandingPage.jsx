@@ -844,7 +844,7 @@ function LandingPage({ theme, onToggleTheme, onOpenAuthModal, onStartCheckout, i
           </div>
 
           <div className="lpFaqList" data-reveal>
-            {faq.items.map((item, index) => {
+            {faq.items.filter((_, i) => showTrial || i !== 0).map((item, index) => {
               const isOpen = openFaq === index;
               return (
                 <div key={item.q} className={`lpFaqItem ${isOpen ? 'isOpen' : ''}`}>

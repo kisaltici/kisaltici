@@ -29,6 +29,7 @@ import {
   resolveUserIp,
   requestIframeToken,
 } from '../utils/paytr.js';
+import { sendPurchaseEmails } from '../utils/mailer.js';
 import { startTrial, cancelAutoRenew, resumeAutoRenew, processDueRenewals } from '../utils/subscription.js';
 
 const router = express.Router();
@@ -67,6 +68,10 @@ export const activateSubscription = async (order) => {
         billingCurrency: order.currency || 'TRY',
         planExpiresAt: expiresAt,
         billingPeriod: order.period,
+        // One-time period for now: no automatic renewal, and a new purchase clears an old canceled/past_due state
+        subscriptionStatus: 'active',
+        autoRenew: false,
+        canceledAt: null,
       },
       $setOnInsert: { subscriptionStartedAt: now },
     },
@@ -275,7 +280,10 @@ router.post(['/paytr/callback', '/paytr/callback.'], async (req, res) => {
             order.kind === 'trial'
               ? await startTrial(order, { utoken: post.utoken, ctoken: post.ctoken })
               : await activateSubscription(order);
-          if (expiresAt) await Order.updateOne({ orderId }, { $set: { activatedUntil: expiresAt } });
+          if (expiresAt) {
+            await Order.updateOne({ orderId }, { $set: { activatedUntil: expiresAt } });
+            await sendPurchaseEmails(order, expiresAt);
+          }
         }
       }
     } else {

@@ -57,6 +57,12 @@
   transition: border-color 0.2s ease;
 }
 
+a.subBtn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .subBtn:hover {
   border-color: var(--text-muted);
 }
