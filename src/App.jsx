@@ -92,8 +92,6 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  const freeRedirectUidRef = useRef(null);
-
   // Right after sign-in the plan is not known yet. Waiting for the profile avoids flashing the dashboard before an
   // account without a plan is sent to checkout; if the profile never arrives the wait ends and the dashboard opens.
   const [profileWaitExpired, setProfileWaitExpired] = useState(false);
@@ -114,7 +112,7 @@ function AppContent() {
   useEffect(() => {
     if (!user || waitingForProfile) return;
     if (location.pathname === '/' || location.pathname === '/en') {
-      const noPlan = profileReady && membershipPlan === 'free' && freeRedirectUidRef.current !== user.uid;
+      const noPlan = profileReady && membershipPlan === 'free';
       if (!noPlan) navigate('/dashboard', { replace: true });
     }
   }, [user, waitingForProfile, profileReady, membershipPlan, location.pathname, navigate]);
@@ -739,18 +737,13 @@ function AppContent() {
     }
   }, [user, navigate]);
 
-  // An account without an active plan cannot create anything: once per sign-in it is sent straight to the payment page
-  // (a plan picked before sign-in is handled above). Back from checkout lands on the dashboard without another redirect.
+  // Gate: an account without an active plan (new, or its period ended) only gets the payment page. Every app route sends
+  // it to checkout; public pages (landing, blog, legal) stay open. It leaves via "sign out" on that page, and as soon as a
+  // payment activates a plan the profile refresh lifts the gate.
   useEffect(() => {
-    if (!user) {
-      freeRedirectUidRef.current = null;
-      return;
-    }
-    if (!profileReady || membershipPlan !== 'free') return;
-    if (freeRedirectUidRef.current === user.uid) return;
-    if (hasPendingCheckout() || location.pathname.startsWith('/checkout')) return;
+    if (!user || !profileReady || membershipPlan !== 'free') return;
+    if (location.pathname.startsWith('/checkout') || hasPendingCheckout()) return;
     if (isPublicPath(location.pathname) && location.pathname !== '/' && location.pathname !== '/en') return;
-    freeRedirectUidRef.current = user.uid;
     navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
   }, [user, profileReady, membershipPlan, location.pathname, navigate]);
 

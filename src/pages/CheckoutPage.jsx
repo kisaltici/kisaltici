@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -30,16 +30,17 @@ const formatDate = (value, lang) =>
     year: 'numeric',
   });
 
-function TopBar({ theme, onBack, text }) {
+// gated = account without an active plan: the back button becomes "sign out" (there is no dashboard to go back to)
+function TopBar({ theme, onBack, text, gated = false }) {
   const isDark = theme === 'dark';
   return (
     <header className="cxTop">
       <div className="cxTopInner">
         <button type="button" className="cxBack" onClick={onBack}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M19 12H5M11 18l-6-6 6-6" />
+            {gated ? <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /> : <path d="M19 12H5M11 18l-6-6 6-6" />}
           </svg>
-          <span>{text.back}</span>
+          <span>{gated ? text.signOut : text.back}</span>
         </button>
         <img src={isDark ? '/KSLT_LOGO_DARK.svg' : '/KSLT_LOGO_LIGHT.svg'} alt="Kısaltıcı" className="cxLogo" width="74" height="24" />
         <span className="cxSecure">
@@ -57,26 +58,33 @@ function TopBar({ theme, onBack, text }) {
 /* ---------------- Result pages (/checkout/success, /checkout/failed) ---------------- */
 function ResultView({ kind, theme }) {
   const { lang } = useTranslation();
-  const { getIdToken, refetchProfile } = useAuth();
+  const { getIdToken, refetchProfile, membershipPlan, signOutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const text = CHECKOUT_COPY[lang] || CHECKOUT_COPY.en;
   const planCopy = getPlanCopy(lang);
+  const gated = membershipPlan === 'free';
   const orderId = new URLSearchParams(location.search).get('oid');
 
   const [order, setOrder] = useState(null);
   const [timedOut, setTimedOut] = useState(false);
+
+  // The auth helpers change identity whenever the profile refreshes; keep them in a ref so a refresh
+  // never restarts the polling below
+  const helpersRef = useRef({ getIdToken, refetchProfile, navigate });
+  helpersRef.current = { getIdToken, refetchProfile, navigate };
 
   // The browser redirect is not proof of payment: poll until the PayTR notification has been processed
   useEffect(() => {
     if (!orderId) return undefined;
     let active = true;
     let attempts = 0;
+    const timers = [];
 
     const poll = async () => {
       attempts += 1;
       try {
-        const token = await getIdToken();
+        const token = await helpersRef.current.getIdToken();
         const res = await fetch(`${API_BASE_URL}/api/billing/order/${encodeURIComponent(orderId)}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
@@ -85,7 +93,11 @@ function ResultView({ kind, theme }) {
         if (data?.success) {
           setOrder(data);
           if (data.status !== 'pending') {
-            if (data.status === 'paid' && refetchProfile) refetchProfile();
+            if (data.status === 'paid') {
+              // Refresh the profile so the new plan is known, then open the dashboard after a short success moment
+              if (helpersRef.current.refetchProfile) await helpersRef.current.refetchProfile();
+              if (active) timers.push(setTimeout(() => helpersRef.current.navigate('/dashboard', { replace: true }), 2500));
+            }
             return;
           }
         }
@@ -97,13 +109,19 @@ function ResultView({ kind, theme }) {
         setTimedOut(true);
         return;
       }
-      setTimeout(poll, 2000);
+      timers.push(setTimeout(poll, 2000));
     };
     poll();
     return () => {
       active = false;
+      timers.forEach(clearTimeout);
     };
-  }, [orderId, getIdToken, refetchProfile]);
+  }, [orderId]);
+
+  const goDashboard = async () => {
+    if (refetchProfile) await refetchProfile();
+    navigate('/dashboard', { replace: true });
+  };
 
   const isPaid = order?.status === 'paid';
   const isFailedOrder = order?.status === 'failed';
@@ -111,7 +129,7 @@ function ResultView({ kind, theme }) {
 
   return (
     <div className="cxPage">
-      <TopBar theme={theme} onBack={() => navigate('/')} text={text} />
+      <TopBar theme={theme} onBack={gated ? signOutUser : () => navigate('/dashboard')} text={text} gated={gated} />
       <main className="cxResult">
         {showFailed ? (
           <>
@@ -130,7 +148,11 @@ function ResultView({ kind, theme }) {
               >
                 {text.failed.retry}
               </button>
-              <button type="button" className="cxBtn" onClick={() => navigate('/')}>{text.failed.goDashboard}</button>
+              {gated ? (
+                <button type="button" className="cxBtn" onClick={signOutUser}>{text.signOut}</button>
+              ) : (
+                <button type="button" className="cxBtn" onClick={goDashboard}>{text.failed.goDashboard}</button>
+              )}
             </div>
           </>
         ) : isPaid ? (
@@ -148,7 +170,7 @@ function ResultView({ kind, theme }) {
               )}
             </p>
             <div className="cxResultActions">
-              <button type="button" className="cxBtn isPrimary" onClick={() => navigate('/')}>{text.success.goDashboard}</button>
+              <button type="button" className="cxBtn isPrimary" onClick={goDashboard}>{text.success.goDashboard}</button>
             </div>
           </>
         ) : timedOut ? (
@@ -161,7 +183,7 @@ function ResultView({ kind, theme }) {
             <h1 className="cxResultTitle">{text.success.pendingTitle}</h1>
             <p className="cxResultText">{text.success.pendingText}</p>
             <div className="cxResultActions">
-              <button type="button" className="cxBtn isPrimary" onClick={() => navigate('/')}>{text.success.goDashboard}</button>
+              <button type="button" className="cxBtn isPrimary" onClick={goDashboard}>{text.success.goDashboard}</button>
             </div>
           </>
         ) : (
@@ -179,7 +201,7 @@ function ResultView({ kind, theme }) {
 /* ---------------- Checkout (/checkout?plan=&period=) ---------------- */
 function CheckoutForm({ theme }) {
   const { lang } = useTranslation();
-  const { user, profileDisplayName, getIdToken } = useAuth();
+  const { user, profileDisplayName, getIdToken, membershipPlan, signOutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const billing = useBillingConfig();
@@ -267,7 +289,12 @@ function CheckoutForm({ theme }) {
 
   return (
     <div className="cxPage">
-      <TopBar theme={theme} onBack={() => navigate('/')} text={text} />
+      <TopBar
+        theme={theme}
+        onBack={membershipPlan === 'free' ? signOutUser : () => navigate('/dashboard')}
+        text={text}
+        gated={membershipPlan === 'free'}
+      />
 
       <main className="cxMain">
         <h1 className="cxTitle">{isTrial ? text.trialTitle(TRIAL_DAYS) : text.title}</h1>

@@ -2,6 +2,7 @@
 export const CHECKOUT_COPY = {
   tr: {
     back: 'Geri dön',
+    signOut: 'Çıkış yap',
     secure: 'Güvenli ödeme',
     title: 'Planını seç ve öde',
     choosePlan: 'Plan',
@@ -63,6 +64,7 @@ export const CHECKOUT_COPY = {
   },
   en: {
     back: 'Go back',
+    signOut: 'Sign out',
     secure: 'Secure payment',
     title: 'Choose your plan and pay',
     choosePlan: 'Plan',
