@@ -239,7 +239,8 @@ router.post('/checkout', requireAuth, checkoutLimiter, async (req, res, next) =>
  * - must answer plain text "OK" with nothing else
  * No auth/session here: PayTR has none.
  */
-router.post('/paytr/callback', async (req, res) => {
+// The trailing-dot alias covers a notification URL saved with a stray "." at the end in the PayTR panel
+router.post(['/paytr/callback', '/paytr/callback.'], async (req, res) => {
   try {
     const config = getPaytrConfig();
     const post = req.body || {};
