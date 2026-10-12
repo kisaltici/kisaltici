@@ -92,10 +92,32 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // Signed-in users live at /dashboard: the marketing landing (/ and /en) sends them there
+  const freeRedirectUidRef = useRef(null);
+
+  // Right after sign-in the plan is not known yet. Waiting for the profile avoids flashing the dashboard before an
+  // account without a plan is sent to checkout; if the profile never arrives the wait ends and the dashboard opens.
+  const [profileWaitExpired, setProfileWaitExpired] = useState(false);
+  const profileReady = Boolean(userProfile) && !profileLoading;
   useEffect(() => {
-    if (user && (location.pathname === '/' || location.pathname === '/en')) navigate('/dashboard', { replace: true });
-  }, [user, location.pathname, navigate]);
+    if (!user) {
+      setProfileWaitExpired(false);
+      return undefined;
+    }
+    if (profileReady) return undefined;
+    const timer = setTimeout(() => setProfileWaitExpired(true), 5000);
+    return () => clearTimeout(timer);
+  }, [user, profileReady]);
+  const waitingForProfile = Boolean(user) && !profileReady && !profileWaitExpired;
+
+  // Signed-in users live at /dashboard: the marketing landing (/ and /en) sends them there. Accounts without a plan
+  // are sent to checkout instead (effect below), so this waits until the plan is known.
+  useEffect(() => {
+    if (!user || waitingForProfile) return;
+    if (location.pathname === '/' || location.pathname === '/en') {
+      const noPlan = profileReady && membershipPlan === 'free' && freeRedirectUidRef.current !== user.uid;
+      if (!noPlan) navigate('/dashboard', { replace: true });
+    }
+  }, [user, waitingForProfile, profileReady, membershipPlan, location.pathname, navigate]);
 
   // Signed-out visitors have no dashboard: send them to the landing page once the first auth check is done
   useEffect(() => {
@@ -719,19 +741,18 @@ function AppContent() {
 
   // An account without an active plan cannot create anything: once per sign-in it is sent straight to the payment page
   // (a plan picked before sign-in is handled above). Back from checkout lands on the dashboard without another redirect.
-  const freeRedirectUidRef = useRef(null);
   useEffect(() => {
     if (!user) {
       freeRedirectUidRef.current = null;
       return;
     }
-    if (!userProfile || profileLoading || membershipPlan !== 'free') return;
+    if (!profileReady || membershipPlan !== 'free') return;
     if (freeRedirectUidRef.current === user.uid) return;
     if (hasPendingCheckout() || location.pathname.startsWith('/checkout')) return;
     if (isPublicPath(location.pathname) && location.pathname !== '/' && location.pathname !== '/en') return;
     freeRedirectUidRef.current = user.uid;
     navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
-  }, [user, userProfile, profileLoading, membershipPlan, location.pathname, navigate]);
+  }, [user, profileReady, membershipPlan, location.pathname, navigate]);
 
   // Opening /checkout while signed out: remember the plan from the URL, then sign in first
   useEffect(() => {
@@ -778,6 +799,11 @@ function AppContent() {
         <CheckoutPage theme={theme} />
       </Suspense>
     );
+  }
+
+  // Signed in, plan not known yet: neutral placeholder instead of flashing the dashboard
+  if (waitingForProfile && ['/', '/en', '/dashboard'].includes(location.pathname)) {
+    return <div className="landingSplash" aria-hidden="true" />;
   }
 
   // Signed-out visitors on the root path (or a stale /dashboard link) see the marketing landing page instead of the app shell
