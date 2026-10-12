@@ -28,7 +28,7 @@ import { DEFAULT_SHORTCUTS, matchShortcut } from './utils/keyboardDefaults';
 import { LanguageProvider, useTranslation } from './i18n/LanguageContext';
 import { AuthProvider, useAuth, preloadAuth } from './context/AuthContext';
 import { API_BASE_URL } from './config/api';
-import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout, fetchBillingConfig } from './utils/checkout';
+import { checkoutPath, savePendingCheckout, takePendingCheckout, hasPendingCheckout } from './utils/checkout';
 import { isBillingPeriod, isPaidPlanId, DEFAULT_PERIOD, FEATURED_PLAN } from './config/plans';
 import { applySeo } from './utils/seo';
 import { LANDING_SEO } from './config/seo';
@@ -717,31 +717,20 @@ function AppContent() {
     }
   }, [user, navigate]);
 
-  // An account without an active plan cannot create anything: after signing in it is sent to the payment page once per
-  // browser session (a plan picked before sign-in is handled above; existing links stay reachable afterwards)
+  // An account without an active plan cannot create anything: once per sign-in it is sent straight to the payment page
+  // (a plan picked before sign-in is handled above). Back from checkout lands on the dashboard without another redirect.
+  const freeRedirectUidRef = useRef(null);
   useEffect(() => {
-    if (!user || !userProfile || profileLoading || membershipPlan !== 'free') return;
+    if (!user) {
+      freeRedirectUidRef.current = null;
+      return;
+    }
+    if (!userProfile || profileLoading || membershipPlan !== 'free') return;
+    if (freeRedirectUidRef.current === user.uid) return;
     if (hasPendingCheckout() || location.pathname.startsWith('/checkout')) return;
     if (isPublicPath(location.pathname) && location.pathname !== '/' && location.pathname !== '/en') return;
-    const key = `kslt_free_checkout_${user.uid}`;
-    try {
-      if (sessionStorage.getItem(key)) return;
-    } catch {
-      /* storage unavailable: the redirect then happens on every page load */
-    }
-    let active = true;
-    fetchBillingConfig().then((config) => {
-      if (!active || !config.enabled) return;
-      try {
-        sessionStorage.setItem(key, '1');
-      } catch {
-        /* see above */
-      }
-      navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
-    });
-    return () => {
-      active = false;
-    };
+    freeRedirectUidRef.current = user.uid;
+    navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
   }, [user, userProfile, profileLoading, membershipPlan, location.pathname, navigate]);
 
   // Opening /checkout while signed out: remember the plan from the URL, then sign in first
