@@ -748,20 +748,25 @@ function AppContent() {
   // Gate for accounts without an active plan. Never bought: every app route sends them to checkout (public pages stay
   // open) and they leave via "sign out" there. Plan ended: sent to checkout once per sign-in, then free to browse. A
   // payment that activates a plan lifts either state through the profile refresh.
+  // The same condition drives the render below, so the dashboard is never drawn for a frame before the redirect lands.
+  const onGatedRoute =
+    !location.pathname.startsWith('/checkout') &&
+    (!isPublicPath(location.pathname) || location.pathname === '/' || location.pathname === '/en');
+  const needsCheckoutRedirect =
+    Boolean(user) &&
+    isPlanless &&
+    onGatedRoute &&
+    !hasPendingCheckout() &&
+    (neverPaid || (hadPlan && endedRedirectUidRef.current !== user.uid));
   useEffect(() => {
     if (!user) {
       endedRedirectUidRef.current = null;
       return;
     }
-    if (!isPlanless) return;
-    if (location.pathname.startsWith('/checkout') || hasPendingCheckout()) return;
-    if (isPublicPath(location.pathname) && location.pathname !== '/' && location.pathname !== '/en') return;
-    if (hadPlan) {
-      if (endedRedirectUidRef.current === user.uid) return;
-      endedRedirectUidRef.current = user.uid;
-    }
+    if (!needsCheckoutRedirect) return;
+    if (hadPlan) endedRedirectUidRef.current = user.uid;
     navigate(checkoutPath(FEATURED_PLAN, DEFAULT_PERIOD), { replace: true });
-  }, [user, isPlanless, hadPlan, location.pathname, navigate]);
+  }, [user, needsCheckoutRedirect, hadPlan, navigate]);
 
   // Opening /checkout while signed out: remember the plan from the URL, then sign in first
   useEffect(() => {
@@ -821,8 +826,8 @@ function AppContent() {
     return <div className="landingSplash" aria-hidden="true" />;
   }
 
-  // Signed in, plan not known yet: neutral placeholder instead of flashing the dashboard
-  if (waitingForProfile && ['/', '/en', '/dashboard'].includes(location.pathname)) {
+  // Signed in, plan not known yet (or a checkout redirect is about to happen): neutral placeholder instead of flashing the dashboard
+  if ((waitingForProfile && ['/', '/en', '/dashboard'].includes(location.pathname)) || needsCheckoutRedirect) {
     return <div className="landingSplash" aria-hidden="true" />;
   }
 
